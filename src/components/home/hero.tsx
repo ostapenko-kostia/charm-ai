@@ -1,3 +1,5 @@
+'use client'
+
 import * as motion from 'framer-motion/client'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -37,13 +39,13 @@ export function Hero() {
 					className='grid grid-cols-2 gap-6 mt-12 w-1/3 max-xl:w-1/2 max-md:w-full max-sm:grid-cols-1 max-sm:w-2/3'
 				>
 					<Link href='/get-reply/screenshot'>
-						<Button className='flex flex-col items-center gap-2 w-full py-10 !px-12 shadow-xl bg-gradient-to-br from-purple-600 via-purple-500 to-pink-500 text-white hover:from-purple-700 hover:via-purple-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl rounded-xl'>
+						<Button className='flex flex-col items-center gap-2 w-full py-10 !px-12 shadow-xl bg-white text-gray-900 hover:bg-gray-50 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl rounded-xl relative before:absolute before:inset-0 before:rounded-xl before:p-[3px] before:bg-gradient-to-r before:from-purple-600 before:to-pink-600 before:-z-10 after:absolute after:inset-[3px] after:rounded-[9px] after:bg-white after:-z-10'>
 							<span className='text-2xl'>📸</span>
 							<span className='font-semibold text-lg'>Reply with Screenshot</span>
 						</Button>
 					</Link>
 					<Link href='/get-reply/text'>
-						<Button className='flex flex-col items-center gap-2 w-full py-10 !px-12 bg-gradient-to-br from-pink-500 via-purple-500 to-purple-600 text-white hover:from-pink-600 hover:via-purple-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl rounded-xl'>
+						<Button className='flex flex-col items-center gap-2 w-full py-10 !px-12 bg-white text-gray-900 hover:bg-gray-50 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl rounded-xl relative before:absolute before:inset-0 before:rounded-xl before:p-[3px] before:bg-gradient-to-r before:from-purple-600 before:to-pink-600 before:-z-10 after:absolute after:inset-[3px] after:rounded-[9px] after:bg-white after:-z-10'>
 							<span className='text-2xl'>✍️</span>
 							<span className='font-semibold text-lg'>Reply with Manual Input</span>
 						</Button>
@@ -57,13 +59,13 @@ export function Hero() {
 					className='grid grid-cols-2 gap-6 mt-8 pt-8 border-t border-gray-200 w-1/3 max-xl:w-1/2 max-md:w-full max-sm:grid-cols-1 max-sm:w-2/3'
 				>
 					<Link href='/get-advice'>
-						<Button className='flex flex-col items-center gap-2 w-full py-10 !px-12 bg-gradient-to-br from-indigo-500 via-purple-500 to-purple-600 text-white shadow-xl hover:from-indigo-600 hover:via-purple-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl rounded-xl'>
+						<Button className='flex flex-col items-center gap-2 w-full py-10 !px-12 bg-white text-gray-900 hover:bg-gray-50 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl rounded-xl relative before:absolute before:inset-0 before:rounded-xl before:p-[3px] before:bg-gradient-to-r before:from-purple-600 before:to-pink-600 before:-z-10 after:absolute after:inset-[3px] after:rounded-[9px] after:bg-white after:-z-10'>
 							<span className='text-3xl'>💡</span>
 							<span className='font-semibold text-lg'>Get Advice</span>
 						</Button>
 					</Link>
 					<Link href='/pick-up-lines'>
-						<Button className='flex flex-col items-center gap-2 w-full py-10 !px-12 bg-gradient-to-br from-purple-500 via-indigo-500 to-indigo-600 text-white shadow-xl hover:from-purple-600 hover:via-indigo-600 hover:to-indigo-700 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl rounded-xl'>
+						<Button className='flex flex-col items-center gap-2 w-full py-10 !px-12 bg-white text-gray-900 hover:bg-gray-50 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl rounded-xl relative before:absolute before:inset-0 before:rounded-xl before:p-[3px] before:bg-gradient-to-r before:from-purple-600 before:to-pink-600 before:-z-10 after:absolute after:inset-[3px] after:rounded-[9px] after:bg-white after:-z-10'>
 							<span className='text-3xl'>🥰</span>
 							<span className='font-semibold text-lg'>Pick Up Lines</span>
 						</Button>
