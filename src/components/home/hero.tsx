@@ -36,40 +36,57 @@ export function Hero() {
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ delay: 0.4 }}
-					className='grid grid-cols-2 gap-6 mt-12 w-1/3 max-xl:w-1/2 max-md:w-full max-sm:grid-cols-1 max-sm:w-2/3'
+					className='grid grid-cols-1 sm:grid-cols-2 gap-4 justify-center mt-12 w-1/2 max-lg:w-full'
 				>
-					<Link href='/get-reply/screenshot'>
-						<Button className='flex flex-col items-center gap-2 w-full py-10 !px-12 shadow-xl bg-white text-gray-900 hover:bg-gray-50 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl rounded-xl relative before:absolute before:inset-0 before:rounded-xl before:p-[3px] before:bg-gradient-to-r before:from-purple-600 before:to-pink-600 before:-z-10 after:absolute after:inset-[3px] after:rounded-[9px] after:bg-white after:-z-10'>
-							<span className='text-2xl'>📸</span>
-							<span className='font-semibold text-lg'>Reply with Screenshot</span>
-						</Button>
-					</Link>
-					<Link href='/get-reply/text'>
-						<Button className='flex flex-col items-center gap-2 w-full py-10 !px-12 bg-white text-gray-900 hover:bg-gray-50 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl rounded-xl relative before:absolute before:inset-0 before:rounded-xl before:p-[3px] before:bg-gradient-to-r before:from-purple-600 before:to-pink-600 before:-z-10 after:absolute after:inset-[3px] after:rounded-[9px] after:bg-white after:-z-10'>
-							<span className='text-2xl'>✍️</span>
-							<span className='font-semibold text-lg'>Reply with Manual Input</span>
-						</Button>
-					</Link>
+					<Button
+						asChild
+						className='bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:opacity-90 transition-all duration-300 h-auto text-lg font-medium w-full hover:scale-[1.02] hover:shadow-xl'
+					>
+						<Link href='/get-reply/text'>
+							<span>Try Manual Chat</span>
+						</Link>
+					</Button>
+					<Button
+						asChild
+						variant='outline'
+						className='border-2 hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 hover:text-white transition-all duration-300 h-auto text-lg font-medium w-full hover:scale-[1.02] hover:shadow-xl hover:border-transparent'
+					>
+						<Link href='/get-reply/screenshot'>
+							<span>Try Screenshot Upload</span>
+						</Link>
+					</Button>
 				</motion.div>
 
 				<motion.div
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ delay: 0.5 }}
-					className='grid grid-cols-2 gap-6 mt-8 pt-8 border-t border-gray-200 w-1/3 max-xl:w-1/2 max-md:w-full max-sm:grid-cols-1 max-sm:w-2/3'
+					className='grid grid-cols-2 gap-6 mt-8 pt-8 border-t border-gray-200 w-1/2 max-lg:w-full max-sm:grid-cols-1'
 				>
-					<Link href='/get-advice'>
-						<Button className='flex flex-col items-center gap-2 w-full py-10 !px-12 bg-white text-gray-900 hover:bg-gray-50 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl rounded-xl relative before:absolute before:inset-0 before:rounded-xl before:p-[3px] before:bg-gradient-to-r before:from-purple-600 before:to-pink-600 before:-z-10 after:absolute after:inset-[3px] after:rounded-[9px] after:bg-white after:-z-10'>
+					<Button
+						asChild
+						className='flex flex-col items-center gap-2 py-10 bg-white hover:bg-gray-50 text-gray-900 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl border-2 hover:border-purple-600'
+					>
+						<Link
+							href='/get-advice'
+							className='flex flex-col items-center gap-2'
+						>
 							<span className='text-3xl'>💡</span>
 							<span className='font-semibold text-lg'>Get Advice</span>
-						</Button>
-					</Link>
-					<Link href='/pick-up-lines'>
-						<Button className='flex flex-col items-center gap-2 w-full py-10 !px-12 bg-white text-gray-900 hover:bg-gray-50 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl rounded-xl relative before:absolute before:inset-0 before:rounded-xl before:p-[3px] before:bg-gradient-to-r before:from-purple-600 before:to-pink-600 before:-z-10 after:absolute after:inset-[3px] after:rounded-[9px] after:bg-white after:-z-10'>
+						</Link>
+					</Button>
+					<Button
+						asChild
+						className='flex flex-col items-center gap-2 py-10 bg-white hover:bg-gray-50 text-gray-900 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl border-2 hover:border-purple-600'
+					>
+						<Link
+							href='/pick-up-lines'
+							className='flex flex-col items-center gap-2'
+						>
 							<span className='text-3xl'>🥰</span>
 							<span className='font-semibold text-lg'>Pick Up Lines</span>
-						</Button>
-					</Link>
+						</Link>
+					</Button>
 				</motion.div>
 
 				<motion.p
