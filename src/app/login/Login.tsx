@@ -3,9 +3,11 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useLogin } from '@/hooks/useAuth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -23,6 +25,7 @@ const loginSchema = z.object({
 export type LoginFormData = z.infer<typeof loginSchema>
 
 export function Login() {
+	const searchParams = useSearchParams()
 	const {
 		register,
 		handleSubmit,
@@ -30,10 +33,16 @@ export function Login() {
 	} = useForm<LoginFormData>({
 		resolver: zodResolver(loginSchema)
 	})
+	const { mutateAsync: login, isPending: isSubmitting } = useLogin()
 
 	const formErrors = errors as Record<string, { message?: string }>
 
-	const isSubmitting = false
+	const onSubmit = async (data: LoginFormData) => {
+		await login(data)
+		// After successful login, redirect to the original protected route or home
+		const from = searchParams.get('from') || '/'
+		window.location.href = from
+	}
 
 	return (
 		<motion.div
@@ -61,7 +70,7 @@ export function Login() {
 				</motion.p>
 
 				<form
-					onSubmit={handleSubmit(data => console.log(data))}
+					onSubmit={handleSubmit(onSubmit)}
 					className='space-y-6'
 				>
 					<motion.div
