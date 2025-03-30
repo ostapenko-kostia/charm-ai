@@ -7,7 +7,6 @@ import { useLogin } from '@/hooks/useAuth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -25,7 +24,6 @@ const loginSchema = z.object({
 export type LoginFormData = z.infer<typeof loginSchema>
 
 export function Login() {
-	const searchParams = useSearchParams()
 	const {
 		register,
 		handleSubmit,
@@ -39,9 +37,6 @@ export function Login() {
 
 	const onSubmit = async (data: LoginFormData) => {
 		await login(data)
-		// After successful login, redirect to the original protected route or home
-		const from = searchParams.get('from') || '/'
-		window.location.href = from
 	}
 
 	return (
