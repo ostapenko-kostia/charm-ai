@@ -1,8 +1,8 @@
-import Link from 'next/link'
-import { Button } from '../ui/button'
-import Image from 'next/image'
-import { Container } from '../layout/container'
 import * as motion from 'framer-motion/client'
+import Image from 'next/image'
+import Link from 'next/link'
+import { Container } from '../layout/container'
+import { Button } from '../ui/button'
 
 export function Hero() {
 	return (
@@ -10,76 +10,110 @@ export function Hero() {
 			initial={{ translateY: '15px', opacity: 0 }}
 			animate={{ translateY: '0px', opacity: 1 }}
 			transition={{ duration: 0.7, ease: 'anticipate' }}
+			className='bg-gradient-to-b from-white to-purple-50'
 		>
-			<Container className='flex flex-col items-center justify-center py-20'>
-				<h1 className='font-bold text-4xl text-center tracking-wide leading-14 max-sm:text-3xl'>
-					Charm AI Assistant: Free CHARM GPT and Fun{' '}
-					<span className='text-pink-700'>AI Dating Assistant</span>
-				</h1>
-				<p className='text-center text-lg font-semibold mt-6'>
-					CHARM GPT makes every encounter both easy and meaningful.
-				</p>
+			<Container className='flex flex-col items-center justify-center py-24'>
+				<motion.h1
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ delay: 0.2 }}
+					className='font-bold text-5xl text-center tracking-tight leading-tight max-sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600'
+				>
+					Charm AI Assistant
+				</motion.h1>
+				<motion.p
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ delay: 0.3 }}
+					className='text-center text-xl text-gray-700 mt-6 max-w-2xl'
+				>
+					Your Free AI Dating Assistant that makes every encounter meaningful and effortless
+				</motion.p>
 
-				<div className='grid grid-cols-2 gap-4 mt-12 w-1/3 max-xl:w-1/2 max-md:w-full max-sm:grid-cols-1 max-sm:w-2/3'>
+				<motion.div
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ delay: 0.4 }}
+					className='grid grid-cols-2 gap-6 mt-12 w-1/3 max-xl:w-1/2 max-md:w-full max-sm:grid-cols-1 max-sm:w-2/3'
+				>
 					<Link href='/get-reply/screenshot'>
-						<Button className='flex flex-col items-center gap-1 w-full py-9 !px-12 shadow-xl'>
-							<span className='text-3xl'>💌</span>
-							<span className='font-medium'>Reply with Screenshot</span>
+						<Button className='flex flex-col items-center gap-2 w-full py-10 !px-12 shadow-xl bg-gradient-to-br from-purple-600 via-purple-500 to-pink-500 text-white hover:from-purple-700 hover:via-purple-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl rounded-xl'>
+							<span className='text-2xl'>📸</span>
+							<span className='font-semibold text-lg'>Reply with Screenshot</span>
 						</Button>
 					</Link>
 					<Link href='/get-reply/text'>
-						<Button className='flex flex-col items-center gap-1 w-full py-9 !px-12 bg-yellow-400 text-black shadow-xl'>
-							<span className='text-3xl'>✍️</span>
-							<span className='font-medium'>Reply with Manual Input</span>
+						<Button className='flex flex-col items-center gap-2 w-full py-10 !px-12 bg-gradient-to-br from-pink-500 via-purple-500 to-purple-600 text-white hover:from-pink-600 hover:via-purple-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl rounded-xl'>
+							<span className='text-2xl'>✍️</span>
+							<span className='font-semibold text-lg'>Reply with Manual Input</span>
 						</Button>
 					</Link>
-				</div>
+				</motion.div>
 
-				<div className='grid grid-cols-2 gap-4 mt-4 pt-6 border-t w-1/3 max-xl:w-1/2 max-md:w-full max-sm:grid-cols-1 max-sm:w-2/3'>
+				<motion.div
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ delay: 0.5 }}
+					className='grid grid-cols-2 gap-6 mt-8 pt-8 border-t border-gray-200 w-1/3 max-xl:w-1/2 max-md:w-full max-sm:grid-cols-1 max-sm:w-2/3'
+				>
 					<Link href='/get-advice'>
-						<Button className='flex flex-col items-center gap-1 w-full py-9 !px-12 bg-pink-50 text-black shadow-xl'>
-							<span className='text-2xl'>💡</span>
-							<span>Get Advice</span>
+						<Button className='flex flex-col items-center gap-2 w-full py-10 !px-12 bg-gradient-to-br from-indigo-500 via-purple-500 to-purple-600 text-white shadow-xl hover:from-indigo-600 hover:via-purple-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl rounded-xl'>
+							<span className='text-3xl'>💡</span>
+							<span className='font-semibold text-lg'>Get Advice</span>
 						</Button>
 					</Link>
 					<Link href='/pick-up-lines'>
-						<Button className='flex flex-col items-center gap-1 w-full py-9 !px-12 bg-pink-50 text-black shadow-xl'>
-							<span className='text-2xl'>🥰</span>
-							<span>Pick Up Lines</span>
+						<Button className='flex flex-col items-center gap-2 w-full py-10 !px-12 bg-gradient-to-br from-purple-500 via-indigo-500 to-indigo-600 text-white shadow-xl hover:from-purple-600 hover:via-indigo-600 hover:to-indigo-700 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl rounded-xl'>
+							<span className='text-3xl'>🥰</span>
+							<span className='font-semibold text-lg'>Pick Up Lines</span>
 						</Button>
 					</Link>
-				</div>
+				</motion.div>
 
-				<p className='text-center text-gray-500 text-sm mt-16'>
+				<motion.p
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ delay: 0.6 }}
+					className='text-center text-gray-600 text-sm font-medium mt-16 uppercase tracking-wider'
+				>
 					Popular on the following dating platforms
-				</p>
+				</motion.p>
 
-				<div className='flex items-center justify-center mx-auto gap-8 mt-6 flex-wrap'>
+				<motion.div
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ delay: 0.7 }}
+					className='flex items-center justify-center mx-auto gap-12 mt-8 flex-wrap'
+				>
 					<Image
 						src='/tinder.png'
-						alt='Dating Apps'
-						width={90}
-						height={21.64}
+						alt='Tinder'
+						width={100}
+						height={24}
+						className='opacity-80 hover:opacity-100 transition-opacity'
 					/>
 					<Image
 						src='/hinge.png'
-						alt='Dating Apps'
-						width={90}
-						height={37.69}
+						alt='Hinge'
+						width={100}
+						height={42}
+						className='opacity-80 hover:opacity-100 transition-opacity'
 					/>
 					<Image
 						src='/momo.png'
-						alt='Dating Apps'
-						width={90}
-						height={27}
+						alt='Momo'
+						width={100}
+						height={30}
+						className='opacity-80 hover:opacity-100 transition-opacity'
 					/>
 					<Image
 						src='/okcupid.png'
-						alt='Dating Apps'
-						width={90}
-						height={29.19}
+						alt='OkCupid'
+						width={100}
+						height={32}
+						className='opacity-80 hover:opacity-100 transition-opacity'
 					/>
-				</div>
+				</motion.div>
 			</Container>
 		</motion.div>
 	)
