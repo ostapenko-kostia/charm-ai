@@ -87,18 +87,7 @@ export function Login() {
 						transition={{ delay: 0.5 }}
 						className='space-y-2'
 					>
-						<Label
-							htmlFor='password'
-							className='flex items-center justify-between'
-						>
-							<span>Password</span>
-							<Link
-								href='/forgot-password'
-								className='text-sm font-medium text-purple-600 hover:text-purple-500'
-							>
-								Forgot password?
-							</Link>
-						</Label>
+						<Label htmlFor='password'>Password</Label>
 						<Input
 							id='password'
 							type='password'
