@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 class TokenService {
 	generateTokens(payload: any) {
 		const accessToken = jwt.sign(payload, process.env.ACCESS_SECRET!, {
-			expiresIn: '10s'
+			expiresIn: '1h'
 		})
 		const refreshToken = jwt.sign(payload, process.env.REFRESH_SECRET!, {
 			expiresIn: '30d'

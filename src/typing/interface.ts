@@ -18,3 +18,18 @@ export interface IAuthState {
 	setUser: (user: IUserWithSubscription | null) => void
 }
 
+export interface IMessage {
+	type: 'my' | 'their'
+	text: string
+}
+
+export interface IChatMessage {
+	role: 'user' | 'assistant'
+	content: string
+}
+
+export interface IPickup {
+	text: string
+	category: string
+	language: string
+}

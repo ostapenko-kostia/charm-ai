@@ -9,16 +9,10 @@ import {
 	SelectTrigger,
 	SelectValue
 } from '@/components/ui/select'
+import { IPickup } from '@/typing/interface'
 import { motion } from 'framer-motion'
 import { Check, Copy, Heart, Search } from 'lucide-react'
 import { useState } from 'react'
-
-type PickupLine = {
-	id: number
-	text: string
-	category: string
-	likes: number
-}
 
 type Category = {
 	id: string
@@ -36,14 +30,14 @@ type LengthOption = {
 }
 
 interface PickupsProps {
-	pickupLines: PickupLine[]
-	categories: Category[]
+	pickupLines: IPickup[]
+	categories: string[]
 	sortOptions: SortOption[]
 	lengthOptions: LengthOption[]
 }
 
 export function Pickups({ pickupLines, categories, sortOptions, lengthOptions }: PickupsProps) {
-	const [copiedId, setCopiedId] = useState<number | null>(null)
+	const [copiedId, setCopiedId] = useState<string | null>(null)
 	const [search, setSearch] = useState('')
 	const [category, setCategory] = useState('all')
 	const [sort, setSort] = useState('popular')
@@ -62,10 +56,6 @@ export function Pickups({ pickupLines, categories, sortOptions, lengthOptions }:
 		})
 		.sort((a, b) => {
 			switch (sort) {
-				case 'popular':
-					return b.likes - a.likes
-				case 'newest':
-					return b.id - a.id
 				case 'shortest':
 					return a.text.length - b.text.length
 				case 'longest':
@@ -75,7 +65,7 @@ export function Pickups({ pickupLines, categories, sortOptions, lengthOptions }:
 			}
 		})
 
-	const copyToClipboard = async (text: string, id: number) => {
+	const copyToClipboard = async (text: string, id: string) => {
 		try {
 			await navigator.clipboard.writeText(text)
 			setCopiedId(id)
@@ -93,14 +83,22 @@ export function Pickups({ pickupLines, categories, sortOptions, lengthOptions }:
 						<div>
 							<h3 className='font-semibold text-gray-900 mb-3'>Categories</h3>
 							<div className='flex flex-col gap-2'>
+								<Button
+									key={Math.random()}
+									variant={category === 'all' ? 'default' : 'outline'}
+									onClick={() => setCategory('all')}
+									className='justify-start'
+								>
+									All
+								</Button>
 								{categories.map(i => (
 									<Button
-										key={i.id}
-										variant={category === i.id ? 'default' : 'outline'}
-										onClick={() => setCategory(i.id)}
+										key={i + Math.random()}
+										variant={category === i ? 'default' : 'outline'}
+										onClick={() => setCategory(i)}
 										className='justify-start'
 									>
-										{i.label}
+										{i}
 									</Button>
 								))}
 							</div>
@@ -172,7 +170,7 @@ export function Pickups({ pickupLines, categories, sortOptions, lengthOptions }:
 				<div className='grid gap-4'>
 					{filteredLines.map(line => (
 						<motion.div
-							key={line.id}
+							key={line.text + Math.random()}
 							initial={{ opacity: 0, y: 20 }}
 							animate={{ opacity: 1, y: 0 }}
 							className='bg-white rounded-xl shadow-lg p-6'
@@ -183,17 +181,10 @@ export function Pickups({ pickupLines, categories, sortOptions, lengthOptions }:
 									<Button
 										variant='ghost'
 										size='icon'
-										className='text-gray-500 hover:text-red-500'
-									>
-										<Heart className='w-5 h-5' />
-									</Button>
-									<Button
-										variant='ghost'
-										size='icon'
 										className='text-gray-500 hover:text-purple-600'
-										onClick={() => copyToClipboard(line.text, line.id)}
+										onClick={() => copyToClipboard(line.text, line.text)}
 									>
-										{copiedId === line.id ? (
+										{copiedId === line.text ? (
 											<Check className='w-5 h-5 text-green-500' />
 										) : (
 											<Copy className='w-5 h-5' />
@@ -202,8 +193,6 @@ export function Pickups({ pickupLines, categories, sortOptions, lengthOptions }:
 								</div>
 							</div>
 							<div className='mt-4 flex items-center gap-2'>
-								<span className='text-sm text-gray-500'>{line.likes} likes</span>
-								<span className='text-sm text-gray-300'>•</span>
 								<span className='text-sm text-gray-500 capitalize'>{line.category}</span>
 								<span className='text-sm text-gray-300'>•</span>
 								<span className='text-sm text-gray-500'>{line.text.length} chars</span>

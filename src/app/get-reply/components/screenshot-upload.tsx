@@ -1,12 +1,16 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Image } from 'lucide-react'
+import { useGetReplyByScreenshot } from '@/hooks/useReply'
+import { AnimatePresence, motion } from 'framer-motion'
+import { Image, LoaderIcon } from 'lucide-react'
 import { useState } from 'react'
 
 export function ScreenshotUpload() {
 	const [selectedImage, setSelectedImage] = useState<File | null>(null)
 	const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+	const [reply, setReply] = useState<string | null>(null)
+	const { mutateAsync: getReplyByScreenshot, isPending } = useGetReplyByScreenshot()
 
 	const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files?.[0]
@@ -18,9 +22,8 @@ export function ScreenshotUpload() {
 	}
 
 	const handleGetReply = async () => {
-		if (!selectedImage) return
-		// TODO: Implement AI reply generation
-		console.log('Selected image:', selectedImage)
+		const reply = (await getReplyByScreenshot(selectedImage!)).data.reply
+		setReply(reply)
 	}
 
 	const handleNewUpload = () => {
@@ -29,10 +32,11 @@ export function ScreenshotUpload() {
 			URL.revokeObjectURL(previewUrl)
 		}
 		setPreviewUrl(null)
+		setReply(null)
 	}
 
 	return (
-		<div className='max-w-2xl mx-auto'>
+		<div className='max-w-2xl mx-auto space-y-6'>
 			<div className='bg-white rounded-2xl shadow-xl p-6 min-h-[400px] flex flex-col'>
 				<div className='flex-grow flex flex-col items-center justify-center mb-6'>
 					{previewUrl ? (
@@ -81,12 +85,29 @@ export function ScreenshotUpload() {
 					<Button
 						className='bg-gradient-to-r from-purple-600 to-pink-600 text-white'
 						onClick={handleGetReply}
-						disabled={!selectedImage}
+						disabled={!selectedImage || isPending}
 					>
-						Get Charm Reply
+						{isPending && <LoaderIcon className='w-4 h-4 animate-spin mr-2' />}
+						{isPending ? 'Generating...' : 'Get Charm Reply'}
 					</Button>
 				</div>
 			</div>
+
+			<AnimatePresence>
+				{reply && (
+					<motion.div
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						exit={{ opacity: 0, y: -20 }}
+						className='bg-white rounded-2xl shadow-xl p-6'
+					>
+						<div className='flex items-center gap-2 mb-4'>
+							<span className='text-sm font-medium text-gray-500'>Latest AI Reply</span>
+						</div>
+						<div className='text-gray-800 text-lg leading-relaxed'>{reply}</div>
+					</motion.div>
+				)}
+			</AnimatePresence>
 		</div>
 	)
 }

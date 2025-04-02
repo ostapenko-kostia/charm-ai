@@ -81,6 +81,7 @@ class AuthService {
 		// Validating Refresh Token
 		if (!refreshToken || !refreshToken.length) throw new ApiError('Unauthorized', 400)
 
+
 		const userData: any = tokenService.validateRefresh(refreshToken)
 		const tokenFromDb = await tokenService.findRefresh(refreshToken)
 		if (!userData || !tokenFromDb) throw new ApiError('Unauthorized', 400)
