@@ -1,7 +1,6 @@
 import { ApiError } from '@/app/api/(exceptions)/apiError'
 import { handleApiError } from '@/app/api/(exceptions)/handleApiError'
 import { fileService } from '@/app/api/(services)/file.service'
-import { ai } from '@/lib/gemini'
 import { openai } from '@/lib/openai'
 import { NextRequest, NextResponse } from 'next/server'
 
