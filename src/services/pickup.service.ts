@@ -1,11 +1,10 @@
-import { IPickup } from '@/typing/interface'
-import axios from 'axios'
+import { api } from '@/lib/axios'
 
 class PickupService {
-	async getAllPickups() {
-		const response = await axios.get<IPickup[]>('https://rizzapi.vercel.app/list')
-		if (response.status === 200) return response.data
-		throw new Error('Failed to fetch pickup lines')
+	async generateMessages(data: FormData) {
+		const response = await api.post('/pickup/generate', data)
+		if (response.status === 200) return response
+		throw new Error('Failed to generate messages')
 	}
 }
 

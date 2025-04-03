@@ -80,11 +80,11 @@ export function Hero() {
 						className='flex flex-col items-center gap-2 py-10 bg-white hover:bg-gray-50 text-gray-900 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl border-2 hover:border-purple-600'
 					>
 						<Link
-							href='/pick-up-lines'
+							href='/first-message'
 							className='flex flex-col items-center gap-2'
 						>
-							<span className='text-3xl'>🥰</span>
-							<span className='font-semibold text-lg'>Pick Up Lines</span>
+							<span className='text-3xl'>💬</span>
+							<span className='font-semibold text-lg'>Generate First Message</span>
 						</Link>
 					</Button>
 				</motion.div>
