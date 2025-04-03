@@ -5,21 +5,7 @@ import { openai } from '@/lib/openai'
 import { NextRequest, NextResponse } from 'next/server'
 
 const PROMPT = `
-## Prompt for Generating a Response Based on a Photo
-
-Task: Create a simple and natural response based on an image. The response should be light and friendly, as if responding to a casual conversation between friends or acquaintances. Keep it straightforward and without any heavy flirtation, but still engaging.
-
-### Requirements:
-- The response should be easy-going and relatable.
-- Avoid any overly formal or cheesy phrases.
-- Keep the tone light, natural, and appropriate for a friendly exchange.
-- It should feel like something you’d say to a friend in a casual conversation.
-
-- Language should match the language of the chat.
-
-## **Output:**  
-- A single response message in text format.  
-- No explanations, reasoning, or multiple options—just the best possible response.  
+You are an expert in conversational dynamics and pickup lines. Your task is to analyze the provided chat screenshot and generate the most effective response for the user to engage the other person positively. Focus on creating a response that is charming, witty, and tailored to the context of the conversation, while also considering the emotional tone and the personalities of both individuals involved. Ensure the response is appropriate, respectful, and encourages further dialogue. Return only the response without any additional commentary or formatting.
 `
 
 export async function POST(req: NextRequest) {
