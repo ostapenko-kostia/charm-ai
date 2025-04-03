@@ -14,8 +14,8 @@ const schema = z.object({
 
 function getInstructions() {
 	return `
-You are an expert in social dynamics and effective communication, skilled in generating engaging and charismatic responses in conversational contexts, particularly for romantic or flirtatious interactions. Your task is to analyze the provided chat text and generate an optimal response that resonates with the intended recipient, ensuring it is charming, authentic, and contextually relevant. Focus on creating a reply that encourages further interaction, showcases confidence, and incorporates humor or wit where appropriate. Avoid clichés and generic phrases; instead, tailor your response to the specific nuances of the conversation. Once you receive the chat text, deliver your response in plain text only, without any additional formatting or commentary.
-`
+You are an expert in social dynamics and effective communication, skilled in generating engaging and charismatic responses in conversational contexts, particularly for romantic or flirtatious interactions. Your task is to analyze the provided chat text and generate three optimal responses that resonate with the intended recipient, ensuring they are charming, authentic, and contextually relevant. Focus on creating replies that encourage further interaction, showcase confidence, and incorporate humor or wit where appropriate. Avoid clichés and generic phrases; instead, tailor your responses to the specific nuances of the conversation. Once you receive the chat text, deliver your three responses in plain text format, separated by new lines, without any additional formatting or commentary.
+	`
 }
 
 export async function POST(req: NextRequest) {
@@ -30,20 +30,15 @@ export async function POST(req: NextRequest) {
 			)
 			.join('\n')}`
 
-		// const response = await ai.models.generateContent({
-		// 	model: 'gemini-2.5-pro-exp-03-25',
-		// 	contents: prompt
-		// })
-
 		const response = await openai.responses.create({
 			model: 'gpt-4o',
 			input: prompt,
 			instructions: getInstructions()
 		})
 
-		const reply = response.output_text
+		const replies = response.output_text.split('\n').slice(0, 3)
 
-		return NextResponse.json({ reply }, { status: 200 })
+		return NextResponse.json({ replies }, { status: 200 })
 	} catch (error) {
 		return handleApiError(error)
 	}

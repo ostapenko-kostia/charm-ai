@@ -5,13 +5,13 @@ import { Input } from '@/components/ui/input'
 import { useGetReplyByText } from '@/hooks/useReply'
 import { IMessage } from '@/typing/interface'
 import { AnimatePresence, motion } from 'framer-motion'
-import { LoaderIcon, SendIcon } from 'lucide-react'
+import { LoaderIcon } from 'lucide-react'
 import { useState } from 'react'
 
 export function ManualChat() {
 	const [messages, setMessages] = useState<IMessage[]>([])
 	const [newMessage, setNewMessage] = useState('')
-	const [reply, setReply] = useState('')
+	const [replies, setReplies] = useState<string[]>([])
 	const { mutateAsync: getReplyByText, isPending } = useGetReplyByText()
 
 	const addMessage = () => {
@@ -27,14 +27,14 @@ export function ManualChat() {
 	}
 
 	const handleGetReply = async () => {
-		const reply = await getReplyByText(messages)
-		setReply(reply.data.reply)
+		const response = await getReplyByText(messages)
+		setReplies(response.data.replies)
 	}
 
 	const handleNewChat = () => {
 		setMessages([])
 		setNewMessage('')
-		setReply('')
+		setReplies([])
 	}
 
 	return (
@@ -110,7 +110,7 @@ export function ManualChat() {
 			</div>
 
 			<AnimatePresence>
-				{reply && (
+				{replies.length > 0 && (
 					<motion.div
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
@@ -118,9 +118,21 @@ export function ManualChat() {
 						className='bg-white rounded-2xl shadow-xl p-6'
 					>
 						<div className='flex items-center gap-2 mb-4'>
-							<span className='text-sm font-medium text-gray-500'>Latest AI Reply</span>
+							<span className='text-sm font-medium text-gray-500'>AI Reply Suggestions</span>
 						</div>
-						<div className='text-gray-800 text-lg leading-relaxed'>{reply}</div>
+						<div className='space-y-4'>
+							{replies.map((reply, index) => (
+								<div
+									key={index}
+									className='p-4 bg-gray-50 rounded-xl border border-gray-100'
+								>
+									<div className='flex items-center gap-2 mb-2'>
+										<span className='text-sm font-medium text-purple-600'>Option {index + 1}</span>
+									</div>
+									<div className='text-gray-800 text-lg leading-relaxed'>{reply}</div>
+								</div>
+							))}
+						</div>
 					</motion.div>
 				)}
 			</AnimatePresence>

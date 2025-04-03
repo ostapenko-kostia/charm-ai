@@ -9,7 +9,7 @@ import { useState } from 'react'
 export function ScreenshotUpload() {
 	const [selectedImage, setSelectedImage] = useState<File | null>(null)
 	const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-	const [reply, setReply] = useState<string | null>(null)
+	const [replies, setReplies] = useState<string[]>([])
 	const { mutateAsync: getReplyByScreenshot, isPending } = useGetReplyByScreenshot()
 
 	const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,8 +22,8 @@ export function ScreenshotUpload() {
 	}
 
 	const handleGetReply = async () => {
-		const reply = (await getReplyByScreenshot(selectedImage!)).data.reply
-		setReply(reply)
+		const response = await getReplyByScreenshot(selectedImage!)
+		setReplies(response.data.replies)
 	}
 
 	const handleNewUpload = () => {
@@ -32,7 +32,7 @@ export function ScreenshotUpload() {
 			URL.revokeObjectURL(previewUrl)
 		}
 		setPreviewUrl(null)
-		setReply(null)
+		setReplies([])
 	}
 
 	return (
@@ -94,7 +94,7 @@ export function ScreenshotUpload() {
 			</div>
 
 			<AnimatePresence>
-				{reply && (
+				{replies.length > 0 && (
 					<motion.div
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
@@ -102,9 +102,21 @@ export function ScreenshotUpload() {
 						className='bg-white rounded-2xl shadow-xl p-6'
 					>
 						<div className='flex items-center gap-2 mb-4'>
-							<span className='text-sm font-medium text-gray-500'>Latest AI Reply</span>
+							<span className='text-sm font-medium text-gray-500'>AI Reply Suggestions</span>
 						</div>
-						<div className='text-gray-800 text-lg leading-relaxed'>{reply}</div>
+						<div className='space-y-4'>
+							{replies.map((reply, index) => (
+								<div
+									key={index}
+									className='p-4 bg-gray-50 rounded-xl border border-gray-100'
+								>
+									<div className='flex items-center gap-2 mb-2'>
+										<span className='text-sm font-medium text-purple-600'>Option {index + 1}</span>
+									</div>
+									<div className='text-gray-800 text-lg leading-relaxed'>{reply}</div>
+								</div>
+							))}
+						</div>
 					</motion.div>
 				)}
 			</AnimatePresence>

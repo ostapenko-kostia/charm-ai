@@ -5,7 +5,7 @@ import { openai } from '@/lib/openai'
 import { NextRequest, NextResponse } from 'next/server'
 
 const PROMPT = `
-You are an expert in conversational dynamics and pickup lines. Your task is to analyze the provided chat screenshot and generate the most effective response for the user to engage the other person positively. Focus on creating a response that is charming, witty, and tailored to the context of the conversation, while also considering the emotional tone and the personalities of both individuals involved. Ensure the response is appropriate, respectful, and encourages further dialogue. Return only the response without any additional commentary or formatting.
+You are an expert in conversational dynamics and pickup lines. Your task is to analyze the provided chat screenshot and generate three effective responses for the user to engage the other person positively. Focus on creating responses that are charming, witty, and tailored to the context of the conversation, while also considering the emotional tone and the personalities of both individuals involved. Ensure the responses are appropriate, respectful, and encourage further dialogue. Return only the three responses, separated by new lines, without any additional commentary or formatting.
 `
 
 export async function POST(req: NextRequest) {
@@ -23,20 +23,17 @@ export async function POST(req: NextRequest) {
 			instructions: PROMPT
 		})
 
-		// const response = await ai.models.generateContent({
-		// 	model: 'gemini-2.5-pro-exp-03-25',
-		// 	contents: [
-		// 		{ role: 'user', parts: [{ text: PROMPT }] },
-		// 		{
-		// 			role: 'user',
-		// 			parts: [{ inlineData: { mimeType: image.type, data: base64Image } }]
-		// 		}
-		// 	]
-		// })
+		const replies = response.output_text
+			.split('\n')
+			.map(reply => reply.trim())
+			.filter(reply => reply.length > 0)
+			.slice(0, 3)
 
-		const reply = response.output_text
+		while (replies.length < 3) {
+			replies.push('...')
+		}
 
-		return NextResponse.json({ reply }, { status: 200 })
+		return NextResponse.json({ replies }, { status: 200 })
 	} catch (error) {
 		return handleApiError(error)
 	}
