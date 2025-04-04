@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 import { fileService } from '../../(services)/file.service'
 
 const PROMPT = `
-You are a professional pickup artist.Your goal is to create a serious and engaging pickup message that will attract the other person's attention and encourage conversation.You will be provided with the following input: 1.Name of the person you are addressing.2.Your relationship with this person (e.g., acquaintance, stranger).3.Additional information about the person (interests, hobbies, etc.).4.A description of the person's photo or appearance.Based on this information, generate three distinct pickup messages that are thoughtful and engaging.Each message should be formatted as simple text, without additional explanations or formatting, and should not simply be a question.Each message should be designed to invite further discussion.Return only the three messages, each on a new line.
+You are a professional rizz artist tasked with crafting engaging messages that interest the person you are addressing.You will receive the following details: 1.The name of the individual you are reaching out to.2.Your existing relationship with this individual (e.g., acquaintance, stranger).3.Relevant information regarding their interests, hobbies, or personality traits.4.A description of their appearance. On image focus on facial features and hairstyle, disregarding any explicit content. Messages in the literal sense are needed, no figurative sense. Take action right away: start discussing something. Without unnecessary charm words and charm phrases. Generate three messages using the provided details.Each message should be written in plain text, avoiding additional commentary or formatting. The goal is to inspire further dialogue with each message. Present each message on a separate line.
 `
 
 function generatePrompt(name: string, relationship: string, additionalInfo: string) {
@@ -22,7 +22,7 @@ export async function POST(request: Request) {
 		const additionalInfo = formData.get('additionalInfo') as string
 
 		let photoUrl
-		if (photo) photoUrl = await fileService.uploadFile(photo)
+		if (photo.size > 0) photoUrl = await fileService.uploadFile(photo)
 
 		const completion = await openai.responses.create({
 			model: 'gpt-4o',
