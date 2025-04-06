@@ -1,21 +1,16 @@
 import { UserDto } from '@/app/api/(dtos)/user.dto'
-import { Subscription } from '@prisma/client'
-
-export interface IUserWithSubscription extends UserDto {
-	subscription: Subscription
-}
 
 export interface IAuthResponse {
 	accessToken: string
 	refreshToken: string
-	user: IUserWithSubscription
+	user: UserDto
 }
 
 export interface IAuthState {
 	isAuth: boolean
-	user: IUserWithSubscription | null
+	user: UserDto | null
 	setIsAuth: (isAuth: boolean) => void
-	setUser: (user: IUserWithSubscription | null) => void
+	setUser: (user: UserDto | null) => void
 }
 
 export interface IMessage {

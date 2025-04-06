@@ -14,7 +14,7 @@ export function Footer({ className }: FooterProps) {
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.5 }}
 			className={clsx(
-				'py-16 bg-gradient-to-b from-white to-purple-50 border-t border-gray-100',
+				'py-16 bg-gradient-to-b grow-0 shrink-0 from-white to-purple-50 border-t border-gray-100',
 				className
 			)}
 		>

@@ -3,12 +3,15 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useGetReplyByText } from '@/hooks/useReply'
+import { useAuthStore } from '@/store/auth.store'
 import { IMessage } from '@/typing/interface'
 import { AnimatePresence, motion } from 'framer-motion'
-import { LoaderIcon } from 'lucide-react'
+import { InfinityIcon, LoaderIcon } from 'lucide-react'
+import Link from 'next/link'
 import { useState } from 'react'
 
 export function ManualChat() {
+	const { user } = useAuthStore()
 	const [messages, setMessages] = useState<IMessage[]>([])
 	const [newMessage, setNewMessage] = useState('')
 	const [replies, setReplies] = useState<string[]>([])
@@ -37,7 +40,12 @@ export function ManualChat() {
 		setReplies([])
 	}
 
-	return (
+	return !user ? (
+		<div className='flex items-center justify-center gap-2 mx-auto mt-5'>
+			<LoaderIcon className='animate-spin' />
+			Loading...
+		</div>
+	) : (
 		<div className='max-w-2xl mx-auto space-y-6'>
 			<div className='bg-white rounded-2xl shadow-xl p-6 min-h-[400px] flex flex-col'>
 				<div className='flex-grow space-y-4 mb-6 overflow-y-auto max-h-[400px] pr-2'>
@@ -106,6 +114,29 @@ export function ManualChat() {
 						{isPending && <LoaderIcon className='w-4 h-4 animate-spin mr-2' />}
 						{isPending ? 'Generating...' : 'Get Reply'}
 					</Button>
+				</div>
+				<div className='text-center flex flex-col items-center mt-3 text-sm text-gray-500'>
+					<div className='flex items-center gap-1'>
+						<span className='text-amber-600'>
+							{user?.subscription?.plan === 'BASIC' ? (
+								user?.credits?.getReply
+							) : (
+								<InfinityIcon className='w-4 h-4 text-amber-600' />
+							)}
+						</span>{' '}
+						credits left.
+					</div>
+					<div className='flex items-center gap-1'>
+						<span> 1 credit = 3 replies.</span>
+						{user?.subscription?.plan === 'BASIC' && (
+							<Link
+								href='/pricing'
+								className='text-blue-500'
+							>
+								Upgrade Plan
+							</Link>
+						)}
+					</div>
 				</div>
 			</div>
 

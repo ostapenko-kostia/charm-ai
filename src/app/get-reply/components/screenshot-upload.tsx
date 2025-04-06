@@ -2,11 +2,14 @@
 
 import { Button } from '@/components/ui/button'
 import { useGetReplyByScreenshot } from '@/hooks/useReply'
+import { useAuthStore } from '@/store/auth.store'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Image, LoaderIcon } from 'lucide-react'
+import { Image, InfinityIcon, LoaderIcon } from 'lucide-react'
+import Link from 'next/link'
 import { useState } from 'react'
 
 export function ScreenshotUpload() {
+	const { user } = useAuthStore()
 	const [selectedImage, setSelectedImage] = useState<File | null>(null)
 	const [previewUrl, setPreviewUrl] = useState<string | null>(null)
 	const [replies, setReplies] = useState<string[]>([])
@@ -35,7 +38,12 @@ export function ScreenshotUpload() {
 		setReplies([])
 	}
 
-	return (
+	return !user ? (
+		<div className='flex items-center justify-center gap-2 mx-auto mt-5'>
+			<LoaderIcon className='animate-spin' />
+			Loading...
+		</div>
+	) : (
 		<div className='max-w-2xl mx-auto space-y-6'>
 			<div className='bg-white rounded-2xl shadow-xl p-6 min-h-[400px] flex flex-col'>
 				<div className='flex-grow flex flex-col items-center justify-center mb-6'>
@@ -90,6 +98,29 @@ export function ScreenshotUpload() {
 						{isPending && <LoaderIcon className='w-4 h-4 animate-spin mr-2' />}
 						{isPending ? 'Generating...' : 'Get Charm Reply'}
 					</Button>
+				</div>
+				<div className='text-center flex flex-col items-center mt-3 text-sm text-gray-500'>
+					<div className='flex items-center gap-1'>
+						<span className='text-amber-600'>
+							{user?.subscription?.plan === 'BASIC' ? (
+								user?.credits?.getReply
+							) : (
+								<InfinityIcon className='w-4 h-4 text-amber-600' />
+							)}
+						</span>{' '}
+						credits left.
+					</div>
+					<div className='flex items-center gap-1'>
+						<span> 1 credit = 3 replies.</span>
+						{user?.subscription?.plan === 'BASIC' && (
+							<Link
+								href='/pricing'
+								className='text-blue-500'
+							>
+								Upgrade Plan
+							</Link>
+						)}
+					</div>
 				</div>
 			</div>
 

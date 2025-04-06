@@ -1,5 +1,8 @@
+import { ApiError } from '@/app/api/(exceptions)/apiError'
 import { handleApiError } from '@/app/api/(exceptions)/handleApiError'
+import { checkAuth } from '@/app/api/(utils)/checkAuth'
 import { openai } from '@/lib/openai'
+import { prisma } from '@/lib/prisma'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
@@ -20,6 +23,24 @@ You are an expert in social dynamics and effective communication, skilled in gen
 
 export async function POST(req: NextRequest) {
 	try {
+		const user = await checkAuth(req)
+		if (!user) throw new ApiError('Unauthorized', 401)
+
+		if (!user.subscription || user.subscription.plan === 'BASIC') {
+			if (user?.credits?.getReply! <= 0) {
+				throw new ApiError('Not enough credits', 400)
+			} else if (user?.credits?.getReply && user?.credits?.getReply > 0) {
+				await prisma.credits.update({
+					where: { userId: user.id },
+					data: { getReply: { decrement: 1 } }
+				})
+			}
+		} else if (user.subscription.plan === 'PRO' || user.subscription.plan === 'PREMIUM') {
+			if (user.subscription.status !== 'ACTIVE') {
+				throw new ApiError('Subscription not active', 400)
+			}
+		}
+
 		const body = await req.json()
 		const { messages } = schema.parse(body)
 
@@ -38,7 +59,19 @@ export async function POST(req: NextRequest) {
 
 		const replies = response.output_text.split('\n').slice(0, 3)
 
-		return NextResponse.json({ replies }, { status: 200 })
+		// Fetch updated credit data
+		const updatedUser = await prisma.user.findUnique({
+			where: { id: user.id },
+			include: { credits: true }
+		})
+
+		return NextResponse.json(
+			{
+				replies,
+				credits: updatedUser?.credits || null
+			},
+			{ status: 200 }
+		)
 	} catch (error) {
 		return handleApiError(error)
 	}

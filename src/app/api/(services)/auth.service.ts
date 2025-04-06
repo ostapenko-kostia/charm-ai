@@ -1,8 +1,8 @@
 import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcrypt'
-import { tokenService } from './token.service'
-import { UserDto } from '../(dtos)/user.dto'
+import { UserDto, UserTokenDto } from '../(dtos)/user.dto'
 import { ApiError } from '../(exceptions)/apiError'
+import { tokenService } from './token.service'
 
 class AuthService {
 	async register({
@@ -19,9 +19,9 @@ class AuthService {
 		// Checking candidate
 		const candidate = await prisma.user.findUnique({
 			where: { email },
-			include: { subscription: true }
+			include: { subscription: true, credits: true }
 		})
-		if (candidate) throw new ApiError('User with this email already exists', 409)
+		if (candidate) throw new ApiError('This email is already in use', 409)
 
 		// Hashing password
 		const hashedPassword = await bcrypt.hash(password, 3)
@@ -31,41 +31,50 @@ class AuthService {
 			data: { firstName, lastName, email, password: hashedPassword }
 		})
 
+		await prisma.credits.create({
+			data: { userId: user.id }
+		})
+
 		// Creating DTO
-		const userSafe = new UserDto(user)
+		const userTokenDto = new UserTokenDto(user)
+		const userDto = new UserDto(user)
 
 		// Creating refresh token
 		const { accessToken, refreshToken } = tokenService.generateTokens({
-			...userSafe
+			...userTokenDto
 		})
 
 		// Saving refresh token
 		await tokenService.saveRefresh(refreshToken, user.id)
 
 		// Returning data
-		return { accessToken, refreshToken, user: userSafe }
+		return { accessToken, refreshToken, user: userDto }
 	}
 
 	async login({ email, password }: { email: string; password: string }) {
 		// Checking user exists
-		const user = await prisma.user.findUnique({ where: { email }, include: { subscription: true } })
-		if (!user) throw new ApiError('User with this email does not exist', 400)
+		const user = await prisma.user.findUnique({
+			where: { email },
+			include: { subscription: true, credits: true }
+		})
+		if (!user) throw new ApiError('Login or password is incorrect', 400)
 
 		// Checking password
 		const isPasswordValid = await bcrypt.compare(password, user.password)
-		if (!isPasswordValid) throw new ApiError('Invalid password', 400)
+		if (!isPasswordValid) throw new ApiError('Login or password is incorrect', 400)
 
 		// Creating DTO
-		const userSafe = new UserDto(user)
+		const userDto = new UserDto(user)
+		const userTokenDto = new UserTokenDto(user)
 
 		// Generating tokens
 		const { accessToken, refreshToken } = tokenService.generateTokens({
-			...userSafe
+			...userTokenDto
 		})
 
 		await tokenService.saveRefresh(refreshToken, user.id)
 
-		return { accessToken, refreshToken, user: userSafe }
+		return { accessToken, refreshToken, user: userDto }
 	}
 
 	async logout(refreshToken: string) {
@@ -79,32 +88,34 @@ class AuthService {
 
 	async refresh(refreshToken: string) {
 		// Validating Refresh Token
-		if (!refreshToken || !refreshToken.length) throw new ApiError('Unauthorized', 400)
-
+		if (!refreshToken || !refreshToken.length) throw new ApiError('Unauthorized', 401)
 
 		const userData: any = tokenService.validateRefresh(refreshToken)
 		const tokenFromDb = await tokenService.findRefresh(refreshToken)
-		if (!userData || !tokenFromDb) throw new ApiError('Unauthorized', 400)
+		if (!userData || !tokenFromDb) throw new ApiError('Unauthorized', 401)
 
 		// Checking user
 		const user = await prisma.user.findUnique({
 			where: { id: userData.id },
-			include: { subscription: true }
+			include: { subscription: true, credits: true }
 		})
 
+		if (!user) throw new ApiError('Unauthorized', 401)
+
 		// Creating DTO
-		const userSafe = new UserDto(user)
+		const userDto = new UserDto(user)
+		const userTokenDto = new UserTokenDto(user)
 
 		// Generating tokens
 		const tokens = tokenService.generateTokens({
-			...userSafe
+			...userTokenDto
 		})
 
 		// Saving refresh token
-		await tokenService.saveRefresh(tokens.refreshToken, userSafe.id)
+		await tokenService.saveRefresh(tokens.refreshToken, user.id)
 
 		// Returning data
-		return { ...tokens, user: userSafe }
+		return { ...tokens, user: userDto }
 	}
 }
 

@@ -1,3 +1,4 @@
+import { pickupService } from '@/services/pickup.service'
 import { useMutation } from '@tanstack/react-query'
 
 type PickupData = {
@@ -16,16 +17,13 @@ export const useGeneratePickups = () => {
 			formData.append('relationship', data.relationship)
 			formData.append('additionalInfo', data.additionalInfo)
 
-			const response = await fetch('/api/pickup/generate', {
-				method: 'POST',
-				body: formData
-			})
+			const response = await pickupService.generateMessages(formData)
 
-			if (!response.ok) {
+			if (response.status !== 200) {
 				throw new Error('Failed to generate pickups')
 			}
 
-			return response.json()
+			return response.data
 		}
 	})
 }

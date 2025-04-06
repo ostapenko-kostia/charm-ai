@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
 		const userData = await authService.login(result.data)
 
 		;(await cookies()).set(TOKEN.REFRESH_TOKEN, userData.refreshToken, {
-			expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+			expires: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
 			httpOnly: true
 		})
 

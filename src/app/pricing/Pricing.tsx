@@ -1,8 +1,10 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { useAuthStore } from '@/store/auth.store'
 import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
+import Link from 'next/link'
 import { useState } from 'react'
 
 const plans = {
@@ -12,9 +14,9 @@ const plans = {
 		monthlyPrice: 0,
 		yearlyPrice: 0,
 		features: [
-			'Access to pickup lines list',
-			'Basic search functionality',
-			'Basic AI-powered responses'
+			'Basic reply generation',
+			'Basic AI-powered responses',
+			'Basic first move generator'
 		],
 		cta: 'Get Started',
 		popular: false
@@ -25,27 +27,36 @@ const plans = {
 		monthlyPrice: 10,
 		yearlyPrice: 100,
 		features: [
-			'Full access to pickup lines',
-			'Advanced search & filtering',
-			'Text-based chat analysis',
-			'AI-powered suggestions'
+			'All basic features',
+			'Full access to reply by screenshot generator',
+			'Full access to reply by screenshot generator'
 		],
 		cta: 'Get Started',
-		popular: true
+		popular: true,
+		monthlyLink: process.env.NEXT_PUBLIC_STRIPE_MONTHLY_PRO_LINK,
+		yearlyLink: process.env.NEXT_PUBLIC_STRIPE_YEARLY_PRO_LINK
 	},
 	premium: {
 		name: 'Premium',
 		description: 'Experience the ultimate Rizz toolkit',
 		monthlyPrice: 20,
 		yearlyPrice: 200,
-		features: ['All Pro features', 'Photo-based chat analysis', 'Personalized AI coaching'],
+		features: [
+			'All pro features',
+			'Full access to first move generator',
+			'',
+			'Full access to AI-powered suggestions'
+		],
 		cta: 'Get Started',
-		popular: false
-	}	
+		popular: false,
+		monthlyLink: process.env.NEXT_PUBLIC_STRIPE_MONTHLY_PREMIUM_LINK,
+		yearlyLink: process.env.NEXT_PUBLIC_STRIPE_YEARLY_PREMIUM_LINK
+	}
 }
 
 export function Pricing() {
 	const [isYearly, setIsYearly] = useState(false)
+	const { isAuth, user } = useAuthStore()
 
 	return (
 		<div className='w-full max-w-7xl mx-auto px-4'>
@@ -101,57 +112,76 @@ export function Pricing() {
 			</div>
 
 			<div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
-				{Object.entries(plans).map(([key, plan], index) => (
-					<motion.div
-						key={key}
-						initial={{ opacity: 0, y: 20 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ delay: 0.4 + index * 0.1 }}
-						className={`relative rounded-2xl bg-white p-8 shadow-xl flex flex-col ${
-							plan.popular ? 'ring-2 ring-purple-600' : ''
-						}`}
-					>
-						{plan.popular && (
-							<span className='absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-purple-600 px-4 py-1 text-sm font-medium text-white'>
-								Most Popular
-							</span>
-						)}
-
-						<div className='mb-8'>
-							<h3 className='text-2xl font-bold mb-2'>{plan.name}</h3>
-							<p className='text-gray-600 mb-4'>{plan.description}</p>
-							<div className='flex items-baseline gap-2'>
-								<span className='text-4xl font-bold'>
-									${isYearly ? plan.yearlyPrice : plan.monthlyPrice}
-								</span>
-								<span className='text-gray-600'>/{isYearly ? 'year' : 'month'}</span>
-							</div>
-						</div>
-
-						<ul className='space-y-4 flex-grow'>
-							{plan.features.map((feature, i) => (
-								<li
-									key={i}
-									className='flex items-center gap-2 text-gray-600'
-								>
-									<Check className='h-5 w-5 text-purple-600' />
-									{feature}
-								</li>
-							))}
-						</ul>
-
-						<Button
-							disabled={plan.name === 'Basic'}
-							className={`w-full py-6 mt-8 ${
-								plan.popular
-									? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
-									: 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+				{Object.entries(plans).map(([key, plan], index) => {
+					const link =
+						plan.name === 'Basic'
+							? '#'
+							: isAuth
+							? isYearly
+								? `${(plan as any).yearlyLink}?prefilled_email=${user?.email}`
+								: `${(plan as any).monthlyLink}?prefilled_email=${user?.email}`
+							: '/login'
+					return (
+						<motion.div
+							key={key}
+							initial={{ opacity: 0, y: 20 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ delay: 0.4 + index * 0.1 }}
+							className={`relative rounded-2xl bg-white p-8 shadow-xl flex flex-col ${
+								plan.popular ? 'ring-2 ring-purple-600' : ''
 							}`}
 						>
-							{plan.cta}
-						</Button>
-					</motion.div>
-				))}
+							{plan.popular && (
+								<span className='absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-purple-600 px-4 py-1 text-sm font-medium text-white'>
+									Most Popular
+								</span>
+							)}
+
+							<div className='mb-8'>
+								<h3 className='text-2xl font-bold mb-2'>{plan.name}</h3>
+								<p className='text-gray-600 mb-4'>{plan.description}</p>
+								<div className='flex items-baseline gap-2'>
+									<span className='text-4xl font-bold'>
+										${isYearly ? plan.yearlyPrice : plan.monthlyPrice}
+									</span>
+									<span className='text-gray-600'>/{isYearly ? 'year' : 'month'}</span>
+								</div>
+							</div>
+
+							<ul className='space-y-4 flex-grow'>
+								{plan.features.map((feature, i) => (
+									<li
+										key={i}
+										className='flex items-center gap-2 text-gray-600'
+									>
+										<Check className='h-5 w-5 text-purple-600' />
+										{feature}
+									</li>
+								))}
+							</ul>
+
+							<Button
+								disabled={
+									plan.name === 'Basic' ||
+									plan.name.toUpperCase() === user?.subscription?.plan.toUpperCase() ||
+									(plan.name === 'Pro' && user?.subscription?.plan === 'PREMIUM')
+								}
+								className={`w-full h-min p-0 mt-8 ${
+									plan.popular
+										? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
+										: 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+								}`}
+							>
+								<Link
+									href={link}
+									className='block py-4 w-full'
+								>
+									{plan.name.toUpperCase() === user?.subscription?.plan ? 'Current Plan' : plan.cta}
+								</Link>
+							</Button>
+						</motion.div>
+					)
+				})}
 			</div>
 
 			<motion.div

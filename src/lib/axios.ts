@@ -1,4 +1,4 @@
-import { getAccessToken, setAccessToken } from '@/services/auth/auth.helper'
+import { getAccessToken } from '@/services/auth/auth.helper'
 import { authService } from '@/services/auth/auth.service'
 import axios from 'axios'
 import { toast } from 'react-hot-toast'
@@ -26,23 +26,39 @@ api.interceptors.response.use(
 
 		if (
 			(error?.response?.status === 401 || error?.response?.status === 403) &&
-			!originalRequest?._isRetry
+			!originalRequest?._isRetry &&
+			!originalRequest?.url?.includes('auth/refresh') &&
+			!originalRequest?.url?.includes('auth/login')
 		) {
 			originalRequest._isRetry = true
 			try {
-				await authService.refresh()
+				const refreshResponse = await authService.refresh()
 
-				return api.request(originalRequest)
-			} catch {
+				if (refreshResponse?.status === 200) {
+					// Update access token in the original request
+					originalRequest.headers['Authorization'] = `Bearer ${getAccessToken()}`
+					return api.request(originalRequest)
+				} else {
+					// If refresh failed, logout
+					await authService.logout()
+					return Promise.reject(error)
+				}
+			} catch (refreshError) {
+				// On refresh failure, clear tokens and redirect to login
 				await authService.logout()
+				return Promise.reject(error)
 			}
 		}
 
-		if (error) {
+		if (error?.response?.data?.message) {
 			const message = error.response.data.message
-			if (!error.response.request.responseURL.includes('refresh')) toast.error(message)
+			if (!error.response.config.url.includes('auth/refresh')) {
+				toast.error(message)
+			}
 		} else if (error?.response?.status !== 401 && error?.response?.status !== 403) {
 			toast.error('Something went wrong. Try again later.')
 		}
+
+		return Promise.reject(error)
 	}
 )

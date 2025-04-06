@@ -6,8 +6,11 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { useGeneratePickups } from '@/hooks/usePickups'
+import { useAuthStore } from '@/store/auth.store'
 import { motion } from 'framer-motion'
+import { InfinityIcon, LoaderIcon } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
@@ -20,6 +23,7 @@ type FormValues = {
 }
 
 export default function FirstMessagePage() {
+	const { user } = useAuthStore()
 	const [photoPreview, setPhotoPreview] = useState<string | null>(null)
 	const [generatedMessages, setGeneratedMessages] = useState<string[]>([])
 	const { mutateAsync: generateMessages, isPending } = useGeneratePickups()
@@ -43,7 +47,12 @@ export default function FirstMessagePage() {
 		}
 	}
 
-	return (
+	return !user ? (
+		<div className='flex items-center justify-center gap-2 mx-auto mt-5'>
+			<LoaderIcon className='animate-spin' />
+			Loading...
+		</div>
+	) : (
 		<motion.div
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
@@ -140,6 +149,29 @@ export default function FirstMessagePage() {
 									{isPending ? 'Generating...' : 'Generate Messages'}
 								</Button>
 							</form>
+							<div className='flex flex-col items-start mt-3 text-sm text-gray-500'>
+								<div className='flex items-center gap-1'>
+									<span className='text-amber-600'>
+										{user?.subscription?.plan === 'BASIC' || user?.subscription?.plan === 'PRO' ? (
+											user?.credits?.getPickup
+										) : (
+											<InfinityIcon className='w-4 h-4 text-amber-600' />
+										)}
+									</span>{' '}
+									credits left.
+								</div>
+								<div className='flex items-center gap-1'>
+									<span> 1 credit = 3 messages.</span>
+									{(user?.subscription?.plan === 'BASIC' || user?.subscription?.plan === 'PRO') && (
+										<Link
+											href='/pricing'
+											className='text-blue-500'
+										>
+											Upgrade Plan
+										</Link>
+									)}
+								</div>
+							</div>
 						</CardContent>
 					</Card>
 				</motion.div>

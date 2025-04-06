@@ -15,31 +15,54 @@ model User {
   email     String @unique
   password  String
 
-  customerId String?
-
   refreshToken RefreshToken?
   subscription Subscription?
+  credits      Credits?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Subscription {
-  id String @id @unique @default(uuid())
+  id String @id @default(cuid())
 
-  user   User   @relation(fields: [userId], references: [id])
-  userId String @unique
+  userId               String @unique
+  stripeSubscriptionId String @unique
+  stripeCustomerId     String
+  stripePriceId        String
 
   plan   PLAN
   status PLAN_STATUS
 
-  lastPaymentAt DateTime?
-  nextPaymentAt DateTime?
-  startDate     DateTime
-  endDate       DateTime
+  startDate        DateTime
+  endDate          DateTime
+  currentPeriodEnd DateTime
+  period           String
+
+  nextPaymentAt DateTime
+  lastPaymentAt DateTime
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Credits {
+  id String @id @default(cuid())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
+
+  getReply  Int @default(5)
+  getPickup Int @default(5)
+  getAdvice Int @default(25)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+
+  @@index([userId])
 }
 
 model RefreshToken {
@@ -63,4 +86,7 @@ enum PLAN {
 enum PLAN_STATUS {
   ACTIVE
   INACTIVE
+  PAST_DUE
+  CANCELED
+  UNPAID
 }

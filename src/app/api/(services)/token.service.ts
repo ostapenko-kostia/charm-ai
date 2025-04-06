@@ -1,31 +1,24 @@
-import jwt from 'jsonwebtoken'
 import { prisma } from '@/lib/prisma'
+import jwt from 'jsonwebtoken'
 
 class TokenService {
 	generateTokens(payload: any) {
 		const accessToken = jwt.sign(payload, process.env.ACCESS_SECRET!, {
-			expiresIn: '1h'
+			expiresIn: '12h'
 		})
 		const refreshToken = jwt.sign(payload, process.env.REFRESH_SECRET!, {
-			expiresIn: '30d'
+			expiresIn: '60d'
 		})
 
 		return { accessToken, refreshToken }
 	}
 
 	async saveRefresh(token: string, userId: string) {
-		const candidate = await prisma.refreshToken.findUnique({
-			where: { userId }
+		await prisma.refreshToken.upsert({
+			where: { userId },
+			update: { token },
+			create: { token, userId }
 		})
-
-		if (candidate) {
-			await prisma.refreshToken.update({
-				where: { userId },
-				data: { token }
-			})
-		} else {
-			await prisma.refreshToken.create({ data: { token, userId } })
-		}
 	}
 
 	async removeRefresh(refreshToken: string) {

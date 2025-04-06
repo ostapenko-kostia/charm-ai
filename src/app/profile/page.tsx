@@ -1,116 +1,149 @@
 'use client'
 
-import { Container } from '@/components/layout/container'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/auth.store'
-import { PLAN_STATUS } from '@prisma/client'
+import { format } from 'date-fns'
+import { motion } from 'framer-motion'
+import { Calendar, Clock, CreditCard, LoaderIcon, Package2, User } from 'lucide-react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+
+const planColors = {
+	BASIC: 'bg-gray-100 text-gray-800',
+	PRO: 'bg-blue-100 text-blue-800',
+	PREMIUM: 'bg-purple-100 text-purple-800'
+}
+
+const statusColors = {
+	ACTIVE: 'bg-green-100 text-green-800',
+	INACTIVE: 'bg-gray-100 text-gray-800',
+	PAST_DUE: 'bg-yellow-100 text-yellow-800',
+	CANCELED: 'bg-red-100 text-red-800',
+	UNPAID: 'bg-orange-100 text-orange-800'
+}
 
 export default function ProfilePage() {
-	const user = useAuthStore(state => state.user)
-
+	const { user } = useAuthStore()
+	const router = useRouter()
 	const subscription = user?.subscription
 
-	return (
-		user && (
-			<div className='min-h-screen bg-gradient-to-b from-purple-50 to-pink-50 py-12'>
-				<Container>
-					<div className='max-w-3xl mx-auto space-y-8'>
-						<h1 className='text-4xl font-bold text-center mb-8 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent'>
-							Profile
-						</h1>
+	return !user ? (
+		<div className='flex items-center justify-center gap-2 mx-auto mt-5'>
+			<LoaderIcon className='animate-spin' />
+			Loading...
+		</div>
+	) : (
+		<div className='container mx-auto py-8'>
+			<motion.div
+				initial={{ opacity: 0, y: 20 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ duration: 0.5 }}
+				className='space-y-6'
+			>
+				<div className='flex items-center justify-between'>
+					<h1 className='text-3xl font-bold'>Profile</h1>
+				</div>
 
-						<Card className='p-8'>
-							<div className='space-y-6'>
+				<div className='grid gap-6 md:grid-cols-2'>
+					<Card>
+						<CardHeader>
+							<CardTitle>Account Information</CardTitle>
+							<CardDescription>Your personal account details</CardDescription>
+						</CardHeader>
+						<CardContent className='space-y-4'>
+							<div className='flex items-center space-x-4'>
+								<div className='h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center'>
+									<User className='h-6 w-6 text-primary' />
+								</div>
 								<div>
-									<h2 className='text-sm font-medium text-gray-500'>Full Name</h2>
-									<p className='mt-1 text-lg font-semibold text-gray-900'>
+									<p className='font-medium'>
 										{user.firstName} {user.lastName}
 									</p>
-								</div>
-
-								<div>
-									<h2 className='text-sm font-medium text-gray-500'>Email</h2>
-									<p className='mt-1 text-lg font-semibold text-gray-900'>{user.email}</p>
-								</div>
-
-								<div>
-									<h2 className='text-sm font-medium text-gray-500'>Member Since</h2>
-									<p className='mt-1 text-lg font-semibold text-gray-900'>
-										{new Date(user.createdAt).toLocaleDateString()}
-									</p>
+									<p className='text-sm text-muted-foreground'>{user.email}</p>
 								</div>
 							</div>
-						</Card>
+						</CardContent>
+					</Card>
 
-						<Card className='p-8'>
-							<h2 className='text-2xl font-semibold mb-6'>Subscription</h2>
-							<div className='space-y-6'>
-								{subscription ? (
-									<>
-										<div className='flex items-center justify-between'>
-											<div>
-												<h3 className='text-lg font-medium'>Current Plan</h3>
-												<Badge
-													variant={
-														subscription.status === PLAN_STATUS.ACTIVE ? 'default' : 'destructive'
-													}
-													className='mt-2'
-												>
+					<Card>
+						<CardHeader>
+							<CardTitle>Subscription Details</CardTitle>
+							<CardDescription>Your current subscription plan</CardDescription>
+						</CardHeader>
+						<CardContent className='space-y-4'>
+							{subscription ? (
+								<>
+									<div className='flex items-center justify-between'>
+										<div className='space-y-1'>
+											<div className='flex items-center space-x-2'>
+												<Badge className={cn(planColors[subscription.plan])}>
 													{subscription.plan}
 												</Badge>
+												<Badge className={cn(statusColors[subscription.status])}>
+													{subscription.status}
+												</Badge>
 											</div>
-											<Button
-												variant='outline'
-												onClick={() => (window.location.href = '/pricing')}
-											>
-												Change Plan
-											</Button>
+											<p className='text-sm text-muted-foreground'>
+												{subscription.period.split('')[0].toUpperCase() +
+													subscription.period.slice(1)}{' '}
+												billing
+											</p>
+										</div>
+										<Link href={process.env.NEXT_PUBLIC_STRIPE_PORTAL_URL!}>
+											<Button variant='outline'>Manage Subscription</Button>
+										</Link>
+									</div>
+
+									<div className='grid gap-4 pt-4'>
+										<div className='flex items-center justify-between'>
+											<div className='space-y-1'>
+												<p className='text-sm font-medium'>Next Payment</p>
+												<p className='text-sm text-muted-foreground'>
+													{format(new Date(subscription.nextPaymentAt), 'PPP')}
+												</p>
+											</div>
+											<Calendar className='h-5 w-5 text-muted-foreground' />
 										</div>
 
-										<div className='grid grid-cols-2 gap-4'>
-											<div>
-												<h3 className='text-sm font-medium text-gray-500'>Start Date</h3>
-												<p className='mt-1 text-lg font-semibold text-gray-900'>
-													{new Date(subscription.startDate).toLocaleDateString()}
+										<div className='flex items-center justify-between'>
+											<div className='space-y-1'>
+												<p className='text-sm font-medium'>Last Payment</p>
+												<p className='text-sm text-muted-foreground'>
+													{format(new Date(subscription.lastPaymentAt), 'PPP')}
 												</p>
 											</div>
-											<div>
-												<h3 className='text-sm font-medium text-gray-500'>End Date</h3>
-												<p className='mt-1 text-lg font-semibold text-gray-900'>
-													{new Date(subscription.endDate).toLocaleDateString()}
-												</p>
-											</div>
-											{subscription.lastPaymentAt && (
-												<div>
-													<h3 className='text-sm font-medium text-gray-500'>Last Payment</h3>
-													<p className='mt-1 text-lg font-semibold text-gray-900'>
-														{new Date(subscription.lastPaymentAt).toLocaleDateString()}
-													</p>
-												</div>
-											)}
-											{subscription.nextPaymentAt && (
-												<div>
-													<h3 className='text-sm font-medium text-gray-500'>Next Payment</h3>
-													<p className='mt-1 text-lg font-semibold text-gray-900'>
-														{new Date(subscription.nextPaymentAt).toLocaleDateString()}
-													</p>
-												</div>
-											)}
+											<CreditCard className='h-5 w-5 text-muted-foreground' />
 										</div>
-									</>
-								) : (
-									<div className='text-center space-y-4'>
-										<p className='text-gray-600'>You don't have an active subscription</p>
-										<Button onClick={() => (window.location.href = '/pricing')}>View Plans</Button>
+
+										<div className='flex items-center justify-between'>
+											<div className='space-y-1'>
+												<p className='text-sm font-medium'>Current Period</p>
+												<p className='text-sm text-muted-foreground'>
+													{format(new Date(subscription.startDate), 'PPP')} -{' '}
+													{format(new Date(subscription.currentPeriodEnd), 'PPP')}
+												</p>
+											</div>
+											<Clock className='h-5 w-5 text-muted-foreground' />
+										</div>
 									</div>
-								)}
-							</div>
-						</Card>
-					</div>
-				</Container>
-			</div>
-		)
+								</>
+							) : (
+								<div className='flex flex-col items-center justify-center space-y-4 py-8'>
+									<Package2 className='h-12 w-12 text-muted-foreground' />
+									<div className='text-center'>
+										<p className='font-medium'>No active subscription</p>
+										<p className='text-sm text-muted-foreground'>Choose a plan to get started</p>
+									</div>
+									<Button onClick={() => router.push('/pricing')}>View Plans</Button>
+								</div>
+							)}
+						</CardContent>
+					</Card>
+				</div>
+			</motion.div>
+		</div>
 	)
 }

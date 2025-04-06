@@ -1,7 +1,7 @@
 import { api } from '@/lib/axios'
-import { clearAccessToken, setAccessToken } from './auth.helper'
-import { IAuthResponse } from '@/typing/interface'
 import { useAuthStore } from '@/store/auth.store'
+import { IAuthResponse } from '@/typing/interface'
+import { clearAccessToken, setAccessToken } from './auth.helper'
 
 class AuthService {
 	async login(data: { email: string; password: string }) {
@@ -32,8 +32,12 @@ class AuthService {
 				useAuthStore.setState({ user: res.data.user, isAuth: true })
 				return res
 			}
-			throw new Error()
-		} catch {}
+			throw new Error('Failed to refresh token')
+		} catch (error) {
+			clearAccessToken()
+			useAuthStore.setState({ user: null, isAuth: false })
+			throw error
+		}
 	}
 
 	async logout() {

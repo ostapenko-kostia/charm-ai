@@ -1,10 +1,9 @@
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
-import { authService } from './app/api/(services)/auth.service'
 import { TOKEN } from './typing/enums'
 
 // Pages that require authentication
-const protectedRoutes = ['/profile', '/get-advice']
+const protectedRoutes = ['/profile', '/get-reply/text', '/get-reply/screenshot', '/first-message', '/get-advice']
 
 // Pages that should redirect to home if user is authenticated
 const authRoutes = ['/login', '/signup']

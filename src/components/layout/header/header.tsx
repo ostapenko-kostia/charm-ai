@@ -17,7 +17,7 @@ export function Header() {
 			initial={{ y: -100 }}
 			animate={{ y: 0 }}
 			transition={{ duration: 0.5, ease: 'easeOut' }}
-			className='sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm'
+			className='sticky top-0 z-50 bg-white/80 grow-0 shrink-0 backdrop-blur-md border-b border-gray-100 shadow-sm'
 		>
 			<Container className='flex items-center justify-between py-4'>
 				<motion.div
