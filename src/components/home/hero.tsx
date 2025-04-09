@@ -1,12 +1,12 @@
-'use client'
-
 import * as motion from 'framer-motion/client'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Container } from '../layout/container'
 import { Button } from '../ui/button'
+import { getTranslations } from 'next-intl/server'
 
-export function Hero() {
+export async function Hero() {
+	const t = await getTranslations('hero')
 	return (
 		<motion.div
 			initial={{ translateY: '15px', opacity: 0 }}
@@ -21,7 +21,7 @@ export function Hero() {
 					transition={{ delay: 0.2 }}
 					className='font-bold text-5xl text-center tracking-tight leading-tight max-sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600'
 				>
-					Charm AI Assistant
+					{t('title')}
 				</motion.h1>
 				<motion.p
 					initial={{ opacity: 0, y: 20 }}
@@ -29,7 +29,7 @@ export function Hero() {
 					transition={{ delay: 0.3 }}
 					className='text-center text-xl text-gray-700 mt-6 max-w-2xl'
 				>
-					Your Free AI Dating Assistant that makes every encounter meaningful and effortless
+					{t('subtitle')}
 				</motion.p>
 
 				<motion.div
@@ -43,7 +43,7 @@ export function Hero() {
 						className='bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:opacity-90 transition-all duration-300 h-auto text-lg font-medium w-full hover:scale-[1.02] hover:shadow-xl'
 					>
 						<Link href='/get-reply/text'>
-							<span>Try Manual Chat</span>
+							<span>{t('buttons.manual-chat')}</span>
 						</Link>
 					</Button>
 					<Button
@@ -52,7 +52,7 @@ export function Hero() {
 						className='border-2 hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 hover:text-white transition-all duration-300 h-auto text-lg font-medium w-full hover:scale-[1.02] hover:shadow-xl hover:border-transparent'
 					>
 						<Link href='/get-reply/screenshot'>
-							<span>Try Screenshot Upload</span>
+							<span>{t('buttons.screenshot-upload')}</span>
 						</Link>
 					</Button>
 				</motion.div>
@@ -72,7 +72,7 @@ export function Hero() {
 							className='flex flex-col items-center gap-2'
 						>
 							<span className='text-3xl'>💡</span>
-							<span className='font-semibold text-lg'>Get Advice</span>
+							<span className='font-semibold text-lg'>{t('buttons.get-advice')}</span>
 						</Link>
 					</Button>
 					<Button
@@ -84,7 +84,7 @@ export function Hero() {
 							className='flex flex-col items-center gap-2'
 						>
 							<span className='text-3xl'>💬</span>
-							<span className='font-semibold text-lg'>Generate First Message</span>
+							<span className='font-semibold text-lg'>{t('buttons.generate-first-message')}</span>
 						</Link>
 					</Button>
 				</motion.div>
@@ -95,7 +95,7 @@ export function Hero() {
 					transition={{ delay: 0.6 }}
 					className='text-center text-gray-600 text-sm font-medium mt-16 uppercase tracking-wider'
 				>
-					Popular on the following dating platforms
+					{t('popular-platforms-title')}
 				</motion.p>
 
 				<motion.div

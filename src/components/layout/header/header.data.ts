@@ -1,15 +1,15 @@
 import { HeaderLink } from './header.types'
 
 export const UNAUTH_HEADER_LINKS: HeaderLink[] = [
-	{ title: 'Home', url: '/' },
-	{ title: 'Pricing', url: '/pricing' },
-	{ title: 'Log in', url: '/login' },
-	{ title: 'Sign up', url: '/signup' }
+	{ titleKey: 'home', url: '/' },
+	{ titleKey: 'pricing', url: '/pricing' },
+	{ titleKey: 'login', url: '/login' },
+	{ titleKey: 'signup', url: '/signup' }
 ]
 
 export const AUTH_HEADER_LINKS: HeaderLink[] = [
-	{ title: 'Home', url: '/' },
-	{ title: 'Pricing', url: '/pricing' },
-	{ title: 'Profile', url: '/profile' },
-	{ title: 'Log out', url: '/logout' }
+	{ titleKey: 'home', url: '/' },
+	{ titleKey: 'pricing', url: '/pricing' },
+	{ titleKey: 'profile', url: '/profile' },
+	{ titleKey: 'logout', url: '/logout' }
 ]

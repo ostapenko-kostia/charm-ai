@@ -1,4 +1,4 @@
 export interface HeaderLink {
-	title: string
+	titleKey: string
 	url: string
 }

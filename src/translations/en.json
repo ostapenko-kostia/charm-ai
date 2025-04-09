@@ -1,0 +1,55 @@
+{
+	"header": {
+		"menu-title": "Menu",
+		"links": {
+			"home": "Home",
+			"pricing": "Pricing",
+			"login": "Login",
+			"signup": "Sign Up",
+			"profile": "Profile",
+			"logout": "Logout"
+		}
+	},
+	"hero": {
+		"title": "Charm AI Assistant",
+		"subtitle": "Your AI Dating Assistant that makes every encounter mean",
+		"buttons": {
+			"manual-chat": "Try Manual Chat",
+			"screenshot-upload": "Try Screenshot Upload",
+			"get-advice": "Get Advice",
+			"generate-first-message": "Generate First Message"
+		},
+		"popular-platforms-title": "Popular on the following dating platforms"
+	},
+	"advantages": {
+		"title": "How Charm AI Assistant & CHARM GPT helps you date on Tinder?",
+		"advantages": {
+			"first": {
+				"title": "Charm AI",
+				"description": "Get AI-powered suggestions for the perfect opener or comeback in any conversation."
+			},
+			"second": {
+				"title": "Real-Time Feedback",
+				"description": "Instantly analyze your messages and refine your approach for maximum impact."
+			},
+			"third": {
+				"title": "Adaptive Persona",
+				"description": "Customize your communication style, from smooth and witty to deep and meaningful."
+			}
+		}
+	},
+	"why-need": {
+		"title": "Why Need Charm AI Assistant & CHARM GPT?",
+		"reasons": {
+			"first": {
+				"text": "Want to impress your crush effortlessly? Our AI dating GPT, trained on countless successful dating cases, offers proven chat techniques tailored to your unique personality. Whether you're shy or outgoing, you'll quickly master the art of flirting and make incredible strides in your dating life!"
+			},
+			"second": {
+				"text": "Worried about privacy? Don't be! Charm AI never save your chat records or screenshots. Share your dating stories freely with our AI coach and receive honest advice without compromising your privacy. With this trustworthy dating assistant, you can fully enjoy the exciting journey of love!"
+			}
+		}
+	},
+	"footer": {
+		"copyright": "Copyright © 2025 Charm AI. All rights reserved."
+	}
+}

@@ -10,8 +10,12 @@ import * as motion from 'framer-motion/client'
 import { MenuIcon } from 'lucide-react'
 import { Container } from '../container'
 import { HeaderLinks } from './header-links'
+import { getTranslations } from 'next-intl/server'
+import { LanguageSwitcher } from '../language-switcher'
 
-export function Header() {
+export async function Header() {
+	const t = await getTranslations('header')
+	
 	return (
 		<motion.header
 			initial={{ y: -100 }}
@@ -36,19 +40,21 @@ export function Header() {
 					<DialogContent className='bg-white/95 backdrop-blur-md'>
 						<DialogHeader>
 							<DialogTitle className='text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600'>
-								Menu
+								{t('menu-title')}
 							</DialogTitle>
 						</DialogHeader>
 						<HeaderLinks className='flex flex-col gap-6 mt-6' />
+						<LanguageSwitcher className='mx-auto border' />
 					</DialogContent>
 				</Dialog>
 				<motion.div
 					initial={{ opacity: 0, x: 20 }}
 					animate={{ opacity: 1, x: 0 }}
 					transition={{ delay: 0.3 }}
-					className='max-md:hidden'
+					className='max-md:hidden flex items-center gap-8'
 				>
 					<HeaderLinks />
+					<LanguageSwitcher />
 				</motion.div>
 			</Container>
 		</motion.header>

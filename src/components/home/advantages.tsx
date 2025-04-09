@@ -1,7 +1,9 @@
 import * as motion from 'framer-motion/client'
 import { Container } from '../layout/container'
+import { getTranslations } from 'next-intl/server'
 
-export function Advantages() {
+export async function Advantages() {
+	const t = await getTranslations('advantages')
 	return (
 		<motion.div
 			initial={{ translateY: '15px', opacity: 0 }}
@@ -16,7 +18,7 @@ export function Advantages() {
 					transition={{ delay: 0.2 }}
 					className='text-4xl font-bold text-center text-white max-sm:text-3xl'
 				>
-					How Charm AI Assistant & CHARM GPT helps you date on Tinder?
+					{t('title')}
 				</motion.h2>
 				<motion.div
 					initial={{ opacity: 0, y: 20 }}
@@ -33,9 +35,11 @@ export function Advantages() {
 						<div className='bg-gradient-to-br from-purple-500 to-pink-500 rounded-full w-16 h-16 flex items-center justify-center text-3xl shadow-xl'>
 							🧠
 						</div>
-						<p className='text-white text-center font-bold text-2xl'>Charm AI</p>
+						<p className='text-white text-center font-bold text-2xl'>
+							{t('advantages.first.title')}
+						</p>
 						<p className='text-white/90 text-center text-lg leading-relaxed'>
-							Get AI-powered suggestions for the perfect opener or comeback in any conversation.
+							{t('advantages.first.description')}
 						</p>
 					</motion.div>
 					<motion.div
@@ -47,9 +51,11 @@ export function Advantages() {
 						<div className='bg-gradient-to-br from-pink-500 to-purple-500 rounded-full w-16 h-16 flex items-center justify-center text-3xl shadow-xl'>
 							🔥
 						</div>
-						<p className='text-white text-center font-bold text-2xl'>Real-Time Feedback</p>
+						<p className='text-white text-center font-bold text-2xl'>
+							{t('advantages.second.title')}
+						</p>
 						<p className='text-white/90 text-center text-lg leading-relaxed'>
-							Instantly analyze your messages and refine your approach for maximum impact.
+							{t('advantages.second.description')}
 						</p>
 					</motion.div>
 					<motion.div
@@ -61,9 +67,11 @@ export function Advantages() {
 						<div className='bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full w-16 h-16 flex items-center justify-center text-3xl shadow-xl'>
 							🎭
 						</div>
-						<p className='text-white text-center font-bold text-2xl'>Adaptive Persona</p>
+						<p className='text-white text-center font-bold text-2xl'>
+							{t('advantages.third.title')}
+						</p>
 						<p className='text-white/90 text-center text-lg leading-relaxed'>
-							Customize your communication style, from smooth and witty to deep and meaningful.
+							{t('advantages.third.description')}
 						</p>
 					</motion.div>
 				</motion.div>

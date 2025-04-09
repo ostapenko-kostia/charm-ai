@@ -1,8 +1,10 @@
 import * as motion from 'framer-motion/client'
 import Image from 'next/image'
 import { Container } from '../layout/container'
+import { getTranslations } from 'next-intl/server'
 
-export function WhyNeed() {
+export async function WhyNeed() {
+	const t = await getTranslations('why-need')
 	return (
 		<motion.div
 			initial={{ translateY: '15px', opacity: 0 }}
@@ -17,7 +19,7 @@ export function WhyNeed() {
 					transition={{ delay: 0.2 }}
 					className='text-4xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600 max-sm:text-3xl'
 				>
-					Why Need Charm AI Assistant & CHARM GPT?
+					{t('title')}
 				</motion.h2>
 				<div className='grid grid-cols-[1fr_1.8fr] mt-16 gap-16 max-lg:grid-cols-1'>
 					<motion.div
@@ -44,20 +46,14 @@ export function WhyNeed() {
 						<div className='bg-white p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02]'>
 							<p className='text-lg text-gray-700 leading-relaxed'>
 								<span className='text-2xl mr-2'>🌟</span>
-								Want to impress your crush effortlessly? Our AI dating GPT, trained on countless
-								successful dating cases, offers proven chat techniques tailored to your unique
-								personality. Whether you're shy or outgoing, you'll quickly master the art of
-								flirting and make incredible strides in your dating life!{' '}
+								{t('reasons.first.text')}
 								<span className='text-2xl'>💕</span>
 							</p>
 						</div>
 						<div className='bg-white p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02]'>
 							<p className='text-lg text-gray-700 leading-relaxed'>
 								<span className='text-2xl mr-2'>🔐</span>
-								Worried about privacy? Don't be! Charm AI never save your chat records or
-								screenshots. Share your dating stories freely with our AI coach and receive honest
-								advice without compromising your privacy. With this trustworthy dating assistant,
-								you can fully enjoy the exciting journey of love!{' '}
+								{t('reasons.second.text')}
 								<span className='text-2xl'>💖</span>
 							</p>
 						</div>
