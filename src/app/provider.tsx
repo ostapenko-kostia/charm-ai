@@ -11,6 +11,7 @@ const queryClient = new QueryClient()
 
 export function Provider({ children }: { children: React.ReactNode }) {
 	const { setUser, setIsAuth, user } = useAuthStore()
+
 	useEffect(() => {
 		async function checkAuth() {
 			try {
@@ -39,7 +40,7 @@ export function Provider({ children }: { children: React.ReactNode }) {
 
 	useEffect(() => {
 		console.log(user)
-	}, [user])
+	}, [])
 
 	return (
 		<QueryClientProvider client={queryClient}>
