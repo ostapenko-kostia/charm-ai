@@ -20,7 +20,7 @@ const authRoutes = ['/login', '/signup']
 
 function getLocale(request: NextRequest) {
 	const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value
-	if (cookieLocale && locales.includes(cookieLocale)) {
+	if (cookieLocale && locales.includes(cookieLocale as 'ua' | 'en')) {
 		return cookieLocale
 	}
 
@@ -31,7 +31,7 @@ function getLocale(request: NextRequest) {
 			const refererPathParts = refererUrl.pathname.split('/')
 			if (refererPathParts.length > 1) {
 				const locale = refererPathParts[1]
-				if (locales.includes(locale)) {
+				if (locales.includes(locale as 'ua' | 'en')) {
 					return locale
 				}
 			}
@@ -46,12 +46,12 @@ function getLocale(request: NextRequest) {
 function getLocaleFromPathname(pathname: string) {
 	const segments = pathname.split('/')
 	const firstSegment = segments[1] || ''
-	return locales.includes(firstSegment) ? firstSegment : null
+	return locales.includes(firstSegment as 'ua' | 'en') ? firstSegment : null
 }
 
 function getPathWithoutLocale(pathname: string) {
 	const segments = pathname.split('/')
-	if (segments.length > 1 && locales.includes(segments[1])) {
+	if (segments.length > 1 && locales.includes(segments[1] as 'ua' | 'en')) {
 		return '/' + segments.slice(2).join('/')
 	}
 	return pathname
@@ -74,7 +74,6 @@ const intlMiddleware = createMiddleware({
 export async function middleware(request: NextRequest) {
 	const { pathname } = request.nextUrl
 	const pathLocale = getLocaleFromPathname(pathname)
-	const pathWithoutLocale = getPathWithoutLocale(pathname)
 
 	if (pathname.startsWith('/api/')) return NextResponse.next()
 
