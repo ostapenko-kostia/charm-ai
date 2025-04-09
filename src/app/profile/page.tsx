@@ -36,7 +36,7 @@ export default function ProfilePage() {
 			Loading...
 		</div>
 	) : (
-		<div className='container mx-auto py-8'>
+		<div className='container mx-auto px-4 py-8'>
 			<motion.div
 				initial={{ opacity: 0, y: 20 }}
 				animate={{ opacity: 1, y: 0 }}
@@ -62,7 +62,12 @@ export default function ProfilePage() {
 									<p className='font-medium'>
 										{user.firstName} {user.lastName}
 									</p>
-									<p className='text-sm text-muted-foreground'>{user.email}</p>
+									<p
+										className='text-sm text-muted-foreground'
+										style={{ wordBreak: 'break-word' }}
+									>
+										{user.email}
+									</p>
 								</div>
 							</div>
 						</CardContent>
@@ -76,7 +81,7 @@ export default function ProfilePage() {
 						<CardContent className='space-y-4'>
 							{subscription ? (
 								<>
-									<div className='flex items-center justify-between'>
+									<div className='flex items-center justify-between max-sm:flex-col max-sm:gap-4 max-sm:items-start'>
 										<div className='space-y-1'>
 											<div className='flex items-center space-x-2'>
 												<Badge className={cn(planColors[subscription.plan])}>
