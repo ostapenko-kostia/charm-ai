@@ -10,7 +10,7 @@ import { clearAccessToken } from '@/services/auth/auth.helper'
 const queryClient = new QueryClient()
 
 export function Provider({ children }: { children: React.ReactNode }) {
-	const { setUser, setIsAuth } = useAuthStore()
+	const { setUser, setIsAuth, user } = useAuthStore()
 	useEffect(() => {
 		async function checkAuth() {
 			try {
@@ -36,6 +36,10 @@ export function Provider({ children }: { children: React.ReactNode }) {
 
 		return () => clearInterval(refreshInterval)
 	}, [])
+
+	useEffect(() => {
+		console.log(user)
+	}, [user])
 
 	return (
 		<QueryClientProvider client={queryClient}>
