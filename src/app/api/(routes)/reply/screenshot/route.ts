@@ -7,7 +7,7 @@ import { prisma } from '@/lib/prisma'
 import { NextRequest, NextResponse } from 'next/server'
 
 const PROMPT = `
-You are an expert in conversational dynamics and pickup lines. Your task is to analyze the provided chat screenshot and generate three effective responses for the user to engage the other person positively. Focus on creating responses that are charming, witty, and tailored to the context of the conversation, while also considering the emotional tone and the personalities of both individuals involved. Ensure the responses are appropriate, respectful, and encourage further dialogue. Return only the three responses, separated by new lines, without any additional commentary or formatting.
+Analyze a provided chat screenshot and generate three conversational responses to positively engage the other person, incorporating expertise in conversational dynamics and pickup lines, and return only the three responses on separate lines.
 `
 
 export async function POST(req: NextRequest) {

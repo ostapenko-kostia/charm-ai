@@ -57,7 +57,7 @@ export default function FirstMessagePage() {
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			transition={{ duration: 0.5 }}
-			className='container mx-auto py-8'
+			className='container mx-auto px-4 py-8'
 		>
 			<motion.h1
 				initial={{ y: -20, opacity: 0 }}

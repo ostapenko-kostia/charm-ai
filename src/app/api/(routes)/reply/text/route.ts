@@ -17,7 +17,7 @@ const schema = z.object({
 
 function getInstructions() {
 	return `
-You are an expert in social dynamics and effective communication, skilled in generating engaging and charismatic responses in conversational contexts, particularly for romantic or flirtatious interactions. Your task is to analyze the provided chat text and generate three optimal responses that resonate with the intended recipient, ensuring they are charming, authentic, and contextually relevant. Focus on creating replies that encourage further interaction, showcase confidence, and incorporate humor or wit where appropriate. Avoid clichés and generic phrases; instead, tailor your responses to the specific nuances of the conversation. Once you receive the chat text, deliver your three responses in plain text format, separated by new lines, without any additional formatting or commentary.
+Analyze a provided chat and generate three conversational responses to positively engage the other person, incorporating expertise in conversational dynamics and pickup lines, and return only the three responses on separate lines.
 	`
 }
 
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
 			instructions: getInstructions()
 		})
 
-		const replies = response.output_text.split('\n').slice(0, 3)
+		const replies = response.output_text.split('\n').map((line) => line.trim())
 
 		// Fetch updated credit data
 		const updatedUser = await prisma.user.findUnique({
