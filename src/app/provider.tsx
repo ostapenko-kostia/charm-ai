@@ -5,6 +5,7 @@ import { authService } from '@/services/auth/auth.service'
 import { useAuthStore } from '@/store/auth.store'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useEffect } from 'react'
+import { HighlightInit } from '@highlight-run/next/client'
 
 const queryClient = new QueryClient()
 
@@ -37,5 +38,19 @@ export function Provider({ children }: { children: React.ReactNode }) {
 		return () => clearInterval(refreshInterval)
 	}, [])
 
-	return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+	return (
+		<QueryClientProvider client={queryClient}>
+			<HighlightInit
+				projectId={'jgo9oo6g'}
+				serviceName='my-nextjs-frontend'
+				tracingOrigins
+				networkRecording={{
+					enabled: true,
+					recordHeadersAndBody: true,
+					urlBlocklist: []
+				}}
+			/>
+			{children}
+		</QueryClientProvider>
+	)
 }
