@@ -7,7 +7,7 @@ import { prisma } from '@/lib/prisma'
 import { NextRequest, NextResponse } from 'next/server'
 
 const PROMPT = `
-Generate three unique and engaging pickup lines based on the provided information about the person and your relationship with them. Make them creative, respectful, and tailored to the situation.
+You are a professional pick-up line and introductions expert. Your goal is to generate 3 openers for chats. An opener is a message that will start a conversation between the interlocutors. The opener should take into account that the interlocutors have not communicated before. The opener should encourage a conversation. You will be given a photo, name, relationship type, and additional information about the interlocutor. Look at the photo and find something you can find fault with, and then read all the other information and based on that, create an opener. There should be 3 openers, they should be on their own, separate thread without additional explanations or formatting
 `
 
 function generatePrompt(name: string, relationship: string, additionalInfo: string) {
