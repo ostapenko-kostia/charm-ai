@@ -1,5 +1,3 @@
-import { match } from '@formatjs/intl-localematcher'
-import Negotiator from 'negotiator'
 import createMiddleware from 'next-intl/middleware'
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
@@ -23,24 +21,7 @@ function getLocale(request: NextRequest) {
 	if (cookieLocale && locales.includes(cookieLocale as 'ua' | 'en')) {
 		return cookieLocale
 	}
-
-	const referer = request.headers.get('referer')
-	if (referer) {
-		try {
-			const refererUrl = new URL(referer)
-			const refererPathParts = refererUrl.pathname.split('/')
-			if (refererPathParts.length > 1) {
-				const locale = refererPathParts[1]
-				if (locales.includes(locale as 'ua' | 'en')) {
-					return locale
-				}
-			}
-		} catch {}
-	}
-
-	const headers = { 'accept-language': request.headers.get('accept-language') || defaultLocale }
-	const languages = new Negotiator({ headers }).languages()
-	return match(languages, locales, defaultLocale)
+	return defaultLocale
 }
 
 function getLocaleFromPathname(pathname: string) {
@@ -68,68 +49,57 @@ const intlMiddleware = createMiddleware({
 export async function middleware(request: NextRequest) {
 	const { pathname } = request.nextUrl
 	const pathLocale = getLocaleFromPathname(pathname)
-	const currentLocale = pathLocale || getLocale(request)
+	const cookieLocale = getLocale(request)
 	const isAuthenticated = request.cookies.has(TOKEN.ACCESS_TOKEN)
-
-	// Create a response object that we'll modify
-	let response: NextResponse
 
 	// Handle API routes
 	if (pathname.startsWith('/api/')) {
-		response = NextResponse.next()
-		return addLocaleCookie(response, currentLocale)
+		return NextResponse.next()
 	}
 
 	// Handle root path
 	if (pathname === '/') {
-		const newPath = `/${currentLocale}`
+		const newPath = `/${cookieLocale}`
 		request.nextUrl.pathname = newPath
-		response = NextResponse.redirect(request.nextUrl)
-		return addLocaleCookie(response, currentLocale)
+		return NextResponse.redirect(request.nextUrl)
 	}
 
 	// Handle missing locale in path
 	if (!pathname.match(new RegExp(`^/(${locales.join('|')})(/|$)`)) && !pathname.match(/\.\w+$/)) {
-		const newPath = `/${currentLocale}${pathname}`
+		const newPath = `/${cookieLocale}${pathname}`
 		request.nextUrl.pathname = newPath
-		response = NextResponse.redirect(request.nextUrl)
-		return addLocaleCookie(response, currentLocale)
+		return NextResponse.redirect(request.nextUrl)
 	}
 
 	// Handle protected routes
 	const isProtectedRoute = protectedRoutes.some(route => {
-		const routeWithLocale = `/${currentLocale}${route}`
+		const routeWithLocale = `/${cookieLocale}${route}`
 		return pathname.startsWith(routeWithLocale)
 	})
 
 	if (isProtectedRoute && !isAuthenticated) {
-		const loginUrl = new URL(`/${currentLocale}/login`, request.url)
+		const loginUrl = new URL(`/${cookieLocale}/login`, request.url)
 		loginUrl.searchParams.set('from', pathname)
-		response = NextResponse.redirect(loginUrl)
-		return addLocaleCookie(response, currentLocale)
+		return NextResponse.redirect(loginUrl)
 	}
 
 	// Handle auth routes
 	const isAuthRoute = authRoutes.some(route => {
-		const routeWithLocale = `/${currentLocale}${route}`
+		const routeWithLocale = `/${cookieLocale}${route}`
 		return pathname.startsWith(routeWithLocale)
 	})
 
 	if (isAuthRoute && isAuthenticated) {
-		const homeUrl = new URL(`/${currentLocale}/profile`, request.url)
-		response = NextResponse.redirect(homeUrl)
-		return addLocaleCookie(response, currentLocale)
+		const homeUrl = new URL(`/${cookieLocale}/profile`, request.url)
+		return NextResponse.redirect(homeUrl)
 	}
 
-	// Apply intl middleware and set cookie
+	// Apply intl middleware
 	if (pathLocale) {
-		response = await intlMiddleware(request)
-		return addLocaleCookie(response, currentLocale)
+		return await intlMiddleware(request)
 	}
 
-	// For all other cases, ensure we set the locale cookie
-	response = NextResponse.next()
-	return addLocaleCookie(response, currentLocale)
+	return NextResponse.next()
 }
 
 export const config = {
