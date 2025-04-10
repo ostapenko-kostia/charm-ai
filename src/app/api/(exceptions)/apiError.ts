@@ -1,8 +1,10 @@
 export class ApiError extends Error {
-  status: number;
+	status: number
+	translationKey?: string
 
-  constructor(message: string, status: number) {
-    super(message);
-    this.status = status;
-  }
+	constructor(message: string, status: number, translationKey?: string) {
+		super(message)
+		this.status = status
+		this.translationKey = translationKey
+	}
 }

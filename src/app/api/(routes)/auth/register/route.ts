@@ -9,25 +9,25 @@ import { z } from 'zod'
 const authRegisterSchema = z.object({
 	firstName: z
 		.string()
-		.min(1, 'First name must be at least 1 character long')
-		.max(50, 'First name must be at most 50 characters long')
+		.min(1, 'validation.first-name-min')
+		.max(50, 'validation.first-name-max')
 		.trim()
-		.refine(val => val.length > 0, 'First name is required'),
+		.refine(val => val.length > 0, 'validation.first-name-required'),
 	lastName: z
 		.string()
-		.min(1, 'Last name must be at least 1 character long')
-		.max(50, 'Last name must be at most 50 characters long')
+		.min(1, 'validation.last-name-min')
+		.max(50, 'validation.last-name-max')
 		.trim()
-		.refine(val => val.length > 0, 'Last name is required'),
+		.refine(val => val.length > 0, 'validation.last-name-required'),
 	email: z
 		.string()
-		.email('Email is invalid')
-		.refine(val => val.length > 0, 'Email is required'),
+		.email('validation.email-invalid')
+		.refine(val => val.length > 0, 'validation.email-required'),
 	password: z
 		.string()
-		.min(8, 'Password must be at least 8 characters long')
+		.min(8, 'validation.password-min')
 		.trim()
-		.refine(val => val.length > 0, 'Password is required')
+		.refine(val => val.length > 0, 'validation.password-required')
 })
 
 export async function POST(req: NextRequest) {
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
 
 		const result = authRegisterSchema.safeParse(body)
 		if (!result.success) {
-			throw new ApiError(result.error.errors[0].message, 400)
+			throw new ApiError(result.error.errors[0].message, 400, result.error.errors[0].message)
 		}
 
 		const userData = await authService.register(result.data)
@@ -46,8 +46,14 @@ export async function POST(req: NextRequest) {
 			httpOnly: true
 		})
 
-		return NextResponse.json(userData, { status: 200 })
+		return NextResponse.json(
+			{
+				...userData,
+				message: 'success.auth.register'
+			},
+			{ status: 200 }
+		)
 	} catch (err) {
-		return handleApiError(err)
+		return handleApiError(err, req)
 	}
 }

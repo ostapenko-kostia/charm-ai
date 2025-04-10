@@ -9,13 +9,13 @@ import { z } from 'zod'
 const authLoginSchema = z.object({
 	email: z
 		.string()
-		.email('Email is invalid')
-		.refine(val => val.length > 0, 'Email is required'),
+		.email('validation.email-invalid')
+		.refine(val => val.length > 0, 'validation.email-required'),
 	password: z
 		.string()
-		.min(8, 'Invalid Password')
+		.min(8, 'validation.password-min')
 		.trim()
-		.refine(val => val.length > 0, 'Password is required')
+		.refine(val => val.length > 0, 'validation.password-required')
 })
 
 export async function POST(req: NextRequest) {
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
 
 		const result = authLoginSchema.safeParse(body)
 		if (!result.success) {
-			throw new ApiError(result.error.errors[0].message, 400)
+			throw new ApiError(result.error.errors[0].message, 400, result.error.errors[0].message)
 		}
 
 		const userData = await authService.login(result.data)
@@ -34,8 +34,14 @@ export async function POST(req: NextRequest) {
 			httpOnly: true
 		})
 
-		return NextResponse.json(userData, { status: 200 })
+		return NextResponse.json(
+			{
+				...userData,
+				message: 'success.auth.login'
+			},
+			{ status: 200 }
+		)
 	} catch (err) {
-		return handleApiError(err)
+		return handleApiError(err, req)
 	}
 }

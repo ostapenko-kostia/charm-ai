@@ -145,7 +145,7 @@ export async function POST(req: NextRequest) {
 						lastPaymentAt: new Date(),
 						nextPaymentAt: periodEndDate,
 						endDate: periodEndDate,
-						currentPeriodEnd: periodEndDate,
+						currentPeriodEnd: periodEndDate
 					}
 				})
 

@@ -1,24 +1,27 @@
 import { ApiError } from '@/app/api/(exceptions)/apiError'
+import { handleApiError } from '@/app/api/(exceptions)/handleApiError'
+import { fileService } from '@/app/api/(services)/file.service'
 import { checkAuth } from '@/app/api/(utils)/checkAuth'
 import { openai } from '@/lib/openai'
 import { prisma } from '@/lib/prisma'
 import { NextRequest, NextResponse } from 'next/server'
-import { fileService } from '../../../(services)/file.service'
 
 const PROMPT = `
-Generate plain text pickup and first messages for a conversation, based on the provided image, name, relationships, and additional information about the person. Focus on inspiring further dialogue without using unnecessary charm words or phrases. Present each 3 messages on a separate line.
+Generate three unique and engaging pickup lines based on the provided information about the person and your relationship with them. Make them creative, respectful, and tailored to the situation.
 `
 
 function generatePrompt(name: string, relationship: string, additionalInfo: string) {
-	return `Name: ${name}\n 
-    Relationship: ${relationship}\n
-    Additional context: ${additionalInfo || 'No additional context provided'}.`
+	return `
+Name: ${name}
+Relationship: ${relationship}
+Additional Info: ${additionalInfo}
+`
 }
 
 export async function POST(request: NextRequest) {
 	try {
 		const user = await checkAuth(request)
-		if (!user) throw new ApiError('Unauthorized', 401)
+		if (!user) throw new ApiError('Unauthorized', 401, 'errors.server.unauthorized')
 
 		if (
 			!user.subscription ||
@@ -26,7 +29,7 @@ export async function POST(request: NextRequest) {
 			user.subscription.plan === 'PRO'
 		) {
 			if (user?.credits?.getReply! <= 0) {
-				throw new ApiError('Not enough credits', 400)
+				throw new ApiError('Not enough credits', 400, 'errors.server.not-enough-credits')
 			} else if (user?.credits?.getReply && user?.credits?.getReply > 0) {
 				await prisma.credits.update({
 					where: { userId: user.id },
@@ -35,7 +38,7 @@ export async function POST(request: NextRequest) {
 			}
 		} else if (user.subscription.plan === 'PREMIUM') {
 			if (user.subscription.status !== 'ACTIVE') {
-				throw new ApiError('Subscription not active', 400)
+				throw new ApiError('Subscription not active', 400, 'errors.server.subscription-not-active')
 			}
 		}
 
@@ -79,6 +82,6 @@ export async function POST(request: NextRequest) {
 		})
 	} catch (error) {
 		console.error('Error generating pickups:', error)
-		return NextResponse.json({ error: 'Failed to generate pickups' }, { status: 500 })
+		return handleApiError(error, request)
 	}
 }

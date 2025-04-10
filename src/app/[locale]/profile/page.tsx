@@ -28,6 +28,8 @@ const statusColors = {
 
 export default function ProfilePage() {
 	const t = useTranslations('profile')
+	const commonT = useTranslations('common')
+	
 	const locale = useLocale()
 	const { user } = useAuthStore()
 	const router = useRouter()
@@ -36,7 +38,7 @@ export default function ProfilePage() {
 	return !user ? (
 		<div className='flex items-center justify-center gap-2 mx-auto mt-5'>
 			<LoaderIcon className='animate-spin' />
-			Loading...
+			{commonT('loading')}
 		</div>
 	) : (
 		<div className='container mx-auto px-4 py-8'>

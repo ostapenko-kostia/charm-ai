@@ -1,4 +1,51 @@
 {
+	"common": {
+		"loading": "Loading..."
+	},
+	"errors": {
+		"server": {
+			"unauthorized": "Unauthorized",
+			"internal-error": "Internal Server Error",
+			"email-in-use": "This email is already in use",
+			"invalid-credentials": "Login or password is incorrect",
+			"not-enough-credits": "Not enough credits",
+			"subscription-not-active": "Subscription not active",
+			"no-image": "No image provided",
+			"no-reply": "No reply from AI",
+			"webhook-failed": "Webhook handler failed",
+			"invalid-period": "Invalid period end date",
+			"user-not-found": "User not found",
+			"subscription-not-found": "Subscription not found",
+			"invalid-request": "Invalid request"
+		},
+		"validation": {
+			"email-required": "Email is required",
+			"email-invalid": "Email is invalid",
+			"password-required": "Password is required",
+			"password-min": "Password must be at least 8 characters",
+			"first-name-required": "First name is required",
+			"first-name-min": "First name must be at least 1 character long",
+			"first-name-max": "First name must be at most 50 characters long",
+			"last-name-required": "Last name is required",
+			"last-name-min": "Last name must be at least 1 character long",
+			"last-name-max": "Last name must be at most 50 characters long"
+		}
+	},
+	"success": {
+		"auth": {
+			"login": "Successfully logged in",
+			"register": "Successfully registered",
+			"logout": "Successfully logged out"
+		},
+		"subscription": {
+			"created": "Subscription created successfully",
+			"updated": "Subscription updated successfully",
+			"cancelled": "Subscription cancelled successfully"
+		},
+		"profile": {
+			"updated": "Profile updated successfully"
+		}
+	},
 	"header": {
 		"menu-title": "Menu",
 		"links": {

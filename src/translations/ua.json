@@ -1,4 +1,7 @@
 {
+	"common": {
+		"loading": "Завантаження..."
+	},
 	"header": {
 		"menu-title": "Меню",
 		"links": {
@@ -167,5 +170,62 @@
 	},
 	"footer": {
 		"copyright": "Copyright © 2025 Charm AI. Всі права захищені."
+	},
+	"errors": {
+		"server": {
+			"unauthorized": "Не авторизовано",
+			"internal-error": "Внутрішня помилка сервера",
+			"email-in-use": "Ця електронна пошта вже використовується",
+			"invalid-credentials": "Невірний логін або пароль",
+			"not-enough-credits": "Недостатньо кредитів",
+			"subscription-not-active": "Підписка не активна",
+			"no-image": "Зображення не надано",
+			"no-reply": "Немає відповіді від ШІ",
+			"webhook-failed": "Помилка обробки webhook",
+			"invalid-period": "Невірна дата закінчення періоду",
+			"user-not-found": "Користувача не знайдено",
+			"subscription-not-found": "Підписку не знайдено",
+			"invalid-request": "Невірний запит"
+		},
+		"validation": {
+			"email-required": "Електронна пошта обов'язкова",
+			"email-invalid": "Невірний формат електронної пошти",
+			"password-required": "Пароль обов'язковий",
+			"password-min": "Пароль має містити щонайменше 8 символів",
+			"first-name-required": "Ім'я обов'язкове",
+			"first-name-min": "Ім'я має містити щонайменше 1 символ",
+			"first-name-max": "Ім'я має містити не більше 50 символів",
+			"last-name-required": "Прізвище обов'язкове",
+			"last-name-min": "Прізвище має містити щонайменше 1 символ",
+			"last-name-max": "Прізвище має містити не більше 50 символів"
+		}
+	},
+	"auth": {
+		"login": {
+			"success": "Успішний вхід",
+			"invalid-credentials": "Невірний email або пароль"
+		},
+		"register": {
+			"success": "Успішна реєстрація",
+			"email-exists": "Користувач з таким email вже існує"
+		},
+		"logout": {
+			"success": "Успішний вихід"
+		}
+	},
+	"success": {
+		"auth": {
+			"login": "Успішний вхід",
+			"register": "Успішна реєстрація",
+			"logout": "Успішний вихід"
+		},
+		"subscription": {
+			"created": "Підписку успішно створено",
+			"updated": "Підписку успішно оновлено",
+			"cancelled": "Підписку успішно скасовано"
+		},
+		"profile": {
+			"updated": "Профіль успішно оновлено"
+		}
 	}
 }

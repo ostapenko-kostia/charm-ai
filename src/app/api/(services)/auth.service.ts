@@ -21,7 +21,8 @@ class AuthService {
 			where: { email },
 			include: { subscription: true, credits: true }
 		})
-		if (candidate) throw new ApiError('This email is already in use', 409)
+		if (candidate)
+			throw new ApiError('This email is already in use', 409, 'errors.server.email-in-use')
 
 		// Hashing password
 		const hashedPassword = await bcrypt.hash(password, 3)
@@ -57,11 +58,13 @@ class AuthService {
 			where: { email },
 			include: { subscription: true, credits: true }
 		})
-		if (!user) throw new ApiError('Login or password is incorrect', 400)
+		if (!user)
+			throw new ApiError('Login or password is incorrect', 400, 'errors.server.invalid-credentials')
 
 		// Checking password
 		const isPasswordValid = await bcrypt.compare(password, user.password)
-		if (!isPasswordValid) throw new ApiError('Login or password is incorrect', 400)
+		if (!isPasswordValid)
+			throw new ApiError('Login or password is incorrect', 400, 'errors.server.invalid-credentials')
 
 		// Creating DTO
 		const userDto = new UserDto(user)
@@ -83,38 +86,36 @@ class AuthService {
 
 		// Handling
 		if (candidate) await tokenService.removeRefresh(refreshToken)
-		else throw new ApiError('Unauthorized', 401)
+		else throw new ApiError('Unauthorized', 401, 'errors.server.unauthorized')
 	}
 
 	async refresh(refreshToken: string) {
 		// Validating Refresh Token
-		if (!refreshToken || !refreshToken.length) throw new ApiError('Unauthorized', 401)
+		if (!refreshToken || !refreshToken.length)
+			throw new ApiError('Unauthorized', 401, 'errors.server.unauthorized')
 
 		const userData: any = tokenService.validateRefresh(refreshToken)
 		const tokenFromDb = await tokenService.findRefresh(refreshToken)
-		if (!userData || !tokenFromDb) throw new ApiError('Unauthorized', 401)
+		if (!userData || !tokenFromDb)
+			throw new ApiError('Unauthorized', 401, 'errors.server.unauthorized')
 
-		// Checking user
+		// Getting user
 		const user = await prisma.user.findUnique({
 			where: { id: userData.id },
 			include: { subscription: true, credits: true }
 		})
-
-		if (!user) throw new ApiError('Unauthorized', 401)
+		if (!user) throw new ApiError('Unauthorized', 401, 'errors.server.unauthorized')
 
 		// Creating DTO
 		const userDto = new UserDto(user)
 		const userTokenDto = new UserTokenDto(user)
 
 		// Generating tokens
-		const tokens = tokenService.generateTokens({
-			...userTokenDto
-		})
+		const tokens = tokenService.generateTokens({ ...userTokenDto })
 
 		// Saving refresh token
 		await tokenService.saveRefresh(tokens.refreshToken, user.id)
 
-		// Returning data
 		return { ...tokens, user: userDto }
 	}
 }

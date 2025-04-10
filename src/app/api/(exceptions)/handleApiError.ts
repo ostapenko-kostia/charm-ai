@@ -1,14 +1,24 @@
-import { ApiError } from "./apiError";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server'
+import { ApiError } from './apiError'
 
-export const handleApiError = (err: unknown) => {
-  if (err instanceof ApiError) {
-    return NextResponse.json({ message: err.message }, { status: err.status });
-  }
+export async function handleApiError(error: unknown, req?: NextRequest) {
+	console.error('❌ Error:', error)
 
-  console.error("Unexpected error:", err);
-  return NextResponse.json(
-    { message: "Internal Server Error" },
-    { status: 500 }
-  );
-};
+	if (error instanceof ApiError) {
+		return NextResponse.json(
+			{
+				message: error.message,
+				translationKey: error.translationKey
+			},
+			{ status: error.status }
+		)
+	}
+
+	return NextResponse.json(
+		{
+			message: 'Internal Server Error',
+			translationKey: 'errors.server.internal-error'
+		},
+		{ status: 500 }
+	)
+}

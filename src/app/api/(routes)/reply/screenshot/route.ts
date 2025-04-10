@@ -13,11 +13,11 @@ Analyze a provided chat screenshot and generate three conversational responses t
 export async function POST(req: NextRequest) {
 	try {
 		const user = await checkAuth(req)
-		if (!user) throw new ApiError('Unauthorized', 401)
+		if (!user) throw new ApiError('Unauthorized', 401, 'errors.server.unauthorized')
 
 		if (!user.subscription || user.subscription.plan === 'BASIC') {
 			if (user?.credits?.getReply! <= 0) {
-				throw new ApiError('Not enough credits', 400)
+				throw new ApiError('Not enough credits', 400, 'errors.server.not-enough-credits')
 			} else if (user?.credits?.getReply && user?.credits?.getReply > 0) {
 				await prisma.credits.update({
 					where: { userId: user.id },
@@ -26,14 +26,14 @@ export async function POST(req: NextRequest) {
 			}
 		} else if (user.subscription.plan === 'PRO' || user.subscription.plan === 'PREMIUM') {
 			if (user.subscription.status !== 'ACTIVE') {
-				throw new ApiError('Subscription not active', 400)
+				throw new ApiError('Subscription not active', 400, 'errors.server.subscription-not-active')
 			}
 		}
 
 		const body = await req.formData()
 		const image = body.get('image') as File
 
-		if (!image) throw new ApiError('No image provided', 400)
+		if (!image) throw new ApiError('No image provided', 400, 'errors.server.no-image')
 
 		const image_url = await fileService.uploadFile(image)
 
@@ -67,6 +67,6 @@ export async function POST(req: NextRequest) {
 			{ status: 200 }
 		)
 	} catch (error) {
-		return handleApiError(error)
+		return handleApiError(error, req)
 	}
 }
