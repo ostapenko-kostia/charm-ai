@@ -3,10 +3,11 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Container } from '../layout/container'
 import { Button } from '../ui/button'
-import { getTranslations } from 'next-intl/server'
+import { getMessages, getTranslations } from 'next-intl/server'
 
 export async function Hero() {
 	const t = await getTranslations('hero')
+
 	return (
 		<motion.div
 			initial={{ translateY: '15px', opacity: 0 }}
@@ -36,11 +37,11 @@ export async function Hero() {
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ delay: 0.4 }}
-					className='grid grid-cols-1 sm:grid-cols-2 gap-4 justify-center mt-12 w-1/2 max-lg:w-full'
+					className='grid grid-cols-1 sm:grid-cols-2 gap-4 justify-center mt-12 max-lg:w-full'
 				>
 					<Button
 						asChild
-						className='bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:opacity-90 transition-all duration-300 h-auto text-lg font-medium w-full hover:scale-[1.02] hover:shadow-xl'
+						className='bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:opacity-90 transition-all duration-300 h-auto text-lg max-md:text-base font-medium w-full hover:scale-[1.02] hover:shadow-xl'
 					>
 						<Link href='/get-reply/text'>
 							<span>{t('buttons.manual-chat')}</span>
@@ -49,7 +50,7 @@ export async function Hero() {
 					<Button
 						asChild
 						variant='outline'
-						className='border-2 hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 hover:text-white transition-all duration-300 h-auto text-lg font-medium w-full hover:scale-[1.02] hover:shadow-xl hover:border-transparent'
+						className='border-2 hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 hover:text-white transition-all duration-300 h-auto text-lg max-md:text-base font-medium w-full hover:scale-[1.02] hover:shadow-xl hover:border-transparent'
 					>
 						<Link href='/get-reply/screenshot'>
 							<span>{t('buttons.screenshot-upload')}</span>
@@ -61,30 +62,24 @@ export async function Hero() {
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ delay: 0.5 }}
-					className='grid grid-cols-2 gap-6 mt-8 pt-8 border-t border-gray-200 w-1/2 max-lg:w-full max-sm:grid-cols-1'
+					className='grid grid-cols-2 gap-6 mt-8 pt-8 border-t border-gray-200 max-lg:w-full max-sm:grid-cols-1'
 				>
-					<Button
-						asChild
-						className='flex flex-col items-center gap-2 py-10 bg-white hover:bg-gray-50 text-gray-900 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl border-2 hover:border-purple-600'
-					>
+					<Button className='flex flex-col items-center gap-2 py-10 bg-white hover:bg-gray-50 text-gray-900 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl border-2 hover:border-purple-600'>
 						<Link
 							href='/get-advice'
 							className='flex flex-col items-center gap-2'
 						>
 							<span className='text-3xl'>💡</span>
-							<span className='font-semibold text-lg'>{t('buttons.get-advice')}</span>
+							<span className='font-semibold text-lg max-md:text-base'>{t('buttons.get-advice')}</span>
 						</Link>
 					</Button>
-					<Button
-						asChild
-						className='flex flex-col items-center gap-2 py-10 bg-white hover:bg-gray-50 text-gray-900 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl border-2 hover:border-purple-600'
-					>
+					<Button className='flex flex-col items-center gap-2 py-10 bg-white hover:bg-gray-50 text-gray-900 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl border-2 hover:border-purple-600'>
 						<Link
 							href='/first-message'
 							className='flex flex-col items-center gap-2'
 						>
 							<span className='text-3xl'>💬</span>
-							<span className='font-semibold text-lg'>{t('buttons.generate-first-message')}</span>
+							<span className='font-semibold text-lg max-md:text-base'>{t('buttons.generate-first-message')}</span>
 						</Link>
 					</Button>
 				</motion.div>

@@ -14,10 +14,10 @@
 		"title": "Charm AI Асистент",
 		"subtitle": "Ваш AI-помічник для побачень та знайомств",
 		"buttons": {
-			"manual-chat": "Спробувати Чат за Текстом",
-			"screenshot-upload": "Спробувати Чат за Знімком екрану",
+			"manual-chat": "Чат за Текстом",
+			"screenshot-upload": "Чат за Знімком екрану",
 			"get-advice": "Отримати Пораду від AI",
-			"generate-first-message": "Згенерувати Перше Повідомлення"
+			"generate-first-message": "Перше Повідомлення"
 		},
 		"popular-platforms-title": "Charm AI популярний на цих платформах"
 	},
