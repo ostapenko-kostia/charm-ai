@@ -1,7 +1,7 @@
 'use client'
 
-import { authService } from '@/services/auth/auth.service'
 import { clearAccessToken } from '@/services/auth/auth.helper'
+import { authService } from '@/services/auth/auth.service'
 import { useAuthStore } from '@/store/auth.store'
 import { HighlightInit } from '@highlight-run/next/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -11,31 +11,26 @@ const queryClient = new QueryClient()
 
 export function Provider({ children }: { children: React.ReactNode }) {
 	const { setUser, setIsAuth } = useAuthStore()
-
 	useEffect(() => {
-		async function checkAuth() {
+		const checkAuth = async () => {
 			try {
-				const res = await authService.refresh()
-				if (res?.status !== 200) {
-					setUser(null)
-					setIsAuth(false)
-					clearAccessToken()
-				}
-			} catch {}
+				await authService.refresh()
+			} catch (error) {
+				setUser(null)
+				setIsAuth(false)
+				clearAccessToken()
+			}
 		}
 
-		// Initial auth check
 		checkAuth()
 
-		// Set up periodic token refresh (every 30 minutes)
 		const refreshInterval = setInterval(() => {
-			const isAuth = useAuthStore.getState().isAuth
-			if (isAuth) {
-				checkAuth().catch(console.error)
-			}
-		}, 30 * 60 * 1000) // 30 minutes
+			checkAuth().catch(console.error)
+		}, 10 * 60 * 1000)
 
-		return () => clearInterval(refreshInterval)
+		return () => {
+			clearInterval(refreshInterval)
+		}
 	}, [])
 
 	return (

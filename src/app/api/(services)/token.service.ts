@@ -32,7 +32,8 @@ class TokenService {
 	validateRefresh(refreshToken: string) {
 		try {
 			return jwt.verify(refreshToken, process.env.REFRESH_SECRET!)
-		} catch {
+		} catch (error) {
+			console.log(error)
 			return null
 		}
 	}
@@ -40,7 +41,8 @@ class TokenService {
 	validateAccess(accessToken: string) {
 		try {
 			return jwt.verify(accessToken, process.env.ACCESS_SECRET!)
-		} catch {
+		} catch (error) {
+			console.log(error)
 			return null
 		}
 	}

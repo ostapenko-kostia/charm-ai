@@ -9,6 +9,7 @@ import { useGeneratePickups } from '@/hooks/usePickups'
 import { useAuthStore } from '@/store/auth.store'
 import { motion } from 'framer-motion'
 import { InfinityIcon, LoaderIcon } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
@@ -24,6 +25,8 @@ type FormValues = {
 
 export default function FirstMessagePage() {
 	const { user } = useAuthStore()
+	const t = useTranslations('first-message')
+	const commonT = useTranslations('common')
 	const [photoPreview, setPhotoPreview] = useState<string | null>(null)
 	const [generatedMessages, setGeneratedMessages] = useState<string[]>([])
 	const { mutateAsync: generateMessages, isPending } = useGeneratePickups()
@@ -50,7 +53,7 @@ export default function FirstMessagePage() {
 	return !user ? (
 		<div className='flex items-center justify-center gap-2 mx-auto mt-5'>
 			<LoaderIcon className='animate-spin' />
-			Loading...
+			{commonT('loading')}
 		</div>
 	) : (
 		<motion.div
@@ -65,7 +68,7 @@ export default function FirstMessagePage() {
 				transition={{ delay: 0.2, duration: 0.5 }}
 				className='text-3xl font-bold mb-8'
 			>
-				First Message Generator
+				{t('title')}
 			</motion.h1>
 
 			<div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
@@ -76,7 +79,7 @@ export default function FirstMessagePage() {
 				>
 					<Card>
 						<CardHeader>
-							<CardTitle>Enter Information</CardTitle>
+							<CardTitle>{t('enter-info.title')}</CardTitle>
 						</CardHeader>
 						<CardContent>
 							<form
@@ -91,7 +94,7 @@ export default function FirstMessagePage() {
 								className='space-y-4'
 							>
 								<div className='space-y-2'>
-									<Label htmlFor='photo'>Photo</Label>
+									<Label htmlFor='photo'>{t('enter-info.fields.photo.title')}</Label>
 									<Input
 										id='photo'
 										type='file'
@@ -113,30 +116,32 @@ export default function FirstMessagePage() {
 								</div>
 
 								<div className='space-y-2'>
-									<Label htmlFor='name'>Name</Label>
+									<Label htmlFor='name'>{t('enter-info.fields.name.title')}</Label>
 									<Input
 										id='name'
-										placeholder='Enter name'
+										placeholder={t('enter-info.fields.name.placeholder')}
 										required
 										{...register('name', { required: true })}
 									/>
 								</div>
 
 								<div className='space-y-2'>
-									<Label htmlFor='relationship'>Relationship Type</Label>
+									<Label htmlFor='relationship'>{t('enter-info.fields.relationships.title')}</Label>
 									<Input
 										id='relationship'
-										placeholder='e.g., colleague, friends, acquaintances'
+										placeholder={t('enter-info.fields.relationships.placeholder')}
 										required
 										{...register('relationship', { required: true })}
 									/>
 								</div>
 
 								<div className='space-y-2'>
-									<Label htmlFor='additionalInfo'>Additional Information</Label>
+									<Label htmlFor='additionalInfo'>
+										{t('enter-info.fields.additional-information.title')}
+									</Label>
 									<Textarea
 										id='additionalInfo'
-										placeholder='Additional information about the person or situation'
+										placeholder={t('enter-info.fields.additional-information.placeholder')}
 										required
 										{...register('additionalInfo', { required: true })}
 									/>
@@ -146,7 +151,7 @@ export default function FirstMessagePage() {
 									type='submit'
 									disabled={isPending}
 								>
-									{isPending ? 'Generating...' : 'Generate Messages'}
+									{isPending ? t('enter-info.processing') : t('enter-info.button')}
 								</Button>
 							</form>
 							<div className='flex flex-col items-start mt-3 text-sm text-gray-500'>
@@ -158,16 +163,16 @@ export default function FirstMessagePage() {
 											<InfinityIcon className='w-4 h-4 text-amber-600' />
 										)}
 									</span>{' '}
-									credits left.
+									{t('enter-info.credits-left')}
 								</div>
 								<div className='flex items-center gap-1'>
-									<span> 1 credit = 3 messages.</span>
+									<span>{t('enter-info.credits-per-reply')}</span>
 									{(user?.subscription?.plan === 'BASIC' || user?.subscription?.plan === 'PRO') && (
 										<Link
 											href='/pricing'
 											className='text-blue-500'
 										>
-											Upgrade Plan
+											{t('enter-info.upgrade-plan')}
 										</Link>
 									)}
 								</div>
@@ -183,7 +188,7 @@ export default function FirstMessagePage() {
 				>
 					<Card>
 						<CardHeader>
-							<CardTitle>Generated Messages</CardTitle>
+							<CardTitle>{t('generated-messages.title')}</CardTitle>
 						</CardHeader>
 						<CardContent>
 							{isPending ? (
@@ -220,7 +225,7 @@ export default function FirstMessagePage() {
 									transition={{ duration: 0.3 }}
 									className='text-center py-4 text-gray-500'
 								>
-									Enter information and click "Generate Messages"
+									{t('generated-messages.placeholder')}
 								</motion.div>
 							)}
 						</CardContent>

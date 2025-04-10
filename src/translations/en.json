@@ -2,50 +2,6 @@
 	"common": {
 		"loading": "Loading..."
 	},
-	"errors": {
-		"server": {
-			"unauthorized": "Unauthorized",
-			"internal-error": "Internal Server Error",
-			"email-in-use": "This email is already in use",
-			"invalid-credentials": "Login or password is incorrect",
-			"not-enough-credits": "Not enough credits",
-			"subscription-not-active": "Subscription not active",
-			"no-image": "No image provided",
-			"no-reply": "No reply from AI",
-			"webhook-failed": "Webhook handler failed",
-			"invalid-period": "Invalid period end date",
-			"user-not-found": "User not found",
-			"subscription-not-found": "Subscription not found",
-			"invalid-request": "Invalid request"
-		},
-		"validation": {
-			"email-required": "Email is required",
-			"email-invalid": "Email is invalid",
-			"password-required": "Password is required",
-			"password-min": "Password must be at least 8 characters",
-			"first-name-required": "First name is required",
-			"first-name-min": "First name must be at least 1 character long",
-			"first-name-max": "First name must be at most 50 characters long",
-			"last-name-required": "Last name is required",
-			"last-name-min": "Last name must be at least 1 character long",
-			"last-name-max": "Last name must be at most 50 characters long"
-		}
-	},
-	"success": {
-		"auth": {
-			"login": "Successfully logged in",
-			"register": "Successfully registered",
-			"logout": "Successfully logged out"
-		},
-		"subscription": {
-			"created": "Subscription created successfully",
-			"updated": "Subscription updated successfully",
-			"cancelled": "Subscription cancelled successfully"
-		},
-		"profile": {
-			"updated": "Profile updated successfully"
-		}
-	},
 	"header": {
 		"menu-title": "Menu",
 		"links": {
@@ -212,7 +168,129 @@
 			"view-plans": "View Plans"
 		}
 	},
+	"reply-by-text": {
+		"title": "Charm AI Chat",
+		"subtitle": "Manually enter the chat history and Charm AI will provide reply suggestions",
+		"placeholder": "Enter message...",
+		"their": "Their Message",
+		"my": "My Message",
+		"new-chat": "New Chat",
+		"get-reply": "Get Reply",
+		"credits-left": "credits left",
+		"credits-per-reply": "1 credit = 3 replies",
+		"processing": "Generating...",
+		"upgrade-plan": "Upgrade Plan",
+		"ai-reply": {
+			"title": "AI Reply Suggestions",
+			"option": "Option"
+		}
+	},
+	"reply-by-screenshot": {
+		"title": "Charm GPT Reply Generator",
+		"subtitle": "Upload the chat screenshot to be replied, and Charm GPT will provide a friendly AI reply",
+		"button": "Upload Chat Screenshot",
+		"new-upload": "New Upload",
+		"get-charm-reply": "Get Charm Reply",
+		"credits-left": "credits left",
+		"credits-per-reply": "1 credit = 3 replies",
+		"processing": "Generating...",
+		"upgrade-plan": "Upgrade Plan",
+		"ai-reply": {
+			"title": "AI Reply Suggestions",
+			"option": "Option"
+		}
+	},
+	"get-advice": {
+		"title": "Get Dating Advice",
+		"subtitle": "Chat with Charm AI and get personalized dating advice",
+		"chat": {
+			"bg-title": "Welcome to Charm AI Advisor",
+			"bg-subtitle": "Ask me anything about dating, relationships, and social interactions. I'm here to help!"
+		},
+		"placeholder": "Ask for dating advice...",
+		"credits-left": "credits left",
+		"credits-per-reply": "1 credit = 3 replies",
+		"processing": "Generating...",
+		"upgrade-plan": "Upgrade Plan",
+		"proccessing": "Thinking..."
+	},
+	"first-message": {
+		"title": "First Message Generator",
+		"enter-info": {
+			"title": "Enter Information",
+			"fields": {
+				"photo": {
+					"title": "Photo"
+				},
+				"name": {
+					"title": "Name",
+					"placeholder": "Enter name..."
+				},
+				"relationships": {
+					"title": "Relationships",
+					"placeholder": "e.g., collegues, friends, acquaintances"
+				},
+				"additional-information": {
+					"title": "Additional Information",
+					"placeholder": "Additional information about the person or situation"
+				}
+			},
+			"button": "Generate Messages",
+			"credits-left": "credits left",
+			"credits-per-reply": "1 credit = 3 messages",
+			"processing": "Generating...",
+			"upgrade-plan": "Upgrade Plan"
+		},
+		"generated-messages": {
+			"title": "Generated Messages",
+			"placeholder": "Enter information and click \"Generate Messages\""
+		}
+	},
 	"footer": {
 		"copyright": "Copyright © 2025 Charm AI. All rights reserved."
+	},
+	"errors": {
+		"server": {
+			"unauthorized": "Unauthorized",
+			"internal-error": "Internal Server Error",
+			"email-in-use": "This email is already in use",
+			"invalid-credentials": "Login or password is incorrect",
+			"not-enough-credits": "Not enough credits",
+			"subscription-not-active": "Subscription not active",
+			"no-image": "No image provided",
+			"no-reply": "No reply from AI",
+			"webhook-failed": "Webhook handler failed",
+			"invalid-period": "Invalid period end date",
+			"user-not-found": "User not found",
+			"subscription-not-found": "Subscription not found",
+			"invalid-request": "Invalid request"
+		},
+		"validation": {
+			"email-required": "Email is required",
+			"email-invalid": "Email is invalid",
+			"password-required": "Password is required",
+			"password-min": "Password must be at least 8 characters",
+			"first-name-required": "First name is required",
+			"first-name-min": "First name must be at least 1 character long",
+			"first-name-max": "First name must be at most 50 characters long",
+			"last-name-required": "Last name is required",
+			"last-name-min": "Last name must be at least 1 character long",
+			"last-name-max": "Last name must be at most 50 characters long"
+		}
+	},
+	"success": {
+		"auth": {
+			"login": "Successfully logged in",
+			"register": "Successfully registered",
+			"logout": "Successfully logged out"
+		},
+		"subscription": {
+			"created": "Subscription created successfully",
+			"updated": "Subscription updated successfully",
+			"cancelled": "Subscription cancelled successfully"
+		},
+		"profile": {
+			"updated": "Profile updated successfully"
+		}
 	}
 }

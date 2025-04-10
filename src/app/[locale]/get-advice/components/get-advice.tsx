@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/auth.store'
 import { IChatMessage } from '@/typing/interface'
 import { Bot, InfinityIcon, LoaderIcon, Send, User } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
@@ -44,6 +45,8 @@ const TypewriterText = ({ content, className }: { content: string; className?: s
 export function GetAdvice() {
 	const { user } = useAuthStore()
 	const [messages, setMessages] = useState<IChatMessage[]>([])
+	const t = useTranslations('get-advice')
+	const commonT = useTranslations('common')
 	const [input, setInput] = useState('')
 	const { mutateAsync: sendMessage, isPending } = useSendMessage()
 
@@ -63,7 +66,7 @@ export function GetAdvice() {
 	return !user ? (
 		<div className='flex items-center justify-center gap-2 mx-auto mt-5'>
 			<LoaderIcon className='animate-spin' />
-			Loading...
+			{commonT('loading')}
 		</div>
 	) : (
 		<div className='flex flex-col h-[calc(100vh-16rem)] max-w-3xl mx-auto'>
@@ -71,11 +74,8 @@ export function GetAdvice() {
 				{messages.length === 0 ? (
 					<div className='flex flex-col items-center justify-center h-full text-center px-4 gap-2'>
 						<Bot className='w-12 h-12 text-purple-600' />
-						<h2 className='text-2xl font-semibold text-gray-900'>Welcome to Charm AI Advisor</h2>
-						<p className='text-gray-600 max-w-sm'>
-							Ask me anything about dating, relationships, and social interactions. I'm here to
-							help!
-						</p>
+						<h2 className='text-2xl font-semibold text-gray-900'>{t('chat.bg-title')}</h2>
+						<p className='text-gray-600 max-w-sm'>{t('chat.bg-subtitle')}</p>
 					</div>
 				) : (
 					<div className='space-y-6 py-6'>
@@ -122,7 +122,7 @@ export function GetAdvice() {
 									<Bot className='w-5 h-5' />
 								</div>
 								<div className='bg-gray-100 rounded-2xl px-4 py-2 text-gray-600 flex items-center gap-2'>
-									<span>Thinking</span>
+									<span>{t('proccessing')}</span>
 									<TypingAnimation />
 								</div>
 							</div>
@@ -139,7 +139,7 @@ export function GetAdvice() {
 					<Input
 						value={input}
 						onChange={e => setInput(e.target.value)}
-						placeholder='Ask for dating advice...'
+						placeholder={t('placeholder')}
 						className='flex-1 bg-white'
 						disabled={isPending}
 					/>
@@ -160,16 +160,16 @@ export function GetAdvice() {
 								<InfinityIcon className='w-4 h-4 text-amber-600' />
 							)}
 						</span>{' '}
-						credits left.
+						{t('credits-left')}
 					</div>
 					<div className='flex items-center gap-1'>
-						<span> 1 credit = 1 message.</span>
+						<span>{t('credits-per-reply')}</span>
 						{(user?.subscription?.plan === 'BASIC' || user?.subscription?.plan === 'PRO') && (
 							<Link
 								href='/pricing'
 								className='text-blue-500'
 							>
-								Upgrade Plan
+								{t('upgrade-plan')}
 							</Link>
 						)}
 					</div>

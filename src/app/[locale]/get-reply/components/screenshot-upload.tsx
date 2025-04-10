@@ -5,11 +5,14 @@ import { useGetReplyByScreenshot } from '@/hooks/useReply'
 import { useAuthStore } from '@/store/auth.store'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Image, InfinityIcon, LoaderIcon } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useState } from 'react'
 
 export function ScreenshotUpload() {
 	const { user } = useAuthStore()
+	const t = useTranslations('reply-by-screenshot')
+	const commonT = useTranslations('common')
 	const [selectedImage, setSelectedImage] = useState<File | null>(null)
 	const [previewUrl, setPreviewUrl] = useState<string | null>(null)
 	const [replies, setReplies] = useState<string[]>([])
@@ -41,7 +44,7 @@ export function ScreenshotUpload() {
 	return !user ? (
 		<div className='flex items-center justify-center gap-2 mx-auto mt-5'>
 			<LoaderIcon className='animate-spin' />
-			Loading...
+			{commonT('loading')}
 		</div>
 	) : (
 		<div className='max-w-2xl mx-auto space-y-6'>
@@ -78,7 +81,7 @@ export function ScreenshotUpload() {
 							type='button'
 							asChild
 						>
-							<span>Upload Chat Screenshot</span>
+							<span>{t('button')}</span>
 						</Button>
 					</label>
 				</div>
@@ -88,7 +91,7 @@ export function ScreenshotUpload() {
 						variant='outline'
 						onClick={handleNewUpload}
 					>
-						New Upload
+						{t('new-upload')}
 					</Button>
 					<Button
 						className='bg-gradient-to-r from-purple-600 to-pink-600 text-white'
@@ -96,7 +99,7 @@ export function ScreenshotUpload() {
 						disabled={!selectedImage || isPending}
 					>
 						{isPending && <LoaderIcon className='w-4 h-4 animate-spin mr-2' />}
-						{isPending ? 'Generating...' : 'Get Charm Reply'}
+						{isPending ? t('processing') : t('get-charm-reply')}
 					</Button>
 				</div>
 				<div className='text-center flex flex-col items-center mt-3 text-sm text-gray-500'>
@@ -108,16 +111,16 @@ export function ScreenshotUpload() {
 								<InfinityIcon className='w-4 h-4 text-amber-600' />
 							)}
 						</span>{' '}
-						credits left.
+						{t('credits-left')}
 					</div>
 					<div className='flex items-center gap-1'>
-						<span> 1 credit = 3 replies.</span>
+						<span>{t('credits-per-reply')}</span>
 						{user?.subscription?.plan === 'BASIC' && (
 							<Link
 								href='/pricing'
 								className='text-blue-500'
 							>
-								Upgrade Plan
+								{t('upgrade-plan')}
 							</Link>
 						)}
 					</div>
@@ -133,7 +136,7 @@ export function ScreenshotUpload() {
 						className='bg-white rounded-2xl shadow-xl p-6'
 					>
 						<div className='flex items-center gap-2 mb-4'>
-							<span className='text-sm font-medium text-gray-500'>AI Reply Suggestions</span>
+							<span className='text-sm font-medium text-gray-500'>{t('ai-reply.title')}</span>
 						</div>
 						<div className='space-y-4'>
 							{replies.map((reply, index) => (
@@ -142,7 +145,9 @@ export function ScreenshotUpload() {
 									className='p-4 bg-gray-50 rounded-xl border border-gray-100'
 								>
 									<div className='flex items-center gap-2 mb-2'>
-										<span className='text-sm font-medium text-purple-600'>Option {index + 1}</span>
+										<span className='text-sm font-medium text-purple-600'>
+											{t('ai-reply.option')} {index + 1}
+										</span>
 									</div>
 									<div className='text-gray-800 text-lg leading-relaxed'>{reply}</div>
 								</div>

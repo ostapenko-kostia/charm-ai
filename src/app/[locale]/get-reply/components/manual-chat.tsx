@@ -7,11 +7,14 @@ import { useAuthStore } from '@/store/auth.store'
 import { IMessage } from '@/typing/interface'
 import { AnimatePresence, motion } from 'framer-motion'
 import { InfinityIcon, LoaderIcon } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useState } from 'react'
 
 export function ManualChat() {
 	const { user } = useAuthStore()
+	const t = useTranslations('reply-by-text')
+	const commonT = useTranslations('common')
 	const [messages, setMessages] = useState<IMessage[]>([])
 	const [newMessage, setNewMessage] = useState('')
 	const [replies, setReplies] = useState<string[]>([])
@@ -43,7 +46,7 @@ export function ManualChat() {
 	return !user ? (
 		<div className='flex items-center justify-center gap-2 mx-auto mt-5'>
 			<LoaderIcon className='animate-spin' />
-			Loading...
+			{commonT('loading')}
 		</div>
 	) : (
 		<div className='max-w-2xl mx-auto space-y-6'>
@@ -75,7 +78,7 @@ export function ManualChat() {
 				<div className='space-y-4 mb-4'>
 					<div className='relative'>
 						<Input
-							placeholder='Enter message...'
+							placeholder={t('placeholder')}
 							value={newMessage}
 							onChange={e => setNewMessage(e.target.value)}
 							className='pr-10'
@@ -87,14 +90,14 @@ export function ManualChat() {
 							onClick={addMessage}
 							className='flex-1'
 						>
-							Their Message
+							{t('their')}
 						</Button>
 						<Button
 							variant='outline'
 							onClick={addMyReply}
 							className='flex-1'
 						>
-							My Message
+							{t('my')}
 						</Button>
 					</div>
 				</div>
@@ -104,7 +107,7 @@ export function ManualChat() {
 						variant='outline'
 						onClick={handleNewChat}
 					>
-						New Chat
+						{t('new-chat')}
 					</Button>
 					<Button
 						className='bg-gradient-to-r from-purple-600 to-pink-600 text-white'
@@ -112,7 +115,7 @@ export function ManualChat() {
 						disabled={messages.length === 0 || isPending}
 					>
 						{isPending && <LoaderIcon className='w-4 h-4 animate-spin mr-2' />}
-						{isPending ? 'Generating...' : 'Get Reply'}
+						{isPending ? t('processing') : t('get-reply')}
 					</Button>
 				</div>
 				<div className='text-center flex flex-col items-center mt-3 text-sm text-gray-500'>
@@ -124,16 +127,16 @@ export function ManualChat() {
 								<InfinityIcon className='w-4 h-4 text-amber-600' />
 							)}
 						</span>{' '}
-						credits left.
+						{t('credits-left')}
 					</div>
 					<div className='flex items-center gap-1'>
-						<span> 1 credit = 3 replies.</span>
+						<span>{t('credits-per-reply')}</span>
 						{user?.subscription?.plan === 'BASIC' && (
 							<Link
 								href='/pricing'
 								className='text-blue-500'
 							>
-								Upgrade Plan
+								{t('upgrade-plan')}
 							</Link>
 						)}
 					</div>
@@ -149,7 +152,7 @@ export function ManualChat() {
 						className='bg-white rounded-2xl shadow-xl p-6'
 					>
 						<div className='flex items-center gap-2 mb-4'>
-							<span className='text-sm font-medium text-gray-500'>AI Reply Suggestions</span>
+							<span className='text-sm font-medium text-gray-500'>{t('ai-reply.title')}</span>
 						</div>
 						<div className='space-y-4'>
 							{replies.map((reply, index) => (
@@ -158,7 +161,9 @@ export function ManualChat() {
 									className='p-4 bg-gray-50 rounded-xl border border-gray-100'
 								>
 									<div className='flex items-center gap-2 mb-2'>
-										<span className='text-sm font-medium text-purple-600'>Option {index + 1}</span>
+										<span className='text-sm font-medium text-purple-600'>
+											{t('ai-reply.option')} {index + 1}
+										</span>
 									</div>
 									<div className='text-gray-800 text-lg leading-relaxed'>{reply}</div>
 								</div>

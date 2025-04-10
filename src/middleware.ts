@@ -49,14 +49,6 @@ function getLocaleFromPathname(pathname: string) {
 	return locales.includes(firstSegment as 'ua' | 'en') ? firstSegment : null
 }
 
-function getPathWithoutLocale(pathname: string) {
-	const segments = pathname.split('/')
-	if (segments.length > 1 && locales.includes(segments[1] as 'ua' | 'en')) {
-		return '/' + segments.slice(2).join('/')
-	}
-	return pathname
-}
-
 function addLocaleCookie(response: NextResponse, locale: string) {
 	response.cookies.set('NEXT_LOCALE', locale, {
 		maxAge: 60 * 60 * 24 * 365, // 1 year

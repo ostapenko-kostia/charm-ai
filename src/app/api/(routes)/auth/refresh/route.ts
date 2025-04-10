@@ -7,12 +7,23 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function POST(req: NextRequest) {
 	try {
 		const cookiesStorage = await cookies()
+		const refreshToken = cookiesStorage.get(TOKEN.REFRESH_TOKEN)?.value
 
-		const userData = await authService.refresh(cookiesStorage.get(TOKEN.REFRESH_TOKEN)?.value ?? '')
+		if (!refreshToken) {
+			return NextResponse.json(
+				{ message: 'No refresh token', translationKey: 'errors.server.unauthorized' },
+				{ status: 401 }
+			)
+		}
 
+		const userData = await authService.refresh(refreshToken)
+
+		// Set new refresh token
 		cookiesStorage.set(TOKEN.REFRESH_TOKEN, userData.refreshToken, {
-			expires: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
-			httpOnly: true
+			expires: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000), // 60 days
+			httpOnly: true,
+			secure: process.env.NODE_ENV === 'production',
+			sameSite: 'lax'
 		})
 
 		return NextResponse.json(userData, { status: 200 })
