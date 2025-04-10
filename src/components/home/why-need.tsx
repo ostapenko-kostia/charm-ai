@@ -4,7 +4,7 @@ import { Container } from '../layout/container'
 import { getTranslations } from 'next-intl/server'
 
 export async function WhyNeed() {
-	const t = await getTranslations('why-need')
+	const t = await getTranslations('home.why-need')
 	return (
 		<motion.div
 			initial={{ translateY: '15px', opacity: 0 }}

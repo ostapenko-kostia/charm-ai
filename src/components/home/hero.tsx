@@ -3,10 +3,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Container } from '../layout/container'
 import { Button } from '../ui/button'
-import { getMessages, getTranslations } from 'next-intl/server'
+import { getTranslations } from 'next-intl/server'
 
 export async function Hero() {
-	const t = await getTranslations('hero')
+	const t = await getTranslations('home.hero')
 
 	return (
 		<motion.div

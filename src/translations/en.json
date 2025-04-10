@@ -10,43 +10,159 @@
 			"logout": "Logout"
 		}
 	},
-	"hero": {
-		"title": "Charm AI Assistant",
-		"subtitle": "Your AI Dating Assistant that makes every encounter mean",
-		"buttons": {
-			"manual-chat": "Try Manual Chat",
-			"screenshot-upload": "Try Screenshot Upload",
-			"get-advice": "Get Advice",
-			"generate-first-message": "Generate First Message"
+	"home": {
+		"hero": {
+			"title": "Charm AI Assistant",
+			"subtitle": "Your AI Dating Assistant that makes every encounter mean",
+			"buttons": {
+				"manual-chat": "Try Manual Chat",
+				"screenshot-upload": "Try Screenshot Upload",
+				"get-advice": "Get Advice",
+				"generate-first-message": "Generate First Message"
+			},
+			"popular-platforms-title": "Popular on the following dating platforms"
 		},
-		"popular-platforms-title": "Popular on the following dating platforms"
-	},
-	"advantages": {
-		"title": "How Charm AI Assistant & CHARM GPT helps you date on Tinder?",
 		"advantages": {
-			"first": {
-				"title": "Charm AI",
-				"description": "Get AI-powered suggestions for the perfect opener or comeback in any conversation."
-			},
-			"second": {
-				"title": "Real-Time Feedback",
-				"description": "Instantly analyze your messages and refine your approach for maximum impact."
-			},
-			"third": {
-				"title": "Adaptive Persona",
-				"description": "Customize your communication style, from smooth and witty to deep and meaningful."
+			"title": "How Charm AI Assistant & CHARM GPT helps you date on Tinder?",
+			"advantages": {
+				"first": {
+					"title": "Charm AI",
+					"description": "Get AI-powered suggestions for the perfect opener or comeback in any conversation."
+				},
+				"second": {
+					"title": "Real-Time Feedback",
+					"description": "Instantly analyze your messages and refine your approach for maximum impact."
+				},
+				"third": {
+					"title": "Adaptive Persona",
+					"description": "Customize your communication style, from smooth and witty to deep and meaningful."
+				}
+			}
+		},
+		"why-need": {
+			"title": "Why Need Charm AI Assistant & CHARM GPT?",
+			"reasons": {
+				"first": {
+					"text": "Want to impress your crush effortlessly? Our AI dating GPT, trained on countless successful dating cases, offers proven chat techniques tailored to your unique personality. Whether you're shy or outgoing, you'll quickly master the art of flirting and make incredible strides in your dating life!"
+				},
+				"second": {
+					"text": "Worried about privacy? Don't be! Charm AI never save your chat records or screenshots. Share your dating stories freely with our AI coach and receive honest advice without compromising your privacy. With this trustworthy dating assistant, you can fully enjoy the exciting journey of love!"
+				}
 			}
 		}
 	},
-	"why-need": {
-		"title": "Why Need Charm AI Assistant & CHARM GPT?",
-		"reasons": {
-			"first": {
-				"text": "Want to impress your crush effortlessly? Our AI dating GPT, trained on countless successful dating cases, offers proven chat techniques tailored to your unique personality. Whether you're shy or outgoing, you'll quickly master the art of flirting and make incredible strides in your dating life!"
+	"pricing": {
+		"title": "Choose Your Plan",
+		"subtitle": "Select the perfect plan for your dating journey",
+		"month": "month",
+		"year": "year",
+		"popular": "Most Popular",
+		"periods": {
+			"monthly": {
+				"title": "Monthly"
 			},
-			"second": {
-				"text": "Worried about privacy? Don't be! Charm AI never save your chat records or screenshots. Share your dating stories freely with our AI coach and receive honest advice without compromising your privacy. With this trustworthy dating assistant, you can fully enjoy the exciting journey of love!"
+			"yearly": {
+				"title": "Yearly",
+				"subtitle": "Save 20%"
 			}
+		},
+		"plans": {
+			"basic": {
+				"title": "Basic",
+				"subtitle": "Get started with limited features",
+				"features": {
+					"first": "Basic reply generation",
+					"second": "Basic AI-powered responses",
+					"third": "Basic first move generator"
+				},
+				"cta": "Get Started"
+			},
+			"pro": {
+				"title": "Pro",
+				"subtitle": "Unlock advanced features",
+				"features": {
+					"first": "All basic features",
+					"second": "Full access to reply by chat history generator",
+					"third": "Full access to reply by screenshot generator"
+				},
+				"cta": "Get Started"
+			},
+			"premium": {
+				"title": "Premium",
+				"subtitle": "Experience the ultimate Rizz toolkit",
+				"features": {
+					"first": "All pro features",
+					"second": "Full access to first move generator",
+					"third": "Full access to AI-powered chat"
+				},
+				"cta": "Get Started"
+			}
+		},
+		"additional": "Cancel anytime."
+	},
+	"login": {
+		"title": "Welcome Back",
+		"subtitle": "Log in to your account to continue",
+		"email": "Email",
+		"password": "Password",
+		"login": "Log in",
+		"signup-link": "Don't have an account?",
+		"signup": "Sign Up",
+		"processing": "Logging in...",
+		"errors": {
+			"email-required": "Email is required",
+			"email-invalid": "Invalid email format",
+			"password-invalid": "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+			"password-min": "Password must be at least 8 characters"
+		}
+	},
+	"signup": {
+		"title": "Create an Account",
+		"subtitle": "Join us to start your dating journey",
+		"first-name": "First Name",
+		"last-name": "Last Name",
+		"email": "Email",
+		"password": "Password",
+		"signup": "Create Account",
+		"processing": "Creating account...",
+		"login-link": "Already have an account?",
+		"login": "Log in",
+		"errors": {
+			"first-name-min": "First name must be at least 2 characters",
+			"last-name-min": "Last name must be at least 2 characters",
+			"first-name-max": "First name must be less than 50 characters",
+			"last-name-max": "Last name must be less than 50 characters",
+			"email-required": "Email is required",
+			"email-invalid": "Invalid email format",
+			"password-invalid": "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+			"password-min": "Password must be at least 8 characters"
+		}
+	},
+	"profile": {
+		"title": "Profile",
+		"account": {
+			"title": "Account Information",
+			"subtitle": "Your personal account details"
+		},
+		"subscription": {
+			"title": "Subscription Details",
+			"subtitle": "Your current subscription plan",
+			"monthly-billing": "Monthly Billing",
+			"yearly-billing": "Yearly Billing",
+			"statuses": {
+				"active": "ACTIVE",
+				"inactive": "INACTIVE",
+				"cancelled": "CANCELED",
+				"past-due": "PAST DUE",
+				"unpaid": "UNPAID"
+			},
+			"manage": "Manage Subscription",
+			"next-payment": "Next Payment",
+			"last-payment": "Last Payment",
+			"current-period": "Current Period",
+			"no-active-subscription": "No active subscription",
+			"choose-plan": "Choose a plan to get started",
+			"view-plans": "View Plans"
 		}
 	},
 	"footer": {

@@ -6,24 +6,23 @@ import { Label } from '@/components/ui/label'
 import { useLogin } from '@/hooks/useAuth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 const loginSchema = z.object({
-	email: z.string().min(1, 'Email is required').email('Invalid email format'),
+	email: z.string().min(1, 'errors.email-required').email('errors.email-invalid'),
 	password: z
 		.string()
-		.min(8, 'Password must be at least 8 characters')
-		.regex(
-			/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-			'Password must contain at least one uppercase letter, one lowercase letter, and one number'
-		)
+		.min(8, 'errors.password-min')
+		.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'errors.password-invalid')
 })
 
 export type LoginFormData = z.infer<typeof loginSchema>
 
 export function Login() {
+	const t = useTranslations('login')
 	const {
 		register,
 		handleSubmit,
@@ -53,7 +52,7 @@ export function Login() {
 					transition={{ delay: 0.2 }}
 					className='text-3xl font-bold text-center mb-2 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600'
 				>
-					Welcome Back
+					{t('title')}
 				</motion.h1>
 				<motion.p
 					initial={{ opacity: 0 }}
@@ -61,7 +60,7 @@ export function Login() {
 					transition={{ delay: 0.3 }}
 					className='text-gray-600 text-center mb-8'
 				>
-					Log in to your account to continue
+					{t('subtitle')}
 				</motion.p>
 
 				<form
@@ -74,7 +73,7 @@ export function Login() {
 						transition={{ delay: 0.4 }}
 						className='space-y-2'
 					>
-						<Label htmlFor='email'>Email</Label>
+						<Label htmlFor='email'>{t('email')}</Label>
 						<Input
 							id='email'
 							type='email'
@@ -82,7 +81,9 @@ export function Login() {
 							{...register('email')}
 							className={`w-full ${formErrors.email ? 'border-red-500' : ''}`}
 						/>
-						{formErrors.email && <p className='text-sm text-red-500'>{formErrors.email.message}</p>}
+						{formErrors.email && (
+							<p className='text-sm text-red-500'>{t(formErrors.email.message ?? '')}</p>
+						)}
 					</motion.div>
 
 					<motion.div
@@ -91,7 +92,7 @@ export function Login() {
 						transition={{ delay: 0.5 }}
 						className='space-y-2'
 					>
-						<Label htmlFor='password'>Password</Label>
+						<Label htmlFor='password'>{t('password')}</Label>
 						<Input
 							id='password'
 							type='password'
@@ -100,7 +101,7 @@ export function Login() {
 							className={`w-full ${formErrors.password ? 'border-red-500' : ''}`}
 						/>
 						{formErrors.password && (
-							<p className='text-sm text-red-500'>{formErrors.password.message}</p>
+							<p className='text-sm text-red-500'>{t(formErrors.password.message ?? '')}</p>
 						)}
 					</motion.div>
 
@@ -136,10 +137,10 @@ export function Login() {
 											d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
 										></path>
 									</svg>
-									Logging in...
+									{t('processing')}
 								</span>
 							) : (
-								'Log in'
+								t('login')
 							)}
 						</Button>
 					</motion.div>
@@ -150,12 +151,12 @@ export function Login() {
 						transition={{ delay: 0.8 }}
 						className='text-center text-sm text-gray-600'
 					>
-						Don't have an account?{' '}
+						{t('signup-link')}{' '}
 						<Link
 							href='/signup'
 							className='font-medium text-purple-600 hover:text-purple-500'
 						>
-							Sign up
+							{t('signup')}
 						</Link>
 					</motion.div>
 				</form>

@@ -3,7 +3,7 @@ import { Container } from '../layout/container'
 import { getTranslations } from 'next-intl/server'
 
 export async function Advantages() {
-	const t = await getTranslations('advantages')
+	const t = await getTranslations('home.advantages')
 	return (
 		<motion.div
 			initial={{ translateY: '15px', opacity: 0 }}

@@ -8,6 +8,7 @@ import { useAuthStore } from '@/store/auth.store'
 import { format } from 'date-fns'
 import { motion } from 'framer-motion'
 import { Calendar, Clock, CreditCard, LoaderIcon, Package2, User } from 'lucide-react'
+import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
@@ -26,6 +27,8 @@ const statusColors = {
 }
 
 export default function ProfilePage() {
+	const t = useTranslations('profile')
+	const locale = useLocale()
 	const { user } = useAuthStore()
 	const router = useRouter()
 	const subscription = user?.subscription
@@ -44,14 +47,14 @@ export default function ProfilePage() {
 				className='space-y-6'
 			>
 				<div className='flex items-center justify-between'>
-					<h1 className='text-3xl font-bold'>Profile</h1>
+					<h1 className='text-3xl font-bold'>{t('title')}</h1>
 				</div>
 
 				<div className='grid gap-6 md:grid-cols-2'>
 					<Card>
 						<CardHeader>
-							<CardTitle>Account Information</CardTitle>
-							<CardDescription>Your personal account details</CardDescription>
+							<CardTitle>{t('account.title')}</CardTitle>
+							<CardDescription>{t('account.subtitle')}</CardDescription>
 						</CardHeader>
 						<CardContent className='space-y-4'>
 							<div className='flex items-center space-x-4'>
@@ -75,8 +78,8 @@ export default function ProfilePage() {
 
 					<Card>
 						<CardHeader>
-							<CardTitle>Subscription Details</CardTitle>
-							<CardDescription>Your current subscription plan</CardDescription>
+							<CardTitle>{t('subscription.title')}</CardTitle>
+							<CardDescription>{t('subscription.subtitle')}</CardDescription>
 						</CardHeader>
 						<CardContent className='space-y-4'>
 							{subscription ? (
@@ -88,26 +91,28 @@ export default function ProfilePage() {
 													{subscription.plan}
 												</Badge>
 												<Badge className={cn(statusColors[subscription.status])}>
-													{subscription.status}
+													{t(`subscription.statuses.${subscription.status.toLowerCase()}`)}
 												</Badge>
 											</div>
 											<p className='text-sm text-muted-foreground'>
-												{subscription.period.split('')[0].toUpperCase() +
-													subscription.period.slice(1)}{' '}
-												billing
+												{t(`subscription.${subscription.period}-billing`)}
 											</p>
 										</div>
 										<Link href={process.env.NEXT_PUBLIC_STRIPE_PORTAL_URL!}>
-											<Button variant='outline'>Manage Subscription</Button>
+											<Button variant='outline'>{t('subscription.manage')}</Button>
 										</Link>
 									</div>
 
 									<div className='grid gap-4 pt-4'>
 										<div className='flex items-center justify-between'>
 											<div className='space-y-1'>
-												<p className='text-sm font-medium'>Next Payment</p>
+												<p className='text-sm font-medium'>{t('subscription.next-payment')}</p>
 												<p className='text-sm text-muted-foreground'>
-													{format(new Date(subscription.nextPaymentAt), 'PPP')}
+													{new Date(subscription.nextPaymentAt).toLocaleString(locale, {
+														year: 'numeric',
+														month: 'long',
+														day: 'numeric'
+													})}
 												</p>
 											</div>
 											<Calendar className='h-5 w-5 text-muted-foreground' />
@@ -115,9 +120,13 @@ export default function ProfilePage() {
 
 										<div className='flex items-center justify-between'>
 											<div className='space-y-1'>
-												<p className='text-sm font-medium'>Last Payment</p>
+												<p className='text-sm font-medium'>{t('subscription.last-payment')}</p>
 												<p className='text-sm text-muted-foreground'>
-													{format(new Date(subscription.lastPaymentAt), 'PPP')}
+													{new Date(subscription.lastPaymentAt).toLocaleString(locale, {
+														year: 'numeric',
+														month: 'long',
+														day: 'numeric'
+													})}
 												</p>
 											</div>
 											<CreditCard className='h-5 w-5 text-muted-foreground' />
@@ -125,10 +134,18 @@ export default function ProfilePage() {
 
 										<div className='flex items-center justify-between'>
 											<div className='space-y-1'>
-												<p className='text-sm font-medium'>Current Period</p>
+												<p className='text-sm font-medium'>{t('subscription.current-period')}</p>
 												<p className='text-sm text-muted-foreground'>
-													{format(new Date(subscription.startDate), 'PPP')} -{' '}
-													{format(new Date(subscription.currentPeriodEnd), 'PPP')}
+													{new Date(subscription.startDate).toLocaleString(locale, {
+														year: 'numeric',
+														month: 'long',
+														day: 'numeric'
+													})}
+													{new Date(subscription.currentPeriodEnd).toLocaleString(locale, {
+														year: 'numeric',
+														month: 'long',
+														day: 'numeric'
+													})}
 												</p>
 											</div>
 											<Clock className='h-5 w-5 text-muted-foreground' />
@@ -139,10 +156,12 @@ export default function ProfilePage() {
 								<div className='flex flex-col items-center justify-center space-y-4 py-8'>
 									<Package2 className='h-12 w-12 text-muted-foreground' />
 									<div className='text-center'>
-										<p className='font-medium'>No active subscription</p>
-										<p className='text-sm text-muted-foreground'>Choose a plan to get started</p>
+										<p className='font-medium'>{t('subscription.no-active-subscription')}</p>
+										<p className='text-sm text-muted-foreground'>{t('subscription.choose-plan')}</p>
 									</div>
-									<Button onClick={() => router.push('/pricing')}>View Plans</Button>
+									<Button onClick={() => router.push('/pricing')}>
+										{t('subscription.view-plans')}
+									</Button>
 								</div>
 							)}
 						</CardContent>

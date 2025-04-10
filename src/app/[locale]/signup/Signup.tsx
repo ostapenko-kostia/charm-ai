@@ -6,32 +6,25 @@ import { Label } from '@/components/ui/label'
 import { useRegister } from '@/hooks/useAuth'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 const signupSchema = z.object({
-	firstName: z
-		.string()
-		.min(2, 'First name must be at least 2 characters')
-		.max(50, 'First name must be less than 50 characters'),
-	lastName: z
-		.string()
-		.min(2, 'Last name must be at least 2 characters')
-		.max(50, 'Last name must be less than 50 characters'),
-	email: z.string().min(1, 'Email is required').email('Invalid email format'),
+	firstName: z.string().min(2, 'errors.first-name-min').max(50, 'errors.first-name-max'),
+	lastName: z.string().min(2, 'errors.last-name-min').max(50, 'errors.last-name-max'),
+	email: z.string().min(1, 'errors.email-required').email('errors.email-invalid'),
 	password: z
 		.string()
-		.min(8, 'Password must be at least 8 characters')
-		.regex(
-			/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-			'Password must contain at least one uppercase letter, one lowercase letter, and one number'
-		)
+		.min(8, 'errors.password-min')
+		.regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'errors.password-invalid')
 })
 
 export type SignupFormData = z.infer<typeof signupSchema>
 
 export function Signup() {
+	const t = useTranslations('signup')
 	const {
 		register,
 		handleSubmit,
@@ -57,7 +50,7 @@ export function Signup() {
 					transition={{ delay: 0.2 }}
 					className='text-3xl font-bold text-center mb-2 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600'
 				>
-					Create Account
+					{t('title')}
 				</motion.h1>
 				<motion.p
 					initial={{ opacity: 0 }}
@@ -65,7 +58,7 @@ export function Signup() {
 					transition={{ delay: 0.3 }}
 					className='text-gray-600 text-center mb-8'
 				>
-					Join us to start your dating journey
+					{t('subtitle')}
 				</motion.p>
 
 				<form
@@ -78,7 +71,7 @@ export function Signup() {
 						transition={{ delay: 0.4 }}
 						className='space-y-2'
 					>
-						<Label htmlFor='firstName'>First Name</Label>
+						<Label htmlFor='firstName'>{t('first-name')}</Label>
 						<Input
 							id='firstName'
 							type='text'
@@ -87,7 +80,7 @@ export function Signup() {
 							className={`w-full ${formErrors.firstName ? 'border-red-500' : ''}`}
 						/>
 						{formErrors.firstName && (
-							<p className='text-sm text-red-500'>{formErrors.firstName.message}</p>
+							<p className='text-sm text-red-500'>{t(formErrors.firstName.message ?? '')}</p>
 						)}
 					</motion.div>
 
@@ -97,7 +90,7 @@ export function Signup() {
 						transition={{ delay: 0.5 }}
 						className='space-y-2'
 					>
-						<Label htmlFor='lastName'>Last Name</Label>
+						<Label htmlFor='lastName'>{t('last-name')}</Label>
 						<Input
 							id='lastName'
 							type='text'
@@ -106,7 +99,7 @@ export function Signup() {
 							className={`w-full ${formErrors.lastName ? 'border-red-500' : ''}`}
 						/>
 						{formErrors.lastName && (
-							<p className='text-sm text-red-500'>{formErrors.lastName.message}</p>
+							<p className='text-sm text-red-500'>{t(formErrors.lastName.message ?? '')}</p>
 						)}
 					</motion.div>
 
@@ -116,7 +109,7 @@ export function Signup() {
 						transition={{ delay: 0.6 }}
 						className='space-y-2'
 					>
-						<Label htmlFor='email'>Email</Label>
+						<Label htmlFor='email'>{t('email')}</Label>
 						<Input
 							id='email'
 							type='email'
@@ -124,7 +117,9 @@ export function Signup() {
 							{...register('email')}
 							className={`w-full ${formErrors.email ? 'border-red-500' : ''}`}
 						/>
-						{formErrors.email && <p className='text-sm text-red-500'>{formErrors.email.message}</p>}
+						{formErrors.email && (
+							<p className='text-sm text-red-500'>{t(formErrors.email.message ?? '')}</p>
+						)}
 					</motion.div>
 
 					<motion.div
@@ -133,7 +128,7 @@ export function Signup() {
 						transition={{ delay: 0.7 }}
 						className='space-y-2'
 					>
-						<Label htmlFor='password'>Password</Label>
+						<Label htmlFor='password'>{t('password')}</Label>
 						<Input
 							id='password'
 							type='password'
@@ -142,7 +137,7 @@ export function Signup() {
 							className={`w-full ${formErrors.password ? 'border-red-500' : ''}`}
 						/>
 						{formErrors.password && (
-							<p className='text-sm text-red-500'>{formErrors.password.message}</p>
+							<p className='text-sm text-red-500'>{t(formErrors.password.message ?? '')}</p>
 						)}
 					</motion.div>
 
@@ -178,10 +173,10 @@ export function Signup() {
 											d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
 										></path>
 									</svg>
-									Creating account...
+									{t('processing')}
 								</span>
 							) : (
-								'Create Account'
+								t('signup')
 							)}
 						</Button>
 					</motion.div>
@@ -192,12 +187,12 @@ export function Signup() {
 						transition={{ delay: 0.9 }}
 						className='text-center text-sm text-gray-600'
 					>
-						Already have an account?{' '}
+						{t('login-link')}{' '}
 						<Link
 							href='/login'
 							className='font-medium text-purple-600 hover:text-purple-500'
 						>
-							Sign in
+							{t('login')}
 						</Link>
 					</motion.div>
 				</form>
