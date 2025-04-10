@@ -69,49 +69,53 @@ export async function middleware(request: NextRequest) {
 	const { pathname } = request.nextUrl
 	const pathLocale = getLocaleFromPathname(pathname)
 	const currentLocale = pathLocale || getLocale(request)
-
-	// Always set the locale cookie if it's not set or different from current locale
-	if (
-		!request.cookies.get('NEXT_LOCALE')?.value ||
-		request.cookies.get('NEXT_LOCALE')?.value !== currentLocale
-	) {
-		const response = NextResponse.next()
-		return addLocaleCookie(response, currentLocale)
-	}
-
-	if (pathname.startsWith('/api/')) return NextResponse.next()
-
 	const isAuthenticated = request.cookies.has(TOKEN.ACCESS_TOKEN)
 
-	if (
-		pathname === '/' ||
-		(!pathname.match(new RegExp(`^/(${locales.join('|')})(/|$)`)) && !pathname.match(/\.\w+$/))
-	) {
-		const newPath = `/${currentLocale}${pathname === '/' ? '' : pathname}`
+	// Handle API routes
+	if (pathname.startsWith('/api/')) {
+		return NextResponse.next()
+	}
+
+	// Handle root path
+	if (pathname === '/') {
+		const newPath = `/${currentLocale}`
 		request.nextUrl.pathname = newPath
 		const response = NextResponse.redirect(request.nextUrl)
 		return addLocaleCookie(response, currentLocale)
 	}
 
-	// Check if the path is a protected route
-	if (protectedRoutes.some(route => pathname.includes(route))) {
-		if (!isAuthenticated) {
-			// Redirect to login if trying to access protected route while not authenticated
-			const loginUrl = new URL(`/${currentLocale}/login`, request.url)
-			loginUrl.searchParams.set('from', pathname)
-			return NextResponse.redirect(loginUrl)
-		}
+	// Handle missing locale in path
+	if (!pathname.match(new RegExp(`^/(${locales.join('|')})(/|$)`)) && !pathname.match(/\.\w+$/)) {
+		const newPath = `/${currentLocale}${pathname}`
+		request.nextUrl.pathname = newPath
+		const response = NextResponse.redirect(request.nextUrl)
+		return addLocaleCookie(response, currentLocale)
 	}
 
-	// Check if the path is an auth route (login/signup)
-	if (authRoutes.some(route => pathname.includes(route))) {
-		if (isAuthenticated) {
-			// Redirect to home if trying to access auth routes while authenticated
-			const homeUrl = new URL(`/${currentLocale}/profile`, request.url)
-			return NextResponse.redirect(homeUrl)
-		}
+	// Handle protected routes
+	const isProtectedRoute = protectedRoutes.some(route => {
+		const routeWithLocale = `/${currentLocale}${route}`
+		return pathname.startsWith(routeWithLocale)
+	})
+
+	if (isProtectedRoute && !isAuthenticated) {
+		const loginUrl = new URL(`/${currentLocale}/login`, request.url)
+		loginUrl.searchParams.set('from', pathname)
+		return NextResponse.redirect(loginUrl)
 	}
 
+	// Handle auth routes
+	const isAuthRoute = authRoutes.some(route => {
+		const routeWithLocale = `/${currentLocale}${route}`
+		return pathname.startsWith(routeWithLocale)
+	})
+
+	if (isAuthRoute && isAuthenticated) {
+		const homeUrl = new URL(`/${currentLocale}/profile`, request.url)
+		return NextResponse.redirect(homeUrl)
+	}
+
+	// Apply intl middleware and set cookie
 	if (pathLocale) {
 		const res = await intlMiddleware(request)
 		return addLocaleCookie(res, pathLocale)
