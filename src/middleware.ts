@@ -1,10 +1,10 @@
+import { match } from '@formatjs/intl-localematcher'
+import Negotiator from 'negotiator'
 import createMiddleware from 'next-intl/middleware'
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
-import Negotiator from 'negotiator'
-import { match } from '@formatjs/intl-localematcher'
-import { TOKEN } from './typing/enums'
 import { defaultLocale, locales } from './lib/i18n'
+import { TOKEN } from './typing/enums'
 
 // Pages that require authentication
 const protectedRoutes = [
@@ -52,7 +52,9 @@ function getLocaleFromPathname(pathname: string) {
 function addLocaleCookie(response: NextResponse, locale: string) {
 	response.cookies.set('NEXT_LOCALE', locale, {
 		maxAge: 60 * 60 * 24 * 365, // 1 year
-		path: '/'
+		path: '/',
+		sameSite: 'lax',
+		secure: process.env.NODE_ENV === 'production'
 	})
 	return response
 }
@@ -66,6 +68,16 @@ const intlMiddleware = createMiddleware({
 export async function middleware(request: NextRequest) {
 	const { pathname } = request.nextUrl
 	const pathLocale = getLocaleFromPathname(pathname)
+	const currentLocale = pathLocale || getLocale(request)
+
+	// Always set the locale cookie if it's not set or different from current locale
+	if (
+		!request.cookies.get('NEXT_LOCALE')?.value ||
+		request.cookies.get('NEXT_LOCALE')?.value !== currentLocale
+	) {
+		const response = NextResponse.next()
+		return addLocaleCookie(response, currentLocale)
+	}
 
 	if (pathname.startsWith('/api/')) return NextResponse.next()
 
@@ -75,19 +87,17 @@ export async function middleware(request: NextRequest) {
 		pathname === '/' ||
 		(!pathname.match(new RegExp(`^/(${locales.join('|')})(/|$)`)) && !pathname.match(/\.\w+$/))
 	) {
-		const locale = getLocale(request)
-		const newPath = `/${locale}${pathname === '/' ? '' : pathname}`
+		const newPath = `/${currentLocale}${pathname === '/' ? '' : pathname}`
 		request.nextUrl.pathname = newPath
 		const response = NextResponse.redirect(request.nextUrl)
-		return addLocaleCookie(response, locale)
+		return addLocaleCookie(response, currentLocale)
 	}
 
 	// Check if the path is a protected route
 	if (protectedRoutes.some(route => pathname.includes(route))) {
 		if (!isAuthenticated) {
 			// Redirect to login if trying to access protected route while not authenticated
-			const locale = pathLocale || getLocale(request)
-			const loginUrl = new URL(`/${locale}/login`, request.url)
+			const loginUrl = new URL(`/${currentLocale}/login`, request.url)
 			loginUrl.searchParams.set('from', pathname)
 			return NextResponse.redirect(loginUrl)
 		}
@@ -97,8 +107,7 @@ export async function middleware(request: NextRequest) {
 	if (authRoutes.some(route => pathname.includes(route))) {
 		if (isAuthenticated) {
 			// Redirect to home if trying to access auth routes while authenticated
-			const locale = pathLocale || getLocale(request)
-			const homeUrl = new URL(`/${locale}/profile`, request.url)
+			const homeUrl = new URL(`/${currentLocale}/profile`, request.url)
 			return NextResponse.redirect(homeUrl)
 		}
 	}
