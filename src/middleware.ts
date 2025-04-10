@@ -71,16 +71,20 @@ export async function middleware(request: NextRequest) {
 	const currentLocale = pathLocale || getLocale(request)
 	const isAuthenticated = request.cookies.has(TOKEN.ACCESS_TOKEN)
 
+	// Create a response object that we'll modify
+	let response: NextResponse
+
 	// Handle API routes
 	if (pathname.startsWith('/api/')) {
-		return NextResponse.next()
+		response = NextResponse.next()
+		return addLocaleCookie(response, currentLocale)
 	}
 
 	// Handle root path
 	if (pathname === '/') {
 		const newPath = `/${currentLocale}`
 		request.nextUrl.pathname = newPath
-		const response = NextResponse.redirect(request.nextUrl)
+		response = NextResponse.redirect(request.nextUrl)
 		return addLocaleCookie(response, currentLocale)
 	}
 
@@ -88,7 +92,7 @@ export async function middleware(request: NextRequest) {
 	if (!pathname.match(new RegExp(`^/(${locales.join('|')})(/|$)`)) && !pathname.match(/\.\w+$/)) {
 		const newPath = `/${currentLocale}${pathname}`
 		request.nextUrl.pathname = newPath
-		const response = NextResponse.redirect(request.nextUrl)
+		response = NextResponse.redirect(request.nextUrl)
 		return addLocaleCookie(response, currentLocale)
 	}
 
@@ -101,7 +105,8 @@ export async function middleware(request: NextRequest) {
 	if (isProtectedRoute && !isAuthenticated) {
 		const loginUrl = new URL(`/${currentLocale}/login`, request.url)
 		loginUrl.searchParams.set('from', pathname)
-		return NextResponse.redirect(loginUrl)
+		response = NextResponse.redirect(loginUrl)
+		return addLocaleCookie(response, currentLocale)
 	}
 
 	// Handle auth routes
@@ -112,16 +117,19 @@ export async function middleware(request: NextRequest) {
 
 	if (isAuthRoute && isAuthenticated) {
 		const homeUrl = new URL(`/${currentLocale}/profile`, request.url)
-		return NextResponse.redirect(homeUrl)
+		response = NextResponse.redirect(homeUrl)
+		return addLocaleCookie(response, currentLocale)
 	}
 
 	// Apply intl middleware and set cookie
 	if (pathLocale) {
-		const res = await intlMiddleware(request)
-		return addLocaleCookie(res, pathLocale)
+		response = await intlMiddleware(request)
+		return addLocaleCookie(response, currentLocale)
 	}
 
-	return NextResponse.next()
+	// For all other cases, ensure we set the locale cookie
+	response = NextResponse.next()
+	return addLocaleCookie(response, currentLocale)
 }
 
 export const config = {
