@@ -143,6 +143,7 @@ export default function ProfilePage() {
 														month: 'long',
 														day: 'numeric'
 													})}
+													{" - "}
 													{new Date(subscription.currentPeriodEnd).toLocaleString(locale, {
 														year: 'numeric',
 														month: 'long',

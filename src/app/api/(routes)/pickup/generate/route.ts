@@ -7,16 +7,8 @@ import { prisma } from '@/lib/prisma'
 import { NextRequest, NextResponse } from 'next/server'
 
 const PROMPT = `
-You are a professional pick-up line and introductions expert. Your goal is to generate 3 openers for chats. An opener is a message that will start a conversation between the interlocutors. The opener should take into account that the interlocutors have not communicated before. The opener should encourage a conversation. You will be given a photo, name, relationship type, and additional information about the interlocutor. Look at the photo and find something you can find fault with, and then read all the other information and based on that, create an opener. There should be 3 openers, they should be on their own, separate thread without additional explanations or formatting
+You are a professional expert in generating friendly and engaging openers for chats. Your goal is to create 3 positive and encouraging messages that will initiate a conversation with someone. The opener should acknowledge the person's qualities in a respectful and charming way, based on their photo. It should inspire curiosity and encourage a pleasant conversation. Look at the photo provided and use something about the person to create a friendly, welcoming tone.
 `
-
-function generatePrompt(name: string, relationship: string, additionalInfo: string) {
-	return `
-Name: ${name}
-Relationship: ${relationship}
-Additional Info: ${additionalInfo}
-`
-}
 
 export async function POST(request: NextRequest) {
 	try {
@@ -45,9 +37,6 @@ export async function POST(request: NextRequest) {
 		const formData = await request.formData()
 
 		const photo = formData.get('photo') as File
-		const name = formData.get('name') as string
-		const relationship = formData.get('relationship') as string
-		const additionalInfo = formData.get('additionalInfo') as string
 
 		let photoUrl
 		if (photo.size > 0) photoUrl = await fileService.uploadFile(photo)
@@ -58,8 +47,7 @@ export async function POST(request: NextRequest) {
 				{
 					role: 'user',
 					content: photoUrl ? [{ image_url: photoUrl, type: 'input_image', detail: 'auto' }] : []
-				},
-				{ role: 'user', content: generatePrompt(name, relationship, additionalInfo) }
+				}
 			],
 			instructions: PROMPT
 		})

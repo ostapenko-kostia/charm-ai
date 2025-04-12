@@ -31,7 +31,10 @@ export async function POST(req: NextRequest) {
 
 		;(await cookies()).set(TOKEN.REFRESH_TOKEN, userData.refreshToken, {
 			expires: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
-			httpOnly: true
+			httpOnly: true,
+			secure: process.env.NODE_ENV === 'production',
+			sameSite: 'lax',
+			path: '/'
 		})
 
 		return NextResponse.json(

@@ -23,7 +23,8 @@ export async function POST(req: NextRequest) {
 			expires: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000), // 60 days
 			httpOnly: true,
 			secure: process.env.NODE_ENV === 'production',
-			sameSite: 'lax'
+			sameSite: 'lax',
+			path: '/'
 		})
 
 		return NextResponse.json(userData, { status: 200 })

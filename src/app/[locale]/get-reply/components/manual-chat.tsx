@@ -9,16 +9,25 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { InfinityIcon, LoaderIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { LoadingState } from '@/components/ui/loading-state'
 
 export function ManualChat() {
-	const { user } = useAuthStore()
+	const { user, isAuth } = useAuthStore()
 	const t = useTranslations('reply-by-text')
 	const commonT = useTranslations('common')
 	const [messages, setMessages] = useState<IMessage[]>([])
 	const [newMessage, setNewMessage] = useState('')
 	const [replies, setReplies] = useState<string[]>([])
 	const { mutateAsync: getReplyByText, isPending } = useGetReplyByText()
+	const router = useRouter()
+
+	useEffect(() => {
+		if (!isAuth) {
+			router.push('/login')
+		}
+	}, [isAuth])
 
 	const addMessage = () => {
 		if (!newMessage.trim()) return
@@ -43,14 +52,15 @@ export function ManualChat() {
 		setReplies([])
 	}
 
-	return !user ? (
-		<div className='flex items-center justify-center gap-2 mx-auto mt-5'>
-			<LoaderIcon className='animate-spin' />
-			{commonT('loading')}
-		</div>
-	) : (
+	if (!isAuth || !user) return <LoadingState />
+
+	return (
 		<div className='max-w-2xl mx-auto space-y-6'>
 			<div className='bg-white rounded-2xl shadow-xl p-6 min-h-[400px] flex flex-col'>
+				<div className='mb-6 p-4 bg-purple-50 rounded-xl border border-purple-100'>
+					<h3 className='text-sm font-medium text-purple-600 mb-2'>{t('instructions.title')}</h3>
+					<p className='text-gray-600 text-sm whitespace-pre-line'>{t('instructions.text')}</p>
+				</div>
 				<div className='flex-grow space-y-4 mb-6 overflow-y-auto max-h-[400px] pr-2'>
 					<AnimatePresence>
 						{messages.map((message, index) => (
@@ -84,7 +94,7 @@ export function ManualChat() {
 							className='pr-10'
 						/>
 					</div>
-					<div className='flex gap-2'>
+					<div className='flex gap-2 max-sm:flex-col'>
 						<Button
 							variant='outline'
 							onClick={addMessage}
@@ -102,15 +112,16 @@ export function ManualChat() {
 					</div>
 				</div>
 
-				<div className='flex justify-between items-center'>
+				<div className='flex justify-between items-center max-sm:flex-col max-sm:gap-2'>
 					<Button
 						variant='outline'
 						onClick={handleNewChat}
+						className='max-sm:w-full'
 					>
 						{t('new-chat')}
 					</Button>
 					<Button
-						className='bg-gradient-to-r from-purple-600 to-pink-600 text-white'
+						className='bg-gradient-to-r from-purple-600 to-pink-600 text-white max-sm:w-full'
 						onClick={handleGetReply}
 						disabled={messages.length === 0 || isPending}
 					>

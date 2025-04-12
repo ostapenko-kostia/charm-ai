@@ -1,237 +1,172 @@
 'use client'
 
+import { Container } from '@/components/layout/container'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
+import { FileInput } from '@/components/ui/file-input'
+import { LoadingState } from '@/components/ui/loading-state'
 import { useGeneratePickups } from '@/hooks/usePickups'
 import { useAuthStore } from '@/store/auth.store'
 import { motion } from 'framer-motion'
 import { InfinityIcon, LoaderIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 
-type FormValues = {
-	photo: FileList
-	name: string
-	relationship: string
-	additionalInfo: string
-}
-
 export default function FirstMessagePage() {
-	const { user } = useAuthStore()
+	const { user, isAuth } = useAuthStore()
+	const router = useRouter()
 	const t = useTranslations('first-message')
 	const commonT = useTranslations('common')
-	const [photoPreview, setPhotoPreview] = useState<string | null>(null)
 	const [generatedMessages, setGeneratedMessages] = useState<string[]>([])
 	const { mutateAsync: generateMessages, isPending } = useGeneratePickups()
 
-	const { register, handleSubmit } = useForm<FormValues>({
-		defaultValues: {
-			name: '',
-			relationship: '',
-			additionalInfo: ''
+	useEffect(() => {
+		if (!isAuth) {
+			router.push('/login')
 		}
-	})
+	}, [isAuth])
 
-	const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files?.[0]
-		if (file) {
-			const reader = new FileReader()
-			reader.onloadend = () => {
-				setPhotoPreview(reader.result as string)
-			}
-			reader.readAsDataURL(file)
-		}
-	}
+	const { handleSubmit, setValue } = useForm<{ photo: FileList }>()
 
-	return !user ? (
-		<div className='flex items-center justify-center gap-2 mx-auto mt-5'>
-			<LoaderIcon className='animate-spin' />
-			{commonT('loading')}
-		</div>
-	) : (
-		<motion.div
-			initial={{ opacity: 0 }}
-			animate={{ opacity: 1 }}
-			transition={{ duration: 0.5 }}
-			className='container mx-auto px-4 py-8'
-		>
-			<motion.h1
-				initial={{ y: -20, opacity: 0 }}
-				animate={{ y: 0, opacity: 1 }}
-				transition={{ delay: 0.2, duration: 0.5 }}
-				className='text-3xl font-bold mb-8'
-			>
-				{t('title')}
-			</motion.h1>
+	if (!isAuth || !user) return <LoadingState />
 
-			<div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
-				<motion.div
-					initial={{ x: -50, opacity: 0 }}
-					animate={{ x: 0, opacity: 1 }}
-					transition={{ delay: 0.3, duration: 0.5 }}
-				>
-					<Card>
-						<CardHeader>
-							<CardTitle>{t('enter-info.title')}</CardTitle>
-						</CardHeader>
-						<CardContent>
-							<form
-								onSubmit={handleSubmit(async data => {
-									if (!data.photo) {
-										toast.error('Please upload a photo')
-										return
-									}
-									const messages = (await generateMessages(data)).data
-									setGeneratedMessages(messages)
-								})}
-								className='space-y-4'
+	return (
+		<div className='min-h-screen bg-gradient-to-b from-white to-purple-50 py-12'>
+			<Container>
+				<div className='max-w-4xl mx-auto'>
+					<h1 className='text-3xl font-bold text-center mb-2 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600'>
+						{t('title')}
+					</h1>
+					<p className='text-gray-600 text-center mb-8'>{t('subtitle')}</p>
+
+					<div className='bg-white rounded-2xl shadow-xl p-6'>
+						<div className='mb-6 p-4 bg-purple-50 rounded-xl border border-purple-100'>
+							<h3 className='text-sm font-medium text-purple-600 mb-2'>
+								{t('instructions.title')}
+							</h3>
+							<p className='text-gray-600 text-sm whitespace-pre-line'>{t('instructions.text')}</p>
+						</div>
+						<div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
+							<motion.div
+								initial={{ x: -50, opacity: 0 }}
+								animate={{ x: 0, opacity: 1 }}
+								transition={{ delay: 0.3, duration: 0.5 }}
 							>
-								<div className='space-y-2'>
-									<Label htmlFor='photo'>{t('enter-info.fields.photo.title')}</Label>
-									<Input
-										id='photo'
-										type='file'
-										accept='image/*'
-										{...register('photo')}
-										onChange={handlePhotoChange}
-									/>
-									{photoPreview && (
-										<div className='mt-2'>
-											<Image
-												src={photoPreview}
-												alt='Preview'
-												width={100}
-												height={100}
-												className='rounded-lg'
+								<Card>
+									<CardHeader>
+										<CardTitle>{t('enter-info.title')}</CardTitle>
+									</CardHeader>
+									<CardContent>
+										<form
+											onSubmit={handleSubmit(async data => {
+												if (!data.photo) {
+													toast.error(t('photo-required-error'))
+													return
+												}
+												const messages = (await generateMessages(data)).data
+												setGeneratedMessages(messages)
+											})}
+											className='space-y-4'
+										>
+											<FileInput
+												accept='image/*'
+												onChange={files => setValue('photo', files!)}
 											/>
+
+											<Button
+												type='submit'
+												disabled={isPending}
+											>
+												{isPending ? t('enter-info.processing') : t('enter-info.button')}
+											</Button>
+										</form>
+										<div className='flex flex-col items-start mt-3 text-sm text-gray-500'>
+											<div className='flex items-center gap-1'>
+												<span className='text-amber-600'>
+													{user?.subscription?.plan === 'BASIC' ||
+													user?.subscription?.plan === 'PRO' ? (
+														user?.credits?.getPickup
+													) : (
+														<InfinityIcon className='w-4 h-4 text-amber-600' />
+													)}
+												</span>{' '}
+												{t('enter-info.credits-left')}
+											</div>
+											<div className='flex items-center gap-1'>
+												<span>{t('enter-info.credits-per-reply')}</span>
+												{(user?.subscription?.plan === 'BASIC' ||
+													user?.subscription?.plan === 'PRO') && (
+													<Link
+														href='/pricing'
+														className='text-blue-500'
+													>
+														{t('enter-info.upgrade-plan')}
+													</Link>
+												)}
+											</div>
 										</div>
-									)}
-								</div>
+									</CardContent>
+								</Card>
+							</motion.div>
 
-								<div className='space-y-2'>
-									<Label htmlFor='name'>{t('enter-info.fields.name.title')}</Label>
-									<Input
-										id='name'
-										placeholder={t('enter-info.fields.name.placeholder')}
-										required
-										{...register('name', { required: true })}
-									/>
-								</div>
-
-								<div className='space-y-2'>
-									<Label htmlFor='relationship'>{t('enter-info.fields.relationships.title')}</Label>
-									<Input
-										id='relationship'
-										placeholder={t('enter-info.fields.relationships.placeholder')}
-										required
-										{...register('relationship', { required: true })}
-									/>
-								</div>
-
-								<div className='space-y-2'>
-									<Label htmlFor='additionalInfo'>
-										{t('enter-info.fields.additional-information.title')}
-									</Label>
-									<Textarea
-										id='additionalInfo'
-										placeholder={t('enter-info.fields.additional-information.placeholder')}
-										required
-										{...register('additionalInfo', { required: true })}
-									/>
-								</div>
-
-								<Button
-									type='submit'
-									disabled={isPending}
-								>
-									{isPending ? t('enter-info.processing') : t('enter-info.button')}
-								</Button>
-							</form>
-							<div className='flex flex-col items-start mt-3 text-sm text-gray-500'>
-								<div className='flex items-center gap-1'>
-									<span className='text-amber-600'>
-										{user?.subscription?.plan === 'BASIC' || user?.subscription?.plan === 'PRO' ? (
-											user?.credits?.getPickup
+							<motion.div
+								initial={{ x: 50, opacity: 0 }}
+								animate={{ x: 0, opacity: 1 }}
+								transition={{ delay: 0.4, duration: 0.5 }}
+							>
+								<Card>
+									<CardHeader>
+										<CardTitle>{t('generated-messages.title')}</CardTitle>
+									</CardHeader>
+									<CardContent>
+										{isPending ? (
+											<motion.div
+												initial={{ scale: 0.8, opacity: 0 }}
+												animate={{ scale: 1, opacity: 1 }}
+												transition={{ duration: 0.3 }}
+												className='text-center py-4'
+											>
+												<motion.div
+													animate={{ rotate: 360 }}
+													transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+													className='inline-block w-6 h-6 border-2 border-primary border-t-transparent rounded-full'
+												/>
+											</motion.div>
+										) : generatedMessages.length > 0 ? (
+											<div className='space-y-4'>
+												{generatedMessages.map((message, index) => (
+													<motion.div
+														key={index}
+														initial={{ scale: 0.9, opacity: 0 }}
+														animate={{ scale: 1, opacity: 1 }}
+														transition={{ delay: index * 0.1, duration: 0.3 }}
+														className='p-4 bg-gray-100 rounded-lg dark:bg-gray-800'
+													>
+														{message}
+													</motion.div>
+												))}
+											</div>
 										) : (
-											<InfinityIcon className='w-4 h-4 text-amber-600' />
+											<motion.div
+												initial={{ opacity: 0 }}
+												animate={{ opacity: 1 }}
+												transition={{ duration: 0.3 }}
+												className='text-center py-4 text-gray-500'
+											>
+												{t('generated-messages.placeholder')}
+											</motion.div>
 										)}
-									</span>{' '}
-									{t('enter-info.credits-left')}
-								</div>
-								<div className='flex items-center gap-1'>
-									<span>{t('enter-info.credits-per-reply')}</span>
-									{(user?.subscription?.plan === 'BASIC' || user?.subscription?.plan === 'PRO') && (
-										<Link
-											href='/pricing'
-											className='text-blue-500'
-										>
-											{t('enter-info.upgrade-plan')}
-										</Link>
-									)}
-								</div>
-							</div>
-						</CardContent>
-					</Card>
-				</motion.div>
-
-				<motion.div
-					initial={{ x: 50, opacity: 0 }}
-					animate={{ x: 0, opacity: 1 }}
-					transition={{ delay: 0.4, duration: 0.5 }}
-				>
-					<Card>
-						<CardHeader>
-							<CardTitle>{t('generated-messages.title')}</CardTitle>
-						</CardHeader>
-						<CardContent>
-							{isPending ? (
-								<motion.div
-									initial={{ scale: 0.8, opacity: 0 }}
-									animate={{ scale: 1, opacity: 1 }}
-									transition={{ duration: 0.3 }}
-									className='text-center py-4'
-								>
-									<motion.div
-										animate={{ rotate: 360 }}
-										transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-										className='inline-block w-6 h-6 border-2 border-primary border-t-transparent rounded-full'
-									/>
-								</motion.div>
-							) : generatedMessages.length > 0 ? (
-								<div className='space-y-4'>
-									{generatedMessages.map((message, index) => (
-										<motion.div
-											key={index}
-											initial={{ scale: 0.9, opacity: 0 }}
-											animate={{ scale: 1, opacity: 1 }}
-											transition={{ delay: index * 0.1, duration: 0.3 }}
-											className='p-4 bg-gray-100 rounded-lg dark:bg-gray-800'
-										>
-											{message}
-										</motion.div>
-									))}
-								</div>
-							) : (
-								<motion.div
-									initial={{ opacity: 0 }}
-									animate={{ opacity: 1 }}
-									transition={{ duration: 0.3 }}
-									className='text-center py-4 text-gray-500'
-								>
-									{t('generated-messages.placeholder')}
-								</motion.div>
-							)}
-						</CardContent>
-					</Card>
-				</motion.div>
-			</div>
-		</motion.div>
+									</CardContent>
+								</Card>
+							</motion.div>
+						</div>
+					</div>
+				</div>
+			</Container>
+		</div>
 	)
 }

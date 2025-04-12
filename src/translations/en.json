@@ -2,6 +2,10 @@
 	"common": {
 		"loading": "Loading..."
 	},
+	"file-input": {
+		"title": { "highlighted": "Click to upload", "normal": "or drag and drop files" },
+		"subtitle": "Only images are supported"
+	},
 	"header": {
 		"menu-title": "Menu",
 		"links": {
@@ -171,6 +175,10 @@
 	"reply-by-text": {
 		"title": "Charm AI Chat",
 		"subtitle": "Manually enter the chat history and Charm AI will provide reply suggestions",
+		"instructions": {
+			"title": "How to use:",
+			"text": "1. Enter the conversation messages\n2. Click 'Their Message' for messages from the other person\n3. Click 'My Message' for your messages\n4. Click 'Get Reply' to generate AI suggestions"
+		},
 		"placeholder": "Enter message...",
 		"their": "Their Message",
 		"my": "My Message",
@@ -188,6 +196,10 @@
 	"reply-by-screenshot": {
 		"title": "Charm GPT Reply Generator",
 		"subtitle": "Upload the chat screenshot to be replied, and Charm GPT will provide a friendly AI reply",
+		"instructions": {
+			"title": "How to use:",
+			"text": "1. Take a screenshot of your chat conversation\n2. Click 'Upload Chat Screenshot' to select the image\n3. Click 'Get Charm Reply' to generate AI suggestions"
+		},
 		"button": "Upload Chat Screenshot",
 		"new-upload": "New Upload",
 		"get-charm-reply": "Get Charm Reply",
@@ -216,25 +228,14 @@
 	},
 	"first-message": {
 		"title": "First Message Generator",
+		"subtitle": "Generate a first message for your crush",
+		"photo-required-error": "Please upload a photo",
+		"instructions": {
+			"title": "How to use:",
+			"text": "1. Upload a photo of the person\n2. Click 'Generate Messages' to get AI suggestions"
+		},
 		"enter-info": {
 			"title": "Enter Information",
-			"fields": {
-				"photo": {
-					"title": "Photo"
-				},
-				"name": {
-					"title": "Name",
-					"placeholder": "Enter name..."
-				},
-				"relationships": {
-					"title": "Relationships",
-					"placeholder": "e.g., collegues, friends, acquaintances"
-				},
-				"additional-information": {
-					"title": "Additional Information",
-					"placeholder": "Additional information about the person or situation"
-				}
-			},
 			"button": "Generate Messages",
 			"credits-left": "credits left",
 			"credits-per-reply": "1 credit = 3 messages",

@@ -31,18 +31,40 @@ class TokenService {
 
 	validateRefresh(refreshToken: string) {
 		try {
-			return jwt.verify(refreshToken, process.env.REFRESH_SECRET!)
+			const decoded = jwt.verify(refreshToken, process.env.REFRESH_SECRET!)
+			if (!decoded || typeof decoded !== 'object') {
+				console.error('Invalid refresh token format')
+				return null
+			}
+			return decoded
 		} catch (error) {
-			console.log(error)
+			if (error instanceof jwt.TokenExpiredError) {
+				console.error('Refresh token expired')
+			} else if (error instanceof jwt.JsonWebTokenError) {
+				console.error('Invalid refresh token')
+			} else {
+				console.error('Refresh token validation error:', error)
+			}
 			return null
 		}
 	}
 
 	validateAccess(accessToken: string) {
 		try {
-			return jwt.verify(accessToken, process.env.ACCESS_SECRET!)
+			const decoded = jwt.verify(accessToken, process.env.ACCESS_SECRET!)
+			if (!decoded || typeof decoded !== 'object') {
+				console.error('Invalid access token format')
+				return null
+			}
+			return decoded
 		} catch (error) {
-			console.log(error)
+			if (error instanceof jwt.TokenExpiredError) {
+				console.error('Access token expired')
+			} else if (error instanceof jwt.JsonWebTokenError) {
+				console.error('Invalid access token')
+			} else {
+				console.error('Access token validation error:', error)
+			}
 			return null
 		}
 	}

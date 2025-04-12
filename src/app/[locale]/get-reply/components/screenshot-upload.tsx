@@ -1,22 +1,31 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { LoadingState } from '@/components/ui/loading-state'
 import { useGetReplyByScreenshot } from '@/hooks/useReply'
 import { useAuthStore } from '@/store/auth.store'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Image, InfinityIcon, LoaderIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 export function ScreenshotUpload() {
-	const { user } = useAuthStore()
+	const { user, isAuth } = useAuthStore()
+	const router = useRouter()
 	const t = useTranslations('reply-by-screenshot')
 	const commonT = useTranslations('common')
 	const [selectedImage, setSelectedImage] = useState<File | null>(null)
 	const [previewUrl, setPreviewUrl] = useState<string | null>(null)
 	const [replies, setReplies] = useState<string[]>([])
 	const { mutateAsync: getReplyByScreenshot, isPending } = useGetReplyByScreenshot()
+
+	useEffect(() => {
+		if (!isAuth) {
+			router.push('/login')
+		}
+	}, [isAuth])
 
 	const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const file = event.target.files?.[0]
@@ -41,14 +50,15 @@ export function ScreenshotUpload() {
 		setReplies([])
 	}
 
-	return !user ? (
-		<div className='flex items-center justify-center gap-2 mx-auto mt-5'>
-			<LoaderIcon className='animate-spin' />
-			{commonT('loading')}
-		</div>
-	) : (
+	if (!isAuth || !user) return <LoadingState />
+
+	return (
 		<div className='max-w-2xl mx-auto space-y-6'>
 			<div className='bg-white rounded-2xl shadow-xl p-6 min-h-[400px] flex flex-col'>
+				<div className='mb-6 p-4 bg-purple-50 rounded-xl border border-purple-100'>
+					<h3 className='text-sm font-medium text-purple-600 mb-2'>{t('instructions.title')}</h3>
+					<p className='text-gray-600 text-sm whitespace-pre-line'>{t('instructions.text')}</p>
+				</div>
 				<div className='flex-grow flex flex-col items-center justify-center mb-6'>
 					{previewUrl ? (
 						<img
@@ -86,15 +96,16 @@ export function ScreenshotUpload() {
 					</label>
 				</div>
 
-				<div className='flex justify-between items-center'>
+				<div className='flex justify-between items-center max-sm:flex-col max-sm:gap-2'>
 					<Button
 						variant='outline'
 						onClick={handleNewUpload}
+						className='max-sm:w-full'
 					>
 						{t('new-upload')}
 					</Button>
 					<Button
-						className='bg-gradient-to-r from-purple-600 to-pink-600 text-white'
+						className='bg-gradient-to-r from-purple-600 to-pink-600 text-white max-sm:w-full'
 						onClick={handleGetReply}
 						disabled={!selectedImage || isPending}
 					>

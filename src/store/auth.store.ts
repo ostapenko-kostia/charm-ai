@@ -1,9 +1,10 @@
 import { IAuthState } from '@/typing/interface'
 import { create } from 'zustand'
+import { getAccessToken } from '@/services/auth/auth.helper'
 
 export const useAuthStore = create<IAuthState>(set => ({
-	isAuth: false,
+	isAuth: !!getAccessToken(),
 	user: null,
-	setIsAuth: (isAuth) => set({ isAuth }),
-	setUser: (user) => set({ user })
+	setIsAuth: isAuth => set({ isAuth }),
+	setUser: user => set({ user })
 }))
