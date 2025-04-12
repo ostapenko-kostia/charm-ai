@@ -72,6 +72,11 @@ export async function POST(request: NextRequest) {
 
 		const photo = formData.get('photo') as File
 
+		// Add file size validation (5MB = 5 * 1024 * 1024 bytes)
+		if (photo.size > 5 * 1024 * 1024) {
+			throw new ApiError('File too large', 400, 'errors.server.file-too-large')
+		}
+
 		let photoUrl
 		if (photo.size > 0) photoUrl = await fileService.uploadFile(photo)
 

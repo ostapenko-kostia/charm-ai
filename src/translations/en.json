@@ -264,7 +264,8 @@
 			"invalid-period": "Invalid period end date",
 			"user-not-found": "User not found",
 			"subscription-not-found": "Subscription not found",
-			"invalid-request": "Invalid request"
+			"invalid-request": "Invalid request",
+			"file-too-large": "File size must be less than 5MB"
 		},
 		"validation": {
 			"email-required": "Email is required",

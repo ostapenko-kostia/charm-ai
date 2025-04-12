@@ -264,7 +264,8 @@
 			"invalid-period": "Невірна дата закінчення періоду",
 			"user-not-found": "Користувача не знайдено",
 			"subscription-not-found": "Підписку не знайдено",
-			"invalid-request": "Невірний запит"
+			"invalid-request": "Невірний запит",
+			"file-too-large": "Розмір файлу має бути менше 5МБ"
 		},
 		"validation": {
 			"email-required": "Електронна пошта обов'язкова",

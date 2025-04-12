@@ -10,12 +10,13 @@ import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { toast } from 'react-hot-toast'
 
 export function ScreenshotUpload() {
 	const { user, isAuth } = useAuthStore()
 	const router = useRouter()
 	const t = useTranslations('reply-by-screenshot')
-	const commonT = useTranslations('common')
+	const generalT = useTranslations()
 	const [selectedImage, setSelectedImage] = useState<File | null>(null)
 	const [previewUrl, setPreviewUrl] = useState<string | null>(null)
 	const [replies, setReplies] = useState<string[]>([])
@@ -27,13 +28,18 @@ export function ScreenshotUpload() {
 		}
 	}, [isAuth])
 
-	const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-		const file = event.target.files?.[0]
+	const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0]
 		if (!file) return
 
+		// Check file size (5MB = 5 * 1024 * 1024 bytes)
+		if (file.size > 5 * 1024 * 1024) {
+			toast.error(generalT('errors.server.file-too-large'))
+			return
+		}
+
 		setSelectedImage(file)
-		const url = URL.createObjectURL(file)
-		setPreviewUrl(url)
+		setPreviewUrl(URL.createObjectURL(file))
 	}
 
 	const handleGetReply = async () => {

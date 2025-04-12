@@ -75,6 +75,11 @@ export async function POST(req: NextRequest) {
 
 		if (!image) throw new ApiError('No image provided', 400, 'errors.server.no-image')
 
+		// Add file size validation (5MB = 5 * 1024 * 1024 bytes)
+		if (image.size > 5 * 1024 * 1024) {
+			throw new ApiError('File too large', 400, 'errors.server.file-too-large')
+		}
+
 		const image_url = await fileService.uploadFile(image)
 
 		const response = await openai.responses.create({

@@ -5,6 +5,7 @@ import { ChevronDown, ChevronUp, UploadIcon, XIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { ChangeEvent, useRef, useState } from 'react'
+import { toast } from 'react-hot-toast'
 
 interface FileInputProps {
 	onChange: (files: FileList | null) => void
@@ -16,6 +17,7 @@ interface FileInputProps {
 
 export function FileInput({ onChange, multiple, accept, label, className }: FileInputProps) {
 	const t = useTranslations('file-input')
+	const generalT = useTranslations()
 	const [dragActive, setDragActive] = useState(false)
 	const [selectedFiles, setSelectedFiles] = useState<File[]>([])
 	const [previewUrls, setPreviewUrls] = useState<string[]>([])
@@ -49,6 +51,12 @@ export function FileInput({ onChange, multiple, accept, label, className }: File
 	}
 
 	const handleFiles = async (files: FileList) => {
+		// Check file size (5MB = 5 * 1024 * 1024 bytes)
+		if (files[0].size > 5 * 1024 * 1024) {
+			toast.error(generalT('errors.server.file-too-large'))
+			return
+		}
+
 		if (multiple) {
 			const newFiles = Array.from(files)
 			setSelectedFiles(newFiles)
