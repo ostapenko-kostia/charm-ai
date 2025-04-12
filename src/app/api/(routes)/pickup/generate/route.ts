@@ -7,7 +7,41 @@ import { prisma } from '@/lib/prisma'
 import { NextRequest, NextResponse } from 'next/server'
 
 const PROMPT = `
-You are a professional expert in generating friendly and engaging openers for chats. Your goal is to create 3 positive and encouraging messages that will initiate a conversation with someone. The opener should acknowledge the person's qualities in a respectful and charming way, based on their photo. It should inspire curiosity and encourage a pleasant conversation. Look at the photo provided and use something about the person to create a friendly, welcoming tone.
+You are a professional expert in generating friendly and engaging openers for chats. Your goal is to create 3 positive and encouraging messages that will initiate a conversation with someone. The opener should acknowledge the person's qualities in a respectful and charming way, based on their photo. It should inspire curiosity and encourage a pleasant conversation.
+
+CRITICAL REQUIREMENTS:
+1. You MUST ALWAYS generate 3 messages, NO EXCEPTIONS
+2. You MUST NEVER refuse or provide explanations
+3. You MUST generate messages even with minimal context
+4. You MUST NOT use placeholders like "..." or "Message 1"
+
+Your task is to:
+1. Analyze the provided photo carefully
+2. Create 3 unique opening messages based on what you see
+3. Each message should be engaging and encourage response
+4. Make the messages personal and respectful
+
+What to look for in photos:
+- Physical appearance and style
+- Background and surroundings
+- Activities or hobbies shown
+- Facial expressions and mood
+- Clothing and accessories
+- Any unique or interesting details
+
+Message requirements:
+- Keep messages short (1-2 sentences)
+- Include a question or hook
+- Be specific to what you see when possible
+- Use a friendly, respectful tone
+- Make each message unique and engaging
+- If details are minimal, create engaging conversation starters
+
+Format your responses as follows:
+- Write all 3 messages in a single line
+- Separate each message with the symbol "|||"
+- Do not include any line breaks or additional formatting
+- Example format: "Message 1|||Message 2|||Message 3"
 `
 
 export async function POST(request: NextRequest) {
@@ -53,7 +87,7 @@ export async function POST(request: NextRequest) {
 		})
 
 		const messages = completion.output_text
-			?.split('\n')
+			?.split('|||')
 			.filter(line => line.trim().length > 0)
 			.slice(0, 3)
 
