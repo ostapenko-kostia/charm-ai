@@ -13,26 +13,48 @@ type StripeInvoice = Stripe.Invoice & {
 	subscription: string
 }
 
+type StripeCustomer = Stripe.Customer & {
+	metadata: {
+		userId: string
+	}
+}
+
 const PLAN_PRICE_IDS = {
-	MONTHLY_PRO: process.env.STRIPE_MONTHLY_PRO_PRICE_ID!,
-	YEARLY_PRO: process.env.STRIPE_YEARLY_PRO_PRICE_ID!,
-	MONTHLY_PREMIUM: process.env.STRIPE_MONTHLY_PREMIUM_PRICE_ID!,
-	YEARLY_PREMIUM: process.env.STRIPE_YEARLY_PREMIUM_PRICE_ID!
+	MONTHLY_PRO: process.env.NEXT_PUBLIC_STRIPE_MONTHLY_PRO_PRICE_ID!,
+	YEARLY_PRO: process.env.NEXT_PUBLIC_STRIPE_YEARLY_PRO_PRICE_ID!,
+	MONTHLY_PREMIUM: process.env.NEXT_PUBLIC_STRIPE_MONTHLY_PREMIUM_PRICE_ID!,
+	YEARLY_PREMIUM: process.env.NEXT_PUBLIC_STRIPE_YEARLY_PREMIUM_PRICE_ID!
 }
 
 const getPlanType = (priceId: string): PLAN => {
-	if (priceId === PLAN_PRICE_IDS.MONTHLY_PRO || priceId === PLAN_PRICE_IDS.YEARLY_PRO) return 'PRO'
-	if (priceId === PLAN_PRICE_IDS.MONTHLY_PREMIUM || priceId === PLAN_PRICE_IDS.YEARLY_PREMIUM)
+	console.log('🔍 Determining plan type for priceId:', priceId)
+	console.log('Available price IDs:', PLAN_PRICE_IDS)
+
+	if (priceId === PLAN_PRICE_IDS.MONTHLY_PRO || priceId === PLAN_PRICE_IDS.YEARLY_PRO) {
+		console.log('✅ Plan type: PRO')
+		return 'PRO'
+	}
+	if (priceId === PLAN_PRICE_IDS.MONTHLY_PREMIUM || priceId === PLAN_PRICE_IDS.YEARLY_PREMIUM) {
+		console.log('✅ Plan type: PREMIUM')
 		return 'PREMIUM'
+	}
+	console.log('⚠️ Defaulting to BASIC plan')
 	return 'BASIC'
 }
 
 const getPlanPeriod = (priceId: string): string => {
-	if (priceId === PLAN_PRICE_IDS.MONTHLY_PRO || priceId === PLAN_PRICE_IDS.MONTHLY_PREMIUM)
+	console.log('🔍 Determining plan period for priceId:', priceId)
+
+	if (priceId === PLAN_PRICE_IDS.MONTHLY_PRO || priceId === PLAN_PRICE_IDS.MONTHLY_PREMIUM) {
+		console.log('✅ Plan period: monthly')
 		return 'monthly'
-	if (priceId === PLAN_PRICE_IDS.YEARLY_PRO || priceId === PLAN_PRICE_IDS.YEARLY_PREMIUM)
+	}
+	if (priceId === PLAN_PRICE_IDS.YEARLY_PRO || priceId === PLAN_PRICE_IDS.YEARLY_PREMIUM) {
+		console.log('✅ Plan period: yearly')
 		return 'yearly'
-	return 'monthly' // default to monthly
+	}
+	console.log('⚠️ Defaulting to monthly period')
+	return 'monthly'
 }
 
 const getPlanStatus = (status: string): PLAN_STATUS => {
@@ -50,6 +72,94 @@ const getPlanStatus = (status: string): PLAN_STATUS => {
 	}
 }
 
+const getCustomerUserId = async (customerId: string): Promise<string | null> => {
+	try {
+		const customer = await stripe.customers.retrieve(customerId)
+		if (customer.deleted) return null
+		return (customer as unknown as StripeCustomer).metadata.userId
+	} catch (error) {
+		console.error('Error retrieving customer:', error)
+		return null
+	}
+}
+
+const handleSubscriptionUpdate = async (
+	subscription: StripeSubscription,
+	userId: string,
+	customerId: string
+) => {
+	const priceId = subscription.items.data[0].price.id
+	console.log('📊 Subscription details:', {
+		priceId,
+		subscriptionId: subscription.id,
+		status: subscription.status,
+		items: subscription.items.data
+	})
+
+	const planType = getPlanType(priceId)
+	const planPeriod = getPlanPeriod(priceId)
+	const planStatus = getPlanStatus(subscription.status)
+	const periodEnd = subscription.current_period_end
+
+	// Validate and convert the period end timestamp
+	const periodEndDate = periodEnd ? new Date(periodEnd * 1000) : new Date()
+	if (isNaN(periodEndDate.getTime())) {
+		throw new Error('Invalid period end date')
+	}
+
+	console.log('📝 Updating subscription with:', {
+		planType,
+		planPeriod,
+		planStatus,
+		periodEndDate
+	})
+
+	// Update user's subscription in database
+	await prisma.subscription.upsert({
+		where: { userId },
+		update: {
+			plan: planType,
+			period: planPeriod,
+			status: planStatus,
+			startDate: new Date(subscription.start_date * 1000),
+			endDate: periodEndDate,
+			currentPeriodEnd: periodEndDate,
+			stripePriceId: priceId,
+			stripeSubscriptionId: subscription.id,
+			stripeCustomerId: customerId,
+			lastPaymentAt: new Date(),
+			nextPaymentAt: periodEndDate
+		},
+		create: {
+			userId,
+			stripeSubscriptionId: subscription.id,
+			stripeCustomerId: customerId,
+			stripePriceId: priceId,
+			plan: planType,
+			period: planPeriod,
+			status: planStatus,
+			startDate: new Date(subscription.start_date * 1000),
+			endDate: periodEndDate,
+			currentPeriodEnd: periodEndDate,
+			lastPaymentAt: new Date(),
+			nextPaymentAt: periodEndDate
+		}
+	})
+
+	return { planType, planPeriod, planStatus, periodEndDate }
+}
+
+const handleSubscriptionCancellation = async (subscriptionId: string) => {
+	await prisma.subscription.update({
+		where: { stripeSubscriptionId: subscriptionId },
+		data: {
+			status: 'CANCELED',
+			endDate: new Date(),
+			currentPeriodEnd: new Date()
+		}
+	})
+}
+
 export async function POST(req: NextRequest) {
 	const rawBody = await req.text()
 	const sig = (await headers()).get('stripe-signature')!
@@ -63,96 +173,50 @@ export async function POST(req: NextRequest) {
 		return new Response(`Webhook Error: ${err.message}`, { status: 400 })
 	}
 
-	console.log('🔁 Body:', event.data.object)
+	console.log('🔁 Processing event:', event.type)
 
 	try {
 		switch (event.type) {
 			case 'invoice.payment_succeeded': {
 				const invoice = event.data.object as StripeInvoice
-				const subscriptionId = invoice.parent?.subscription_details?.subscription as string
+				const subscriptionId = invoice.subscription as string
 				const customerId = invoice.customer as string
 
+				// Get user ID from customer metadata
+				const userId = await getCustomerUserId(customerId)
+				if (!userId) {
+					console.log('⚠️ No user ID found in customer metadata')
+					return NextResponse.json({ received: true }, { status: 200 })
+				}
+
+				// Get user from database
 				const user = await prisma.user.findUnique({
-					where: {
-						email: invoice.customer_email as string
-					}
+					where: { id: userId }
 				})
 
 				if (!user) {
-					console.log('⚠️ No user found in invoice')
+					console.log('⚠️ No user found with ID:', userId)
 					return NextResponse.json({ received: true }, { status: 200 })
 				}
 
-				if (!subscriptionId) {
-					console.log('⚠️ No subscription ID found in invoice')
-					return NextResponse.json({ received: true }, { status: 200 })
-				}
-
-				// Get the subscription to check the plan
+				// Get subscription details
 				const subscription = (await stripe.subscriptions.retrieve(
 					subscriptionId
 				)) as unknown as StripeSubscription
-				const priceId = subscription.items.data[0].price.id
-				const planType = getPlanType(priceId)
-				const planPeriod = getPlanPeriod(priceId)
-				const periodEnd = subscription.current_period_end
 
-				// Validate and convert the period end timestamp
-				const periodEndDate = periodEnd ? new Date(periodEnd * 1000) : new Date()
-				if (isNaN(periodEndDate.getTime())) {
-					console.error('❌ Invalid period end date:', periodEnd)
-					return NextResponse.json({ error: 'Invalid period end date' }, { status: 400 })
-				}
-
-				// Check for existing active subscriptions and cancel them if different
-				const existingSubscription = await prisma.subscription.findUnique({
-					where: { userId: user.id }
-				})
-
-				if (existingSubscription && existingSubscription.stripeSubscriptionId !== subscriptionId) {
-					try {
-						// Cancel the old subscription in Stripe
-						await stripe.subscriptions.cancel(existingSubscription.stripeSubscriptionId)
-						console.log('✅ Canceled old subscription:', existingSubscription.stripeSubscriptionId)
-					} catch (err) {
-						console.error('❌ Failed to cancel old subscription:', err)
-					}
-				}
-
-				// Update user's subscription in database
-				await prisma.subscription.upsert({
-					where: { userId: user.id },
-					update: {
-						plan: planType,
-						period: planPeriod,
-						status: 'ACTIVE',
-						lastPaymentAt: new Date(),
-						nextPaymentAt: periodEndDate,
-						endDate: periodEndDate,
-						currentPeriodEnd: periodEndDate,
-						stripePriceId: priceId,
-						stripeSubscriptionId: subscriptionId
-					},
-					create: {
-						userId: user.id,
-						stripeSubscriptionId: subscriptionId,
-						stripeCustomerId: customerId,
-						stripePriceId: priceId,
-						plan: planType,
-						period: planPeriod,
-						status: 'ACTIVE',
-						startDate: new Date(),
-						lastPaymentAt: new Date(),
-						nextPaymentAt: periodEndDate,
-						endDate: periodEndDate,
-						currentPeriodEnd: periodEndDate
-					}
-				})
+				// Update subscription in database
+				const { planType, planPeriod, planStatus, periodEndDate } = await handleSubscriptionUpdate(
+					subscription,
+					userId,
+					customerId
+				)
 
 				console.log('✅ Payment succeeded and subscription updated:', {
+					userId,
 					customerId,
 					planType,
 					planPeriod,
+					planStatus,
 					subscriptionId,
 					periodEndDate
 				})
@@ -162,81 +226,37 @@ export async function POST(req: NextRequest) {
 			case 'customer.subscription.created': {
 				const subscription = event.data.object as StripeSubscription
 				const customerId = subscription.customer as string
-				const priceId = subscription.items.data[0].price.id
-				const planType = getPlanType(priceId)
-				const planPeriod = getPlanPeriod(priceId)
-				const periodEnd = subscription.current_period_end
 
-				// Find the user by their Stripe customer ID
-				const user = await prisma.user.findFirst({
-					where: {
-						subscription: {
-							stripeCustomerId: customerId
-						}
-					}
-				})
-
-				if (!user) {
-					console.log('⚠️ No user found for customer:', customerId)
+				// Get user ID from customer metadata
+				const userId = await getCustomerUserId(customerId)
+				if (!userId) {
+					console.log('⚠️ No user ID found in customer metadata')
 					return NextResponse.json({ received: true }, { status: 200 })
 				}
 
-				// Check for existing active subscriptions and cancel them
-				const existingSubscription = await prisma.subscription.findUnique({
-					where: { userId: user.id }
+				// Get user from database
+				const user = await prisma.user.findUnique({
+					where: { id: userId }
 				})
 
-				if (existingSubscription && existingSubscription.stripeSubscriptionId !== subscription.id) {
-					try {
-						// Cancel the old subscription in Stripe
-						await stripe.subscriptions.cancel(existingSubscription.stripeSubscriptionId)
-						console.log('✅ Canceled old subscription:', existingSubscription.stripeSubscriptionId)
-					} catch (err) {
-						console.error('❌ Failed to cancel old subscription:', err)
-					}
+				if (!user) {
+					console.log('⚠️ No user found with ID:', userId)
+					return NextResponse.json({ received: true }, { status: 200 })
 				}
 
-				// Validate and convert the period end timestamp
-				const periodEndDate = periodEnd ? new Date(periodEnd * 1000) : new Date()
-				if (isNaN(periodEndDate.getTime())) {
-					console.error('❌ Invalid period end date:', periodEnd)
-					return NextResponse.json({ error: 'Invalid period end date' }, { status: 400 })
-				}
-
-				// Update user's subscription in database
-				await prisma.subscription.upsert({
-					where: { userId: user.id },
-					update: {
-						plan: planType,
-						period: planPeriod,
-						status: 'ACTIVE',
-						startDate: new Date(),
-						endDate: periodEndDate,
-						currentPeriodEnd: periodEndDate,
-						stripePriceId: priceId,
-						stripeSubscriptionId: subscription.id
-					},
-					create: {
-						userId: user.id,
-						stripeSubscriptionId: subscription.id,
-						stripeCustomerId: customerId,
-						stripePriceId: priceId,
-						plan: planType,
-						period: planPeriod,
-						status: 'ACTIVE',
-						startDate: new Date(),
-						endDate: periodEndDate,
-						currentPeriodEnd: periodEndDate,
-						lastPaymentAt: new Date(subscription.latest_invoice?.toString()!) ?? new Date(),
-						nextPaymentAt: new Date(subscription.current_period_end.toString()!) ?? new Date()
-					}
-				})
+				// Update subscription in database
+				const { planType, planPeriod, planStatus, periodEndDate } = await handleSubscriptionUpdate(
+					subscription,
+					userId,
+					customerId
+				)
 
 				console.log('📦 Subscription created:', {
-					userId: user.id,
+					userId,
 					customerId,
 					planType,
 					planPeriod,
+					planStatus,
 					subscriptionId: subscription.id,
 					periodEndDate
 				})
@@ -246,53 +266,38 @@ export async function POST(req: NextRequest) {
 			case 'customer.subscription.updated': {
 				const subscription = event.data.object as StripeSubscription
 				const customerId = subscription.customer as string
-				const priceId = subscription.items.data[0].price.id
-				const planType = getPlanType(priceId)
-				const planPeriod = getPlanPeriod(priceId)
-				const planStatus = getPlanStatus(subscription.status)
-				const periodEnd = subscription.current_period_end
 
-				// Validate and convert the period end timestamp
-				const periodEndDate = periodEnd ? new Date(periodEnd * 1000) : new Date()
-				if (isNaN(periodEndDate.getTime())) {
-					console.error('❌ Invalid period end date:', periodEnd)
-					return NextResponse.json({ error: 'Invalid period end date' }, { status: 400 })
+				// Get user ID from customer metadata
+				const userId = await getCustomerUserId(customerId)
+				if (!userId) {
+					console.log('⚠️ No user ID found in customer metadata')
+					return NextResponse.json({ received: true }, { status: 200 })
 				}
 
-				// Update user's subscription in database
-				await prisma.subscription.upsert({
-					where: { stripeSubscriptionId: subscription.id },
-					update: {
-						plan: planType,
-						period: planPeriod,
-						status: planStatus,
-						endDate: periodEndDate,
-						currentPeriodEnd: periodEndDate,
-						stripeSubscriptionId: subscription.id,
-						stripePriceId: priceId
-					},
-					create: {
-						userId: customerId,
-						stripeSubscriptionId: subscription.id,
-						stripeCustomerId: customerId,
-						stripePriceId: priceId,
-						plan: planType,
-						period: planPeriod,
-						status: planStatus,
-						startDate: new Date(),
-						endDate: periodEndDate,
-						currentPeriodEnd: periodEndDate,
-						lastPaymentAt: new Date(subscription.latest_invoice?.toString()!) ?? new Date(),
-						nextPaymentAt: new Date(subscription.current_period_end.toString()!) ?? new Date()
-					}
+				// Get user from database
+				const user = await prisma.user.findUnique({
+					where: { id: userId }
 				})
 
+				if (!user) {
+					console.log('⚠️ No user found with ID:', userId)
+					return NextResponse.json({ received: true }, { status: 200 })
+				}
+
+				// Update subscription in database
+				const { planType, planPeriod, planStatus, periodEndDate } = await handleSubscriptionUpdate(
+					subscription,
+					userId,
+					customerId
+				)
+
 				console.log('🔁 Subscription updated:', {
+					userId,
 					customerId,
 					planType,
 					planPeriod,
+					planStatus,
 					subscriptionId: subscription.id,
-					status: subscription.status,
 					periodEndDate
 				})
 				break
@@ -300,28 +305,24 @@ export async function POST(req: NextRequest) {
 
 			case 'customer.subscription.deleted': {
 				const subscription = event.data.object as StripeSubscription
-				const customerId = subscription.customer as string
+				const subscriptionId = subscription.id
 
+				// Get subscription from database
 				const subscriptionFromDb = await prisma.subscription.findUnique({
-					where: { stripeSubscriptionId: subscription.id }
+					where: { stripeSubscriptionId: subscriptionId }
 				})
 
 				if (!subscriptionFromDb) {
-					console.log('⚠️ No subscription found in database:', subscription.id)
+					console.log('⚠️ No subscription found in database:', subscriptionId)
 					return NextResponse.json({ received: true }, { status: 200 })
 				}
-				await prisma.subscription.update({
-					where: { stripeSubscriptionId: subscription.id },
-					data: {
-						status: 'CANCELED',
-						endDate: new Date(),
-						currentPeriodEnd: new Date()
-					}
-				})
+
+				// Handle subscription cancellation
+				await handleSubscriptionCancellation(subscriptionId)
 
 				console.log('❌ Subscription deleted:', {
-					customerId,
-					subscriptionId: subscription.id
+					subscriptionId,
+					userId: subscriptionFromDb.userId
 				})
 				break
 			}

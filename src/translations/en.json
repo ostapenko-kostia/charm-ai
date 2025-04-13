@@ -62,6 +62,7 @@
 		"title": "Choose Your Plan",
 		"subtitle": "Select the perfect plan for your dating journey",
 		"month": "month",
+		"current": "Current Plan",
 		"year": "year",
 		"popular": "Most Popular",
 		"periods": {
@@ -159,7 +160,7 @@
 			"statuses": {
 				"active": "ACTIVE",
 				"inactive": "INACTIVE",
-				"cancelled": "CANCELED",
+				"canceled": "CANCELED",
 				"past-due": "PAST DUE",
 				"unpaid": "UNPAID"
 			},
