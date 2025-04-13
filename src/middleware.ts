@@ -5,16 +5,7 @@ import { defaultLocale, locales } from './lib/i18n'
 import { TOKEN } from './typing/enums'
 
 // Pages that require authentication
-const protectedRoutes = [
-	'/profile',
-	'/get-reply/text',
-	'/get-reply/screenshot',
-	'/first-message',
-	'/get-advice'
-]
-
-// Pages that should redirect to home if user is authenticated
-const authRoutes = ['/login', '/signup']
+const protectedRoutes = ['/profile']
 
 function getLocale(request: NextRequest) {
 	const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value
@@ -28,16 +19,6 @@ function getLocaleFromPathname(pathname: string) {
 	const segments = pathname.split('/')
 	const firstSegment = segments[1] || ''
 	return locales.includes(firstSegment as 'ua' | 'en') ? firstSegment : null
-}
-
-function addLocaleCookie(response: NextResponse, locale: string) {
-	response.cookies.set('NEXT_LOCALE', locale, {
-		maxAge: 60 * 60 * 24 * 365, // 1 year
-		path: '/',
-		sameSite: 'lax',
-		secure: process.env.NODE_ENV === 'production'
-	})
-	return response
 }
 
 const intlMiddleware = createMiddleware({
@@ -81,17 +62,6 @@ export async function middleware(request: NextRequest) {
 		const loginUrl = new URL(`/${cookieLocale}/login`, request.url)
 		loginUrl.searchParams.set('from', pathname)
 		return NextResponse.redirect(loginUrl)
-	}
-
-	// Handle auth routes
-	const isAuthRoute = authRoutes.some(route => {
-		const routeWithLocale = `/${cookieLocale}${route}`
-		return pathname.startsWith(routeWithLocale)
-	})
-
-	if (isAuthRoute && isAuthenticated) {
-		const homeUrl = new URL(`/${cookieLocale}/profile`, request.url)
-		return NextResponse.redirect(homeUrl)
 	}
 
 	// Apply intl middleware

@@ -1,10 +1,17 @@
 import { IAuthState } from '@/typing/interface'
 import { create } from 'zustand'
-import { getAccessToken } from '@/services/auth/auth.helper'
 
 export const useAuthStore = create<IAuthState>(set => ({
-	isAuth: !!getAccessToken(),
-	user: null,
+	isAuth: false,
+	user:
+		typeof window !== 'undefined' && localStorage.getItem('user')
+			? JSON.parse(localStorage.getItem('user')!)
+			: null,
+	visitorId: null,
+	setVisitorId: visitorId => set({ visitorId }),
 	setIsAuth: isAuth => set({ isAuth }),
-	setUser: user => set({ user })
+	setUser: user => {
+		user ? localStorage.setItem('user', JSON.stringify(user)) : localStorage.removeItem('user')
+		set({ user })
+	}
 }))

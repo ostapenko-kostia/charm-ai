@@ -8,25 +8,17 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Image, InfinityIcon, LoaderIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 
 export function ScreenshotUpload() {
 	const { user, isAuth } = useAuthStore()
-	const router = useRouter()
 	const t = useTranslations('reply-by-screenshot')
 	const generalT = useTranslations()
 	const [selectedImage, setSelectedImage] = useState<File | null>(null)
 	const [previewUrl, setPreviewUrl] = useState<string | null>(null)
 	const [replies, setReplies] = useState<string[]>([])
 	const { mutateAsync: getReplyByScreenshot, isPending } = useGetReplyByScreenshot()
-
-	useEffect(() => {
-		if (!isAuth) {
-			router.push('/login')
-		}
-	}, [isAuth])
 
 	const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0]
@@ -122,24 +114,17 @@ export function ScreenshotUpload() {
 				<div className='text-center flex flex-col items-center mt-3 text-sm text-gray-500'>
 					<div className='flex items-center gap-1'>
 						<span className='text-amber-600'>
-							{user?.subscription?.plan === 'BASIC' ? (
-								user?.credits?.getReply
-							) : (
+							{(user?.subscription?.plan === 'PRO' || user?.subscription?.plan === 'PREMIUM') &&
+							user?.subscription?.status === 'ACTIVE' ? (
 								<InfinityIcon className='w-4 h-4 text-amber-600' />
+							) : (
+								user?.credits?.getReply
 							)}
 						</span>{' '}
 						{t('credits-left')}
 					</div>
 					<div className='flex items-center gap-1'>
 						<span>{t('credits-per-reply')}</span>
-						{user?.subscription?.plan === 'BASIC' && (
-							<Link
-								href='/pricing'
-								className='text-blue-500'
-							>
-								{t('upgrade-plan')}
-							</Link>
-						)}
 					</div>
 				</div>
 			</div>

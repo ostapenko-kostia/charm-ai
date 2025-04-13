@@ -102,7 +102,12 @@ const handleSubscriptionUpdate = async (
 	const periodEnd = subscription.current_period_end
 
 	// Validate and convert the period end timestamp
-	const periodEndDate = periodEnd ? new Date(periodEnd * 1000) : new Date()
+	const periodEndDate = periodEnd
+		? new Date(periodEnd * 1000)
+		: planPeriod === 'monthly'
+		? new Date(new Date().setMonth(new Date().getMonth() + 1))
+		: new Date(new Date().setFullYear(new Date().getFullYear() + 1))
+		
 	if (isNaN(periodEndDate.getTime())) {
 		throw new Error('Invalid period end date')
 	}

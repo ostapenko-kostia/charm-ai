@@ -3,14 +3,17 @@
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { LoadingState } from '@/components/ui/loading-state'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/auth.store'
-import { format } from 'date-fns'
 import { motion } from 'framer-motion'
-import { Calendar, Clock, CreditCard, LoaderIcon, Package2, User } from 'lucide-react'
+import { Calendar, Clock, CreditCard, Package2, User } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+import { useState } from 'react'
 
 const planColors = {
 	BASIC: 'bg-gray-100 text-gray-800',
@@ -26,21 +29,22 @@ const statusColors = {
 	UNPAID: 'bg-orange-100 text-orange-800'
 }
 
-export default function ProfilePage() {
+export default dynamic(() => Promise.resolve(ProfilePage), {
+	ssr: false
+})
+
+function ProfilePage() {
 	const t = useTranslations('profile')
-	const commonT = useTranslations('common')
-	
+
 	const locale = useLocale()
 	const { user } = useAuthStore()
 	const router = useRouter()
 	const subscription = user?.subscription
 
-	return !user ? (
-		<div className='flex items-center justify-center gap-2 mx-auto mt-5'>
-			<LoaderIcon className='animate-spin' />
-			{commonT('loading')}
-		</div>
-	) : (
+	if (!user) return <LoadingState />
+	else if (user.isGuest) window.location.href = '/'
+
+	return (
 		<div className='container mx-auto px-4 py-8'>
 			<motion.div
 				initial={{ opacity: 0, y: 20 }}
@@ -143,7 +147,7 @@ export default function ProfilePage() {
 														month: 'long',
 														day: 'numeric'
 													})}
-													{" - "}
+													{' - '}
 													{new Date(subscription.currentPeriodEnd).toLocaleString(locale, {
 														year: 'numeric',
 														month: 'long',

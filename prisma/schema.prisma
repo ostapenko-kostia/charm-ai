@@ -10,10 +10,13 @@ datasource db {
 model User {
   id String @id @unique @default(uuid())
 
-  firstName String
-  lastName  String
-  email     String @unique
-  password  String
+  firstName String?
+  lastName  String?
+  email     String? @unique
+  password  String?
+
+  visitorId String  @unique
+  isGuest   Boolean @default(true)
 
   refreshToken RefreshToken?
   subscription Subscription?

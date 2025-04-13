@@ -2,13 +2,13 @@
 
 import { Button } from '@/components/ui/button'
 import { useCheckout } from '@/hooks/useCheckout'
+import { useAuthStore } from '@/store/auth.store'
 import { motion } from 'framer-motion'
 import { Check, LoaderIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { PricingPlan } from './pricing.config'
 import { usePricingButton } from './usePricingButton'
-import { useAuthStore } from '@/store/auth.store'
 
 interface PricingCardProps {
 	plan: PricingPlan
@@ -17,7 +17,7 @@ interface PricingCardProps {
 }
 
 export function PricingCard({ plan, isYearly, index }: PricingCardProps) {
-	const { isAuth } = useAuthStore()
+	const { isAuth, user } = useAuthStore()
 	const t = useTranslations('pricing')
 	const { isLoading, handleCheckout } = useCheckout()
 	const { getButtonStyles, getButtonText, isButtonDisabled } = usePricingButton(plan)
@@ -73,6 +73,14 @@ export function PricingCard({ plan, isYearly, index }: PricingCardProps) {
 							{t('plans.basic.cta')}
 						</Button>
 					</Link>
+				) : user?.isGuest ? (
+					<Button
+						className={getButtonStyles()}
+						variant='ghost'
+						disabled={true}
+					>
+						{t('plans.basic.cta')}
+					</Button>
 				) : (
 					<Button
 						className={getButtonStyles()}

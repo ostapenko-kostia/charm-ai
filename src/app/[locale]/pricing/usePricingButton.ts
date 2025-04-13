@@ -5,8 +5,8 @@ export const usePricingButton = (plan: PricingPlan) => {
 	const { user, isAuth } = useAuthStore()
 
 	const getButtonStyles = () => {
-		if (!isAuth) {
-			return 'w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 hover:text-white'
+		if (!isAuth || user?.isGuest) {
+			return 'w-full bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-600 font-medium shadow-sm transition-all duration-200 hover:text-gray-600'
 		}
 
 		if (plan.name === 'plans.basic.title') {
@@ -35,7 +35,7 @@ export const usePricingButton = (plan: PricingPlan) => {
 	}
 
 	const getButtonText = (t: (key: string) => string) => {
-		if (!isAuth) return t('plans.basic.cta')
+		if (!isAuth || user?.isGuest) return t('plans.basic.cta')
 		if (plan.name === 'plans.basic.title') return t('plans.basic.cta')
 		if (user?.subscription?.plan === 'PREMIUM') return t('current')
 		if (user?.subscription?.plan === 'PRO' && plan.name === 'plans.pro.title') return t('current')
@@ -47,7 +47,7 @@ export const usePricingButton = (plan: PricingPlan) => {
 	}
 
 	const isButtonDisabled = () => {
-		if (!isAuth) return false
+		if (!isAuth || user?.isGuest) return true
 		if (plan.name === 'plans.basic.title') return true
 		if (user?.subscription?.plan === 'PREMIUM') return true
 		if (user?.subscription?.plan === 'PRO' && plan.name === 'plans.pro.title') return true

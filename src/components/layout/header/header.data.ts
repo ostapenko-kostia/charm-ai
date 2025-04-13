@@ -10,6 +10,5 @@ export const UNAUTH_HEADER_LINKS: HeaderLink[] = [
 export const AUTH_HEADER_LINKS: HeaderLink[] = [
 	{ titleKey: 'home', url: '/' },
 	{ titleKey: 'pricing', url: '/pricing' },
-	{ titleKey: 'profile', url: '/profile' },
-	{ titleKey: 'logout', url: '/logout' }
+	{ titleKey: 'profile', url: '/profile' }
 ]

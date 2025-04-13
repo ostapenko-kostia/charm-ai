@@ -2,13 +2,13 @@
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { LoadingState } from '@/components/ui/loading-state'
 import { useSendMessage } from '@/hooks/useChat'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/auth.store'
 import { IChatMessage } from '@/typing/interface'
-import { Bot, InfinityIcon, LoaderIcon, Send, User } from 'lucide-react'
+import { Bot, InfinityIcon, Send, User } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 const TypingAnimation = () => (
@@ -46,7 +46,6 @@ export function GetAdvice() {
 	const { user } = useAuthStore()
 	const [messages, setMessages] = useState<IChatMessage[]>([])
 	const t = useTranslations('get-advice')
-	const commonT = useTranslations('common')
 	const [input, setInput] = useState('')
 	const { mutateAsync: sendMessage, isPending } = useSendMessage()
 
@@ -63,12 +62,9 @@ export function GetAdvice() {
 		setMessages(response.data.messages)
 	}
 
-	return !user ? (
-		<div className='flex items-center justify-center gap-2 mx-auto mt-5'>
-			<LoaderIcon className='animate-spin' />
-			{commonT('loading')}
-		</div>
-	) : (
+	if (!user) return <LoadingState />
+
+	return (
 		<div className='flex flex-col h-[calc(100vh-16rem)] max-w-3xl mx-auto'>
 			<div className='flex-1 overflow-y-auto px-4 pb-4'>
 				{messages.length === 0 ? (
@@ -154,24 +150,16 @@ export function GetAdvice() {
 				<div className='text-center flex flex-col items-center mt-3 text-sm text-gray-500'>
 					<div className='flex items-center gap-1'>
 						<span className='text-amber-600'>
-							{user?.subscription?.plan === 'BASIC' || user?.subscription?.plan === 'PRO' ? (
-								user?.credits?.getAdvice
-							) : (
+							{user?.subscription?.plan === 'PREMIUM' && user?.subscription?.status === 'ACTIVE' ? (
 								<InfinityIcon className='w-4 h-4 text-amber-600' />
+							) : (
+								user?.credits?.getAdvice
 							)}
 						</span>{' '}
 						{t('credits-left')}
 					</div>
 					<div className='flex items-center gap-1'>
 						<span>{t('credits-per-reply')}</span>
-						{(user?.subscription?.plan === 'BASIC' || user?.subscription?.plan === 'PRO') && (
-							<Link
-								href='/pricing'
-								className='text-blue-500'
-							>
-								{t('upgrade-plan')}
-							</Link>
-						)}
 					</div>
 				</div>
 			</div>

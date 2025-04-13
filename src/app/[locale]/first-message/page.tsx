@@ -8,27 +8,17 @@ import { LoadingState } from '@/components/ui/loading-state'
 import { useGeneratePickups } from '@/hooks/usePickups'
 import { useAuthStore } from '@/store/auth.store'
 import { motion } from 'framer-motion'
-import { InfinityIcon, LoaderIcon } from 'lucide-react'
+import { InfinityIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 
 export default function FirstMessagePage() {
 	const { user, isAuth } = useAuthStore()
-	const router = useRouter()
 	const t = useTranslations('first-message')
-	const commonT = useTranslations('common')
 	const [generatedMessages, setGeneratedMessages] = useState<string[]>([])
 	const { mutateAsync: generateMessages, isPending } = useGeneratePickups()
-
-	useEffect(() => {
-		if (!isAuth) {
-			router.push('/login')
-		}
-	}, [isAuth])
 
 	const { handleSubmit, setValue } = useForm<{ photo: FileList }>()
 
@@ -87,26 +77,17 @@ export default function FirstMessagePage() {
 										<div className='flex flex-col items-start mt-3 text-sm text-gray-500'>
 											<div className='flex items-center gap-1'>
 												<span className='text-amber-600'>
-													{user?.subscription?.plan === 'BASIC' ||
-													user?.subscription?.plan === 'PRO' ? (
-														user?.credits?.getPickup
-													) : (
+													{user?.subscription?.plan === 'PREMIUM' &&
+													user?.subscription?.status === 'ACTIVE' ? (
 														<InfinityIcon className='w-4 h-4 text-amber-600' />
+													) : (
+														user?.credits?.getPickup
 													)}
 												</span>{' '}
 												{t('enter-info.credits-left')}
 											</div>
 											<div className='flex items-center gap-1'>
 												<span>{t('enter-info.credits-per-reply')}</span>
-												{(user?.subscription?.plan === 'BASIC' ||
-													user?.subscription?.plan === 'PRO') && (
-													<Link
-														href='/pricing'
-														className='text-blue-500'
-													>
-														{t('enter-info.upgrade-plan')}
-													</Link>
-												)}
 											</div>
 										</div>
 									</CardContent>

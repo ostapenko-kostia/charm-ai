@@ -7,19 +7,22 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(req: NextRequest) {
 	try {
-		const cookiesStorage = await cookies()
-		const refreshToken = cookiesStorage.get('refreshToken')?.value
+		const body = await req.json()
+		const visitorId = body.visitorId
 
-		if (!refreshToken || !refreshToken.length)
-			throw new ApiError('Unauthorized', 401, 'server.unauthorized')
+		const userData = await authService.init(visitorId)
 
-		await authService.logout(refreshToken)
-
-		cookiesStorage.delete(TOKEN.REFRESH_TOKEN)
+		;(await cookies()).set(TOKEN.REFRESH_TOKEN, userData.refreshToken, {
+			expires: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
+			httpOnly: true,
+			secure: process.env.NODE_ENV === 'production',
+			sameSite: 'lax',
+			path: '/'
+		})
 
 		return NextResponse.json(
 			{
-				message: 'success.auth.logout'
+				...userData
 			},
 			{ status: 200 }
 		)

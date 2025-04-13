@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { LoadingState } from '@/components/ui/loading-state'
 import { useGetReplyByText } from '@/hooks/useReply'
 import { useAuthStore } from '@/store/auth.store'
 import { IMessage } from '@/typing/interface'
@@ -9,25 +10,15 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { InfinityIcon, LoaderIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { LoadingState } from '@/components/ui/loading-state'
+import { useState } from 'react'
 
 export function ManualChat() {
 	const { user, isAuth } = useAuthStore()
 	const t = useTranslations('reply-by-text')
-	const commonT = useTranslations('common')
 	const [messages, setMessages] = useState<IMessage[]>([])
 	const [newMessage, setNewMessage] = useState('')
 	const [replies, setReplies] = useState<string[]>([])
 	const { mutateAsync: getReplyByText, isPending } = useGetReplyByText()
-	const router = useRouter()
-
-	useEffect(() => {
-		if (!isAuth) {
-			router.push('/login')
-		}
-	}, [isAuth])
 
 	const addMessage = () => {
 		if (!newMessage.trim()) return
@@ -132,24 +123,17 @@ export function ManualChat() {
 				<div className='text-center flex flex-col items-center mt-3 text-sm text-gray-500'>
 					<div className='flex items-center gap-1'>
 						<span className='text-amber-600'>
-							{user?.subscription?.plan === 'BASIC' ? (
-								user?.credits?.getReply
-							) : (
+							{(user?.subscription?.plan === 'PRO' || user?.subscription?.plan === 'PREMIUM') &&
+							user?.subscription?.status === 'ACTIVE' ? (
 								<InfinityIcon className='w-4 h-4 text-amber-600' />
+							) : (
+								user?.credits?.getReply
 							)}
 						</span>{' '}
 						{t('credits-left')}
 					</div>
 					<div className='flex items-center gap-1'>
 						<span>{t('credits-per-reply')}</span>
-						{user?.subscription?.plan === 'BASIC' && (
-							<Link
-								href='/pricing'
-								className='text-blue-500'
-							>
-								{t('upgrade-plan')}
-							</Link>
-						)}
 					</div>
 				</div>
 			</div>

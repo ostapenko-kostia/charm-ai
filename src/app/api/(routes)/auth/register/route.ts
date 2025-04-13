@@ -27,7 +27,8 @@ const authRegisterSchema = z.object({
 		.string()
 		.min(8, 'validation.password-min')
 		.trim()
-		.refine(val => val.length > 0, 'validation.password-required')
+		.refine(val => val.length > 0, 'validation.password-required'),
+	visitorId: z.string()
 })
 
 export async function POST(req: NextRequest) {

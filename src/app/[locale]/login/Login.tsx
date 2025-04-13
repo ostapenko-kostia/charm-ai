@@ -4,10 +4,12 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useLogin } from '@/hooks/useAuth'
+import { useAuthStore } from '@/store/auth.store'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -22,6 +24,7 @@ const loginSchema = z.object({
 export type LoginFormData = z.infer<typeof loginSchema>
 
 export function Login() {
+	const { user } = useAuthStore()
 	const t = useTranslations('login')
 	const {
 		register,
@@ -37,6 +40,10 @@ export function Login() {
 	const onSubmit = async (data: LoginFormData) => {
 		await login(data)
 	}
+
+	useEffect(() => {
+		if (user && !user?.isGuest) window.location.href = '/profile'
+	}, [user])
 
 	return (
 		<motion.div

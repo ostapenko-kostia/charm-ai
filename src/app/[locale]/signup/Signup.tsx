@@ -4,10 +4,12 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useRegister } from '@/hooks/useAuth'
+import { useAuthStore } from '@/store/auth.store'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -24,6 +26,7 @@ const signupSchema = z.object({
 export type SignupFormData = z.infer<typeof signupSchema>
 
 export function Signup() {
+	const { user, visitorId } = useAuthStore()
 	const t = useTranslations('signup')
 	const {
 		register,
@@ -35,6 +38,10 @@ export function Signup() {
 	const { mutateAsync: signup, isPending: isSubmitting } = useRegister()
 
 	const formErrors = errors as Record<string, { message?: string }>
+
+	useEffect(() => {
+		if (user && !user?.isGuest) window.location.href = '/profile'
+	}, [user])
 
 	return (
 		<motion.div
@@ -62,7 +69,7 @@ export function Signup() {
 				</motion.p>
 
 				<form
-					onSubmit={handleSubmit(async data => await signup(data))}
+					onSubmit={handleSubmit(async data => await signup({ ...data, visitorId: visitorId! }))}
 					className='space-y-6'
 				>
 					<motion.div

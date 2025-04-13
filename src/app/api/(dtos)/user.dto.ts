@@ -22,6 +22,8 @@ export class UserDto {
 	createdAt: Date
 	subscription: Subscription | null
 	credits: Credits | null
+	isGuest: boolean
+	visitorId: string
 
 	constructor(user: any) {
 		this.firstName = user.firstName
@@ -31,5 +33,7 @@ export class UserDto {
 		this.createdAt = user.createdAt
 		this.subscription = user.subscription
 		this.credits = user.credits
+		this.isGuest = user.isGuest
+		this.visitorId = user.visitorId
 	}
 }
