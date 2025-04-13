@@ -64,14 +64,11 @@ api.interceptors.response.use(
 					// Update access token in the original request
 					originalRequest.headers['Authorization'] = `Bearer ${getAccessToken()}`
 					return api.request(originalRequest)
-				} else {
-					// If refresh failed, logout
-					await authService.logout()
-					return Promise.reject(error)
 				}
+				// If refresh failed, just reject the original error
+				return Promise.reject(error)
 			} catch (refreshError) {
-				// On refresh failure, clear tokens and redirect to login
-				await authService.logout()
+				// On refresh failure, just reject the original error
 				return Promise.reject(error)
 			}
 		}
