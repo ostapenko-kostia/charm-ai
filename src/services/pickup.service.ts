@@ -14,7 +14,7 @@ class PickupService {
 			headers: { 'Content-Type': 'multipart/formdata' }
 		})
 		if (response.status === 200) {
-			if (response.data.credits) {
+			if (response?.data?.credits) {
 				updateStoreCredits(response.data.credits)
 			}
 			return response

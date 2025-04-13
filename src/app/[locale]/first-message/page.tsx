@@ -5,6 +5,13 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { FileInput } from '@/components/ui/file-input'
 import { LoadingState } from '@/components/ui/loading-state'
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue
+} from '@/components/ui/select'
 import { useGeneratePickups } from '@/hooks/usePickups'
 import { useAuthStore } from '@/store/auth.store'
 import { motion } from 'framer-motion'
@@ -20,7 +27,7 @@ export default function FirstMessagePage() {
 	const [generatedMessages, setGeneratedMessages] = useState<string[]>([])
 	const { mutateAsync: generateMessages, isPending } = useGeneratePickups()
 
-	const { handleSubmit, setValue } = useForm<{ photo: FileList }>()
+	const { handleSubmit, setValue } = useForm<{ photo: FileList; language: string }>()
 
 	if (!isAuth || !user) return <LoadingState />
 
@@ -57,8 +64,8 @@ export default function FirstMessagePage() {
 													toast.error(t('photo-required-error'))
 													return
 												}
-												const messages = (await generateMessages(data)).data
-												setGeneratedMessages(messages)
+												const messages = (await generateMessages(data))?.data
+												setGeneratedMessages(messages || [])
 											})}
 											className='space-y-4'
 										>
@@ -66,6 +73,20 @@ export default function FirstMessagePage() {
 												accept='image/*'
 												onChange={files => setValue('photo', files!)}
 											/>
+
+											<Select onValueChange={value => setValue('language', value)}>
+												<SelectTrigger className='w-1/2 max-sm:w-full'>
+													<SelectValue
+														className='w-full'
+														placeholder={t('enter-info.fields.language.placeholder')}
+													/>
+												</SelectTrigger>
+												<SelectContent>
+													<SelectItem value='eng'>{t('enter-info.fields.language.options.en')}</SelectItem>
+													<SelectItem value='ukr'>{t('enter-info.fields.language.options.ua')}</SelectItem>
+													<SelectItem value='rus'>{t('enter-info.fields.language.options.ru')}</SelectItem>
+												</SelectContent>
+											</Select>
 
 											<Button
 												type='submit'

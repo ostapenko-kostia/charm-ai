@@ -241,7 +241,17 @@
 			"credits-left": "credits left",
 			"credits-per-reply": "1 credit = 3 messages",
 			"processing": "Generating...",
-			"upgrade-plan": "Upgrade Plan"
+			"upgrade-plan": "Upgrade Plan",
+			"fields": {
+				"language": {
+					"placeholder": "Select language",
+					"options": {
+						"en": "English",
+						"ua": "Ukrainian",
+						"ru": "Russian"
+					}
+				}
+			}
 		},
 		"generated-messages": {
 			"title": "Generated Messages",
@@ -253,6 +263,7 @@
 	},
 	"errors": {
 		"server": {
+			"language-required": "Language is required",
 			"unauthorized": "Unauthorized",
 			"internal-error": "Internal Server Error",
 			"email-in-use": "This email is already in use",

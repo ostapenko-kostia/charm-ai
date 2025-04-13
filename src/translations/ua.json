@@ -241,7 +241,17 @@
 			"credits-left": "кредитів залишилось",
 			"credits-per-reply": "1 кредит = 3 повідомлення",
 			"processing": "Генерація...",
-			"upgrade-plan": "Оновити план"
+			"upgrade-plan": "Оновити план",
+			"fields": {
+				"language": {
+					"placeholder": "Виберіть мову",
+					"options": {
+						"en": "Англійська",
+						"ua": "Українська",
+						"ru": "Російська"
+					}
+				}
+			}
 		},
 		"generated-messages": {
 			"title": "Згенеровані Повідомлення",
@@ -253,6 +263,7 @@
 	},
 	"errors": {
 		"server": {
+			"language-required": "Мова є обов'язковою",
 			"unauthorized": "Не авторизовано",
 			"internal-error": "Внутрішня помилка сервера",
 			"email-in-use": "Ця електронна пошта вже використовується",

@@ -44,6 +44,12 @@ Format your responses as follows:
 - Example format: "Message 1|||Message 2|||Message 3"
 `
 
+const LANGUAGES = {
+	eng: 'English',
+	ukr: 'Ukrainian',
+	rus: 'Russian'
+}
+
 export async function POST(request: NextRequest) {
 	try {
 		const user = await checkAuth(request)
@@ -71,11 +77,13 @@ export async function POST(request: NextRequest) {
 		const formData = await request.formData()
 
 		const photo = formData.get('photo') as File
+		const language = formData.get('language') as string
 
-		// Add file size validation (5MB = 5 * 1024 * 1024 bytes)
-		if (photo.size > 5 * 1024 * 1024) {
+		if (!language || !language.length || language === 'undefined')
+			throw new ApiError('Language is required', 400, 'errors.server.language-required')
+
+		if (photo.size > 5 * 1024 * 1024)
 			throw new ApiError('File too large', 400, 'errors.server.file-too-large')
-		}
 
 		let photoUrl
 		if (photo.size > 0) photoUrl = await fileService.uploadFile(photo)
@@ -85,7 +93,17 @@ export async function POST(request: NextRequest) {
 			input: [
 				{
 					role: 'user',
-					content: photoUrl ? [{ image_url: photoUrl, type: 'input_image', detail: 'auto' }] : []
+					content: [
+						...(photoUrl
+							? [{ type: 'input_image' as const, image_url: photoUrl, detail: 'auto' as const }]
+							: []),
+						{
+							type: 'input_text' as const,
+							text: `Generate messages in ${
+								LANGUAGES[language as keyof typeof LANGUAGES] || 'English'
+							} language.`
+						}
+					]
 				}
 			],
 			instructions: PROMPT
