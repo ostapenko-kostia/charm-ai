@@ -9,6 +9,7 @@ import { useAuthStore } from '@/store/auth.store'
 import { IChatMessage } from '@/typing/interface'
 import { Bot, InfinityIcon, Send, User } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import dynamic from 'next/dynamic'
 import { useEffect, useState } from 'react'
 
 const TypingAnimation = () => (
@@ -42,7 +43,7 @@ const TypewriterText = ({ content, className }: { content: string; className?: s
 	)
 }
 
-export function GetAdvice() {
+function GetAdviceComponent() {
 	const { user } = useAuthStore()
 	const [messages, setMessages] = useState<IChatMessage[]>([])
 	const t = useTranslations('get-advice')
@@ -166,3 +167,5 @@ export function GetAdvice() {
 		</div>
 	)
 }
+
+export const GetAdvice = dynamic(() => Promise.resolve(GetAdviceComponent), { ssr: false })
