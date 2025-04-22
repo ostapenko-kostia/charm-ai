@@ -37,7 +37,7 @@ export const usePricingButton = (plan: PricingPlan) => {
 	const getButtonText = (t: (key: string) => string) => {
 		if (!isAuth || user?.isGuest) return t('plans.basic.cta')
 		if (plan.name === 'plans.basic.title') return t('plans.basic.cta')
-		if (user?.subscription?.plan === 'PREMIUM') return t('current')
+		if (user?.subscription?.plan === 'PREMIUM'  && plan.name === 'plans.premium.title') return t('current')
 		if (user?.subscription?.plan === 'PRO' && plan.name === 'plans.pro.title') return t('current')
 		if (user?.subscription?.plan === 'PRO' && plan.name === 'plans.premium.title')
 			return t('plans.premium.cta')
@@ -47,12 +47,12 @@ export const usePricingButton = (plan: PricingPlan) => {
 	}
 
 	const isButtonDisabled = () => {
-		if (!isAuth || user?.isGuest) return true
-		if (plan.name === 'plans.basic.title') return true
-		if (user?.subscription?.plan === 'PREMIUM') return true
-		if (user?.subscription?.plan === 'PRO' && plan.name === 'plans.pro.title') return true
-		if (user?.subscription?.plan === 'PRO' && plan.name === 'plans.basic.title') return true
-		if (user?.subscription?.plan === 'BASIC' && plan.name === 'plans.basic.title') return true
+		if (!user?.isGuest) {
+			if (plan.name === 'plans.basic.title') return true
+			if (user?.subscription?.plan === 'PREMIUM') return true
+			if (user?.subscription?.plan === 'PRO' && plan.name === 'plans.pro.title') return true
+			if (user?.subscription?.plan === 'PRO' && plan.name === 'plans.basic.title') return true
+		}
 		return false
 	}
 

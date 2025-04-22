@@ -76,8 +76,10 @@ export function PricingCard({ plan, isYearly, index }: PricingCardProps) {
 				) : user?.isGuest ? (
 					<Button
 						className={getButtonStyles()}
+						onClick={() => {
+							window.location.href = '/login'
+						}}
 						variant='ghost'
-						disabled={true}
 					>
 						{t('plans.basic.cta')}
 					</Button>
@@ -85,8 +87,14 @@ export function PricingCard({ plan, isYearly, index }: PricingCardProps) {
 					<Button
 						className={getButtonStyles()}
 						variant='ghost'
-						onClick={() => priceId && handleCheckout(priceId)}
-						disabled={isButtonDisabled() || isLoading(priceId || '')}
+						onClick={() => {
+							if (user?.isGuest) {
+								window.location.href = '/login'
+								return
+							}
+							priceId && handleCheckout(priceId)
+						}}
+						disabled={isButtonDisabled()}
 					>
 						{isLoading(priceId || '') ? (
 							<LoaderIcon className='h-4 w-4 animate-spin' />

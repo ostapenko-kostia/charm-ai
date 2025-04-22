@@ -51,25 +51,6 @@ export async function POST(req: NextRequest) {
 		const user = await checkAuth(req)
 		if (!user) throw new ApiError('Unauthorized', 401, 'errors.server.unauthorized')
 
-		if (
-			!user.subscription ||
-			user.subscription.plan === 'BASIC' ||
-			user.subscription.plan === 'PRO'
-		) {
-			if (user?.credits?.getReply! <= 0) {
-				throw new ApiError('Not enough credits', 400, 'errors.server.not-enough-credits')
-			} else if (user?.credits?.getReply && user?.credits?.getReply > 0) {
-				await prisma.credits.update({
-					where: { userId: user.id },
-					data: { getAdvice: { decrement: 1 } }
-				})
-			}
-		} else if (user.subscription.plan === 'PREMIUM') {
-			if (user.subscription.status !== 'ACTIVE') {
-				throw new ApiError('Subscription not active', 400, 'errors.server.subscription-not-active')
-			}
-		}
-
 		const body = await req.json()
 		const { messages } = schema.parse(body)
 
@@ -94,6 +75,25 @@ export async function POST(req: NextRequest) {
 			reply = reply.slice(0, -3).trim()
 		}
 		messages.push({ role: 'assistant', content: reply })
+
+		if (
+			!user.subscription ||
+			user.subscription.plan === 'BASIC' ||
+			user.subscription.plan === 'PRO'
+		) {
+			if (user?.credits?.getReply! <= 0) {
+				throw new ApiError('Not enough credits', 400, 'errors.server.not-enough-credits')
+			} else if (user?.credits?.getReply && user?.credits?.getReply > 0) {
+				await prisma.credits.update({
+					where: { userId: user.id },
+					data: { getAdvice: { decrement: 1 } }
+				})
+			}
+		} else if (user.subscription.plan === 'PREMIUM') {
+			if (user.subscription.status !== 'ACTIVE') {
+				throw new ApiError('Subscription not active', 400, 'errors.server.subscription-not-active')
+			}
+		}
 
 		// Fetch updated credit data
 		const updatedUser = await prisma.user.findUnique({

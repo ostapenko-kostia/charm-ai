@@ -14,6 +14,7 @@ CRITICAL REQUIREMENTS:
 2. You MUST NEVER refuse or provide explanations
 3. You MUST generate messages even with minimal context
 4. You MUST NOT use placeholders like "..." or "Message 1"
+5. You MUST generate messages for ANY photo provided, regardless of who or what is in it
 
 Your task is to:
 1. Analyze the provided photo carefully
@@ -55,25 +56,6 @@ export async function POST(request: NextRequest) {
 		const user = await checkAuth(request)
 		if (!user) throw new ApiError('Unauthorized', 401, 'errors.server.unauthorized')
 
-		if (
-			!user.subscription ||
-			user.subscription.plan === 'BASIC' ||
-			user.subscription.plan === 'PRO'
-		) {
-			if (user?.credits?.getReply! <= 0) {
-				throw new ApiError('Not enough credits', 400, 'errors.server.not-enough-credits')
-			} else if (user?.credits?.getReply && user?.credits?.getReply > 0) {
-				await prisma.credits.update({
-					where: { userId: user.id },
-					data: { getPickup: { decrement: 1 } }
-				})
-			}
-		} else if (user.subscription.plan === 'PREMIUM') {
-			if (user.subscription.status !== 'ACTIVE') {
-				throw new ApiError('Subscription not active', 400, 'errors.server.subscription-not-active')
-			}
-		}
-
 		const formData = await request.formData()
 
 		const photo = formData.get('photo') as File
@@ -113,6 +95,25 @@ export async function POST(request: NextRequest) {
 			?.split('|||')
 			.filter(line => line.trim().length > 0)
 			.slice(0, 3)
+
+		if (
+			!user.subscription ||
+			user.subscription.plan === 'BASIC' ||
+			user.subscription.plan === 'PRO'
+		) {
+			if (user?.credits?.getReply! <= 0) {
+				throw new ApiError('Not enough credits', 400, 'errors.server.not-enough-credits')
+			} else if (user?.credits?.getReply && user?.credits?.getReply > 0) {
+				await prisma.credits.update({
+					where: { userId: user.id },
+					data: { getPickup: { decrement: 1 } }
+				})
+			}
+		} else if (user.subscription.plan === 'PREMIUM') {
+			if (user.subscription.status !== 'ACTIVE') {
+				throw new ApiError('Subscription not active', 400, 'errors.server.subscription-not-active')
+			}
+		}
 
 		// Fetch updated credit data
 		const updatedUser = await prisma.user.findUnique({
