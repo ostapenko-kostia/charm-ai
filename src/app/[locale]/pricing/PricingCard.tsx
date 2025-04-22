@@ -47,6 +47,9 @@ export function PricingCard({ plan, isYearly, index }: PricingCardProps) {
 					<span className='text-4xl font-bold'>
 						${isYearly ? plan.yearlyPrice : plan.monthlyPrice}
 					</span>
+					{isYearly && plan.monthlyPrice > 0 && (
+						<span className='text-gray-400 line-through'>${plan.monthlyPrice * 12}</span>
+					)}
 					<span className='text-gray-600'>/{isYearly ? t('year') : t('month')}</span>
 				</div>
 			</div>
