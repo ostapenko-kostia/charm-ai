@@ -77,12 +77,17 @@ class AuthService {
 		}
 
 		// Creating user
-		const user = await prisma.user.create({
+		const { id: userId } = await prisma.user.create({
 			data: { visitorId, isGuest: true }
 		})
 
 		await prisma.credits.create({
-			data: { userId: user.id }
+			data: { userId: userId }
+		})
+
+		const user = await prisma.user.findUnique({
+			where: { visitorId },
+			include: { subscription: true, credits: true }
 		})
 
 		// Creating DTO
@@ -95,7 +100,7 @@ class AuthService {
 		})
 
 		// Saving refresh token
-		await tokenService.saveRefresh(refreshToken, user.id)
+		await tokenService.saveRefresh(refreshToken, userId)
 
 		// Returning data
 		return { accessToken, refreshToken, user: userDto }

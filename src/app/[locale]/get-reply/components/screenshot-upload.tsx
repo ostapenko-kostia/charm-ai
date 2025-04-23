@@ -1,13 +1,13 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { CTA } from '@/components/ui/cta'
 import { LoadingState } from '@/components/ui/loading-state'
 import { useGetReplyByScreenshot } from '@/hooks/useReply'
 import { useAuthStore } from '@/store/auth.store'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Image, InfinityIcon, LoaderIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import Link from 'next/link'
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 
@@ -135,26 +135,33 @@ export function ScreenshotUpload() {
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
 						exit={{ opacity: 0, y: -20 }}
-						className='bg-white rounded-2xl shadow-xl p-6'
+						className='space-y-6'
 					>
-						<div className='flex items-center gap-2 mb-4'>
-							<span className='text-sm font-medium text-gray-500'>{t('ai-reply.title')}</span>
-						</div>
-						<div className='space-y-4'>
-							{replies.map((reply, index) => (
-								<div
-									key={index}
-									className='p-4 bg-gray-50 rounded-xl border border-gray-100'
-								>
-									<div className='flex items-center gap-2 mb-2'>
-										<span className='text-sm font-medium text-purple-600'>
-											{t('ai-reply.option')} {index + 1}
-										</span>
+						<div className='bg-white rounded-2xl shadow-xl p-6'>
+							<div className='flex items-center gap-2 mb-4'>
+								<span className='text-sm font-medium text-gray-500'>{t('ai-reply.title')}</span>
+							</div>
+							<div className='space-y-4'>
+								{replies.map((reply, index) => (
+									<div
+										key={index}
+										className='p-4 bg-gray-50 rounded-xl border border-gray-100'
+									>
+										<div className='flex items-center gap-2 mb-2'>
+											<span className='text-sm font-medium text-purple-600'>
+												{t('ai-reply.option')} {index + 1}
+											</span>
+										</div>
+										<div className='text-gray-800 text-lg leading-relaxed'>{reply}</div>
 									</div>
-									<div className='text-gray-800 text-lg leading-relaxed'>{reply}</div>
-								</div>
-							))}
+								))}
+							</div>
 						</div>
+
+						<CTA
+							type={user.isGuest ? 'user' : 'guest'}
+							section='reply-by-screenshot'
+						/>
 					</motion.div>
 				)}
 			</AnimatePresence>

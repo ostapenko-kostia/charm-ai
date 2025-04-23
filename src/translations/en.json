@@ -175,42 +175,66 @@
 	},
 	"reply-by-text": {
 		"title": "Charm AI Chat",
-		"subtitle": "Manually enter the chat history and Charm AI will provide reply suggestions",
+		"subtitle": "Get personalized dating advice and conversation help from an AI expert",
 		"instructions": {
 			"title": "How to use:",
-			"text": "1. Enter the conversation messages\n2. Click 'Their Message' for messages from the other person\n3. Click 'My Message' for your messages\n4. Click 'Get Reply' to generate AI suggestions"
+			"text": "1. Enter your conversation or dating situation\n2. Click 'Their Message' for messages from the other person\n3. Click 'My Message' for your messages\n4. Click 'Get Reply' to receive expert advice and suggestions"
 		},
-		"placeholder": "Enter message...",
+		"placeholder": "Describe your situation or enter message...",
 		"their": "Their Message",
 		"my": "My Message",
 		"new-chat": "New Chat",
-		"get-reply": "Get Reply",
+		"get-reply": "Get Expert Advice",
 		"credits-left": "credits left",
-		"credits-per-reply": "1 credit = 3 replies",
-		"processing": "Generating...",
+		"credits-per-reply": "1 credit = personalized advice",
+		"processing": "Analyzing your situation...",
 		"upgrade-plan": "Upgrade Plan",
 		"ai-reply": {
-			"title": "AI Reply Suggestions",
-			"option": "Option"
+			"title": "Expert Advice & Suggestions",
+			"option": "Suggestion"
+		},
+		"cta": {
+			"guest": {
+				"title": "Want more expert advice?",
+				"subtitle": "Create an account to get full access to Charm AI",
+				"button": "Create Account"
+			},
+			"user": {
+				"title": "Want unlimited expert advice?",
+				"subtitle": "Upgrade to Premium for unlimited access to all features",
+				"button": "Upgrade Now"
+			}
 		}
 	},
 	"reply-by-screenshot": {
-		"title": "Charm GPT Reply Generator",
-		"subtitle": "Upload the chat screenshot to be replied, and Charm GPT will provide a friendly AI reply",
+		"title": "Charm AI Conversation Analyzer",
+		"subtitle": "Upload your chat screenshot and get expert analysis and suggestions",
 		"instructions": {
 			"title": "How to use:",
-			"text": "1. Take a screenshot of your chat conversation\n2. Click 'Upload Chat Screenshot' to select the image\n3. Click 'Get Charm Reply' to generate AI suggestions"
+			"text": "1. Take a screenshot of your chat conversation\n2. Click 'Upload Chat Screenshot' to select the image\n3. Click 'Get Expert Analysis' to receive personalized advice"
 		},
 		"button": "Upload Chat Screenshot",
 		"new-upload": "New Upload",
-		"get-charm-reply": "Get Charm Reply",
+		"get-charm-reply": "Get Expert Analysis",
 		"credits-left": "credits left",
-		"credits-per-reply": "1 credit = 3 replies",
-		"processing": "Generating...",
+		"credits-per-reply": "1 credit = expert analysis",
+		"processing": "Analyzing your conversation...",
 		"upgrade-plan": "Upgrade Plan",
 		"ai-reply": {
-			"title": "AI Reply Suggestions",
-			"option": "Option"
+			"title": "Expert Analysis & Suggestions",
+			"option": "Suggestion"
+		},
+		"cta": {
+			"guest": {
+				"title": "Want more expert analysis?",
+				"subtitle": "Create an account to get full access to Charm AI",
+				"button": "Create Account"
+			},
+			"user": {
+				"title": "Want unlimited expert analysis?",
+				"subtitle": "Upgrade to Premium for unlimited access to all features",
+				"button": "Upgrade Now"
+			}
 		}
 	},
 	"get-advice": {

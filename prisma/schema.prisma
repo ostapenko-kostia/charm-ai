@@ -71,7 +71,7 @@ model Credits {
 model RefreshToken {
   id String @id @unique @default(uuid())
 
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @unique
 
   token String @unique
