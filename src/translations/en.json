@@ -15,6 +15,15 @@
 			"signup": "Sign Up",
 			"profile": "Profile",
 			"logout": "Logout"
+		},
+		"generate": {
+			"title": "Generate",
+			"options": {
+				"manual-chat": "Manual Chat",
+				"screenshot-upload": "Screenshot Upload",
+				"get-advice": "Get Advice",
+				"first-message": "First Message"
+			}
 		}
 	},
 	"home": {

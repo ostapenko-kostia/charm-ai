@@ -15,6 +15,15 @@
 			"signup": "Зареєструватися",
 			"profile": "Профіль",
 			"logout": "Вийти"
+		},
+		"generate": {
+			"title": "Згенерувати",
+			"options": {
+				"manual-chat": "Чат за Текстом",
+				"screenshot-upload": "Чат за Знімком",
+				"get-advice": "Отримати Пораду",
+				"first-message": "Перше Повідомлення"
+			}
 		}
 	},
 	"home": {
