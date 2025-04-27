@@ -237,7 +237,7 @@
 		},
 		"placeholder": "Задайте питання про кохання...",
 		"credits-left": "кредитів залишилось",
-		"credits-per-reply": "1 кредит = 3 відповіді",
+	"credits-per-reply": "1 кредит = персоналізована порада",
 		"processing": "Генерація...",
 		"upgrade-plan": "Оновити план",
 		"proccessing": "Думаю..."

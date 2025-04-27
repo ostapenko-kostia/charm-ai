@@ -52,13 +52,7 @@ IMPORTANT INSTRUCTIONS:
    - Explaining the psychology behind your advice
    - Suggesting follow-up actions
 3. Use HTML tags to format your response for better readability
-
-Format your responses as follows:
-- Write all 3 messages in a single line
-- Separate each message with the symbol "|||"
-- Do not include any line breaks or additional formatting
-- Example format: "Message 1|||Message 2|||Message 3"
-	`
+`
 }
 
 export async function POST(req: NextRequest) {

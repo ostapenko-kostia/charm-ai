@@ -57,7 +57,7 @@ model Credits {
 
   getReply  Int @default(5)
   getPickup Int @default(5)
-  getAdvice Int @default(25)
+  getAdvice Int @default(10)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
