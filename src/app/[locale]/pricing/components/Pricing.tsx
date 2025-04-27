@@ -3,8 +3,8 @@
 import { motion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
+import { plans } from '../config/pricing.config'
 import { PeriodToggle } from './PeriodToggle'
-import { plans } from './pricing.config'
 import { PricingCard } from './PricingCard'
 
 export function Pricing() {

@@ -7,8 +7,8 @@ import { motion } from 'framer-motion'
 import { Check, LoaderIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
-import { PricingPlan } from './pricing.config'
-import { usePricingButton } from './usePricingButton'
+import { PricingPlan } from '../config/pricing.config'
+import { usePricingButton } from '../hooks/usePricingButton'
 
 interface PricingCardProps {
 	plan: PricingPlan

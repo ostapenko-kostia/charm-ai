@@ -1,5 +1,5 @@
 import { useAuthStore } from '@/store/auth.store'
-import { PricingPlan } from './pricing.config'
+import { PricingPlan } from '../config/pricing.config'
 
 export const usePricingButton = (plan: PricingPlan) => {
 	const { user, isAuth } = useAuthStore()

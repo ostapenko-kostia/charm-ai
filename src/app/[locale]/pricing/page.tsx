@@ -1,6 +1,6 @@
 import { Container } from '@/components/layout/container'
 import * as motion from 'framer-motion/client'
-import { Pricing } from './Pricing'
+import { Pricing } from './components/Pricing'
 
 export default function PricingPage() {
 	return (

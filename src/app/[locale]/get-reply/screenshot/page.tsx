@@ -1,5 +1,5 @@
 import { Container } from '@/components/layout/container'
-import { ScreenshotUpload } from '../components/screenshot-upload'
+import { ScreenshotUpload } from './ScreenshotUpload'
 import { getTranslations } from 'next-intl/server'
 
 export default async function ScreenshotReplyPage() {

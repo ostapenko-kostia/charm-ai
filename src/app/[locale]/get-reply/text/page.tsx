@@ -1,5 +1,5 @@
 import { Container } from '@/components/layout/container'
-import { ManualChat } from '../components/manual-chat'
+import { ManualChat } from './ManualChat'
 import { getTranslations } from 'next-intl/server'
 
 export default async function TextReplyPage() {

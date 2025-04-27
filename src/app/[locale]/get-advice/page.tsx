@@ -1,5 +1,5 @@
 import { Container } from '@/components/layout/container'
-import { GetAdvice } from './components/get-advice'
+import { GetAdvice } from './GetAdvice'
 import { getTranslations } from 'next-intl/server'
 
 export default async function GetAdvicePage() {
