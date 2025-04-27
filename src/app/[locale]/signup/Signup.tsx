@@ -26,7 +26,7 @@ const signupSchema = z.object({
 export type SignupFormData = z.infer<typeof signupSchema>
 
 export function Signup() {
-	const { user, visitorId } = useAuthStore()
+	const { user } = useAuthStore()
 	const t = useTranslations('signup')
 	const {
 		register,
@@ -40,7 +40,7 @@ export function Signup() {
 	const formErrors = errors as Record<string, { message?: string }>
 
 	useEffect(() => {
-		if (user && !user?.isGuest) window.location.href = '/profile'
+		if (user) window.location.href = '/profile'
 	}, [user])
 
 	return (
@@ -69,7 +69,7 @@ export function Signup() {
 				</motion.p>
 
 				<form
-					onSubmit={handleSubmit(async data => await signup({ ...data, visitorId: visitorId! }))}
+					onSubmit={handleSubmit(async data => await signup(data))}
 					className='space-y-6'
 				>
 					<motion.div

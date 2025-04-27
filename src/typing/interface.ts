@@ -9,10 +9,8 @@ export interface IAuthResponse {
 export interface IAuthState {
 	isAuth: boolean
 	user: UserDto | null
-	visitorId: string | null
 	setIsAuth: (isAuth: boolean) => void
 	setUser: (user: UserDto | null) => void
-	setVisitorId: (visitorId: string | null) => void
 }
 
 export interface IMessage {

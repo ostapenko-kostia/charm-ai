@@ -91,6 +91,7 @@ export async function POST(req: NextRequest) {
 		}
 		messages.push({ role: 'assistant', content: reply })
 
+		// Handle regular users
 		if (
 			!user.subscription ||
 			user.subscription.plan === 'BASIC' ||

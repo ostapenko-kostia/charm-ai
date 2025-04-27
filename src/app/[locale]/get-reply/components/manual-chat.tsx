@@ -167,10 +167,7 @@ export function ManualChat() {
 							</div>
 						</div>
 
-						<CTA
-							type={user.isGuest ? 'guest' : 'user'}
-							section='reply-by-text'
-						/>
+						<CTA />
 					</motion.div>
 				)}
 			</AnimatePresence>

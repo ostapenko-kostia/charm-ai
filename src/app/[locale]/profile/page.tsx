@@ -4,16 +4,15 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { LoadingState } from '@/components/ui/loading-state'
+import { useLogout } from '@/hooks/useAuth'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/auth.store'
 import { motion } from 'framer-motion'
-import { Calendar, Clock, CreditCard, Package2, User } from 'lucide-react'
+import { Calendar, Clock, CreditCard, LogOut, Package2, User } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
-import { useState } from 'react'
 
 const planColors = {
 	BASIC: 'bg-gray-100 text-gray-800',
@@ -40,11 +39,13 @@ function ProfilePage() {
 	const { user } = useAuthStore()
 	const router = useRouter()
 	const subscription = user?.subscription
+	const logout = useLogout()
 
-	if (!user) return <LoadingState />
-	else if (user.isGuest) window.location.href = '/'
+	const handleLogout = () => {
+		logout.mutate()
+	}
 
-	return (
+	return user && (
 		<div className='container mx-auto px-4 py-8'>
 			<motion.div
 				initial={{ opacity: 0, y: 20 }}
@@ -54,6 +55,14 @@ function ProfilePage() {
 			>
 				<div className='flex items-center justify-between'>
 					<h1 className='text-3xl font-bold'>{t('title')}</h1>
+					<Button
+						className='flex items-center gap-2'
+						onClick={handleLogout}
+						disabled={logout.isPending}
+					>
+						<LogOut size={16} />
+						{t('logout')}
+					</Button>
 				</div>
 
 				<div className='grid gap-6 md:grid-cols-2'>

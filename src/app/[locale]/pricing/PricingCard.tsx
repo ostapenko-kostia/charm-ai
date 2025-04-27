@@ -17,7 +17,7 @@ interface PricingCardProps {
 }
 
 export function PricingCard({ plan, isYearly, index }: PricingCardProps) {
-	const { isAuth, user } = useAuthStore()
+	const { isAuth } = useAuthStore()
 	const t = useTranslations('pricing')
 	const { isLoading, handleCheckout } = useCheckout()
 	const { getButtonStyles, getButtonText, isButtonDisabled } = usePricingButton(plan)
@@ -76,25 +76,11 @@ export function PricingCard({ plan, isYearly, index }: PricingCardProps) {
 							{t('plans.basic.cta')}
 						</Button>
 					</Link>
-				) : user?.isGuest ? (
-					<Button
-						className={getButtonStyles()}
-						onClick={() => {
-							window.location.href = '/login'
-						}}
-						variant='ghost'
-					>
-						{t('plans.basic.cta')}
-					</Button>
 				) : (
 					<Button
 						className={getButtonStyles()}
 						variant='ghost'
 						onClick={() => {
-							if (user?.isGuest) {
-								window.location.href = '/login'
-								return
-							}
 							priceId && handleCheckout(priceId)
 						}}
 						disabled={isButtonDisabled()}

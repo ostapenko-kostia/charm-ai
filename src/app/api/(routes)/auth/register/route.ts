@@ -27,8 +27,7 @@ const authRegisterSchema = z.object({
 		.string()
 		.min(8, 'validation.password-min')
 		.trim()
-		.refine(val => val.length > 0, 'validation.password-required'),
-	visitorId: z.string()
+		.refine(val => val.length > 0, 'validation.password-required')
 })
 
 export async function POST(req: NextRequest) {
@@ -53,7 +52,8 @@ export async function POST(req: NextRequest) {
 		return NextResponse.json(
 			{
 				...userData,
-				message: 'success.auth.register'
+				message: 'Registered successfully',
+				translationKey: 'success.auth.register'
 			},
 			{ status: 200 }
 		)

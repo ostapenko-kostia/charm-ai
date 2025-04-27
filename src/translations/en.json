@@ -157,6 +157,7 @@
 	},
 	"profile": {
 		"title": "Profile",
+		"logout": "Logout",
 		"account": {
 			"title": "Account Information",
 			"subtitle": "Your personal account details"
@@ -201,19 +202,12 @@
 		"ai-reply": {
 			"title": "Expert Advice & Suggestions",
 			"option": "Suggestion"
-		},
-		"cta": {
-			"guest": {
-				"title": "Want more expert advice?",
-				"subtitle": "Create an account to get full access to Charm AI",
-				"button": "Create Account"
-			},
-			"user": {
-				"title": "Out of moves?",
-				"subtitle": "Get unlimited expert advice, no limits, no waiting.Unlock Premium — dominate every chat.",
-				"button": "Upgrade Now"
-			}
 		}
+	},
+	"cta": {
+		"title": "Out of moves?",
+		"subtitle": "Get unlimited expert advice, no limits, no waiting. Unlock Premium — dominate every chat.",
+		"button": "Upgrade Now"
 	},
 	"reply-by-screenshot": {
 		"title": "Charm AI Conversation Analyzer",
@@ -232,18 +226,6 @@
 		"ai-reply": {
 			"title": "Expert Analysis & Suggestions",
 			"option": "Suggestion"
-		},
-		"cta": {
-			"guest": {
-				"title": "Want more expert analysis?",
-				"subtitle": "Create an account to get full access to Charm AI",
-				"button": "Create Account"
-			},
-			"user": {
-				"title": "Out of moves?",
-				"subtitle": "Get unlimited expert advice, no limits, no waiting.Unlock Premium — dominate every chat.",
-				"button": "Upgrade Now"
-			}
 		}
 	},
 	"get-advice": {

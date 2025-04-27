@@ -40,9 +40,11 @@ api.interceptors.response.use(
 		const locale =
 			cookieLocale && locales.includes(cookieLocale as 'ua' | 'en') ? cookieLocale : defaultLocale
 
-		if (response?.data?.message) {
-			const translatedMessage = getTranslation(response.data.message, locale as 'en' | 'ua')
+		if (response?.data?.translationKey) {
+			const translatedMessage = getTranslation(response.data.translationKey, locale as 'en' | 'ua')
 			toast.success(translatedMessage)
+		} else if (response?.data?.message) {
+			toast.success(response.data.message)
 		}
 
 		return response

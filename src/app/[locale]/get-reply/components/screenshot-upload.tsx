@@ -158,10 +158,7 @@ export function ScreenshotUpload() {
 							</div>
 						</div>
 
-						<CTA
-							type={user.isGuest ? 'user' : 'guest'}
-							section='reply-by-screenshot'
-						/>
+						<CTA />
 					</motion.div>
 				)}
 			</AnimatePresence>

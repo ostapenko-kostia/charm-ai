@@ -19,20 +19,8 @@ export function useRegister() {
 			password: string
 			firstName: string
 			lastName: string
-			visitorId: string
 		}) => {
 			return await authService.register(data)
-		},
-		onSuccess: () => {
-			window.location.href = '/'
-		}
-	})
-}
-
-export function useInit() {
-	return useMutation({
-		mutationFn: async (visitorId: string) => {
-			return await authService.init(visitorId)
 		},
 		onSuccess: () => {
 			window.location.href = '/'
@@ -44,6 +32,17 @@ export function useRefresh() {
 	return useMutation({
 		mutationFn: async () => {
 			return await authService.refresh()
+		}
+	})
+}
+
+export function useLogout() {
+	return useMutation({
+		mutationFn: async () => {
+			return await authService.logout()
+		},
+		onSuccess: () => {
+			window.location.href = '/'
 		}
 	})
 }

@@ -42,7 +42,7 @@ export function Login() {
 	}
 
 	useEffect(() => {
-		if (user && !user?.isGuest) window.location.href = '/profile'
+		if (user) window.location.href = '/profile'
 	}, [user])
 
 	return (
