@@ -41,7 +41,7 @@ export function GenerateDropdown() {
 			</button>
 
 			{isOpen && (
-				<div className='absolute left-0 top-full mt-2 w-48 rounded-md border bg-background shadow-lg'>
+				<div className='absolute left-0 top-full mt-2 w-48 rounded-md border bg-white shadow-lg z-50'>
 					{options.map(option => (
 						<button
 							key={option.key}

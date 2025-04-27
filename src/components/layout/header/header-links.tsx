@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { AUTH_HEADER_LINKS, UNAUTH_HEADER_LINKS } from './header.data'
 import { GenerateDropdown } from '@/components/ui/generate-dropdown'
+
 export function HeaderLinks({ className }: { className?: string }) {
 	const t = useTranslations('header.links')
 	const { isAuth, user } = useAuthStore()
