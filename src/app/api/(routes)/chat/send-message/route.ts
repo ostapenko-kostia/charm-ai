@@ -97,9 +97,9 @@ export async function POST(req: NextRequest) {
 			user.subscription.plan === 'BASIC' ||
 			user.subscription.plan === 'PRO'
 		) {
-			if (user?.credits?.getReply! <= 0) {
+			if (user?.credits?.getAdvice! <= 0) {
 				throw new ApiError('Not enough credits', 400, 'errors.server.not-enough-credits')
-			} else if (user?.credits?.getReply && user?.credits?.getReply > 0) {
+			} else if (user?.credits?.getAdvice && user?.credits?.getAdvice > 0) {
 				await prisma.credits.update({
 					where: { userId: user.id },
 					data: { getAdvice: { decrement: 1 } }
