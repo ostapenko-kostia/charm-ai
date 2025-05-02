@@ -3,6 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { CTA } from '@/components/ui/cta'
 import { LoadingState } from '@/components/ui/loading-state'
+import { ReplyFeedback } from '@/components/ui/reply-feedback'
 import { useGetReplyByScreenshot } from '@/hooks/useReply'
 import { useAuthStore } from '@/store/auth.store'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -152,7 +153,8 @@ export function ScreenshotUpload() {
 												{t('ai-reply.option')} {index + 1}
 											</span>
 										</div>
-										<div className='text-gray-800 text-lg leading-relaxed'>{reply}</div>
+										<div className='text-gray-800 text-lg leading-relaxed mb-4'>{reply}</div>
+										<ReplyFeedback text={reply} />
 									</div>
 								))}
 							</div>

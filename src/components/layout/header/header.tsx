@@ -8,14 +8,14 @@ import {
 import { Logo } from '@/components/ui/logo'
 import * as motion from 'framer-motion/client'
 import { MenuIcon } from 'lucide-react'
-import { Container } from '../container'
-import { HeaderLinks } from './header-links'
 import { getTranslations } from 'next-intl/server'
+import { Container } from '../container'
 import { LanguageSwitcher } from '../language-switcher'
+import { HeaderLinks } from './header-links'
 
 export async function Header() {
 	const t = await getTranslations('header')
-	
+
 	return (
 		<motion.header
 			initial={{ y: -100 }}

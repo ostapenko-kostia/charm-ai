@@ -8,16 +8,18 @@ datasource db {
 }
 
 model User {
-  id String @id @unique @default(uuid())
+  id String @id @unique @default(cuid())
 
   firstName String
   lastName  String
   email     String @unique
   password  String
 
-  refreshToken RefreshToken?
-  subscription Subscription?
-  credits      Credits?
+  refreshToken   RefreshToken?
+  subscription   Subscription?
+  credits        Credits?
+  replyFeedbacks ReplyFeedback[]
+  feedbacks      Feedback[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -66,7 +68,7 @@ model Credits {
 }
 
 model RefreshToken {
-  id String @id @unique @default(uuid())
+  id String @id @unique @default(cuid())
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @unique
@@ -89,4 +91,36 @@ enum PLAN_STATUS {
   PAST_DUE
   CANCELED
   UNPAID
+}
+
+model ReplyFeedback {
+  id String @id @default(cuid())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  text String
+
+  isLiked    Boolean
+  isDisliked Boolean
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@index([userId])
+  @@unique([userId, text])
+}
+
+model Feedback {
+  id String @id @default(cuid())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  comment String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@index([userId])
 }

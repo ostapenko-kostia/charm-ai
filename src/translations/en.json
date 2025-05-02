@@ -304,10 +304,14 @@
 			"first-name-max": "First name must be at most 50 characters long",
 			"last-name-required": "Last name is required",
 			"last-name-min": "Last name must be at least 1 character long",
-			"last-name-max": "Last name must be at most 50 characters long"
+			"last-name-max": "Last name must be at most 50 characters long",
+			"comment-required": "Comment is required"
 		}
 	},
 	"success": {
+		"feedback": {
+			"created": "Feedback sent successfully!"
+		},
 		"auth": {
 			"login": "Successfully logged in",
 			"register": "Successfully registered",
@@ -320,6 +324,18 @@
 		},
 		"profile": {
 			"updated": "Profile updated successfully"
+		}
+	},
+	"feedback": {
+		"title": "Share Your Feedback",
+		"comment": {
+			"title": "Comment",
+			"placeholder": "Tell us what you liked or what could be improved..."
+		},
+		"submit": "Submit Feedback",
+		"success": {
+			"title": "Thank you for your feedback!",
+			"message": "We appreciate your input and will use it to improve our service."
 		}
 	}
 }
