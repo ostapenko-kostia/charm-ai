@@ -12,17 +12,18 @@ import { UserDto } from './dto/user.dto';
 import { LoginRequest } from './dto/login.dto';
 import { User } from '@prisma/client';
 import { AuthResponse } from './dto/auth.dto';
-import { Request } from 'express';
+import { AppLogger } from 'src/logger/logger.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly tokenService: TokenService,
+    private readonly logger: AppLogger,
   ) {}
 
   async register(dto: RegisterRequest) {
-    const { email, password } = dto;
+    const { email, password, firstName, lastName } = dto;
 
     // Check if the user already exists
     const candidate = await this.prisma.user.findUnique({
@@ -44,8 +45,13 @@ export class AuthService {
       data: {
         email,
         password: hashedPassword,
+        firstName,
+        lastName,
       },
     });
+
+    // Log the user creation
+    this.logger.log(`User created: ${user.id} - ${user.email}`);
 
     // Issue token pair
     return this.issueTokenPair(user);
@@ -82,10 +88,10 @@ export class AuthService {
   }
 
   async refresh(refreshToken: string | null) {
-		// Check if the refresh token is provided
-		if (!refreshToken) {
-			throw new UnauthorizedException();
-		}
+    // Check if the refresh token is provided
+    if (!refreshToken) {
+      throw new UnauthorizedException();
+    }
 
     // Validate the refresh token
     const decoded = this.tokenService.validateRefreshToken(refreshToken);
